@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:state_pressed="true" android:color="@color/atv_cell_text_detail_highlighted_text" />
+    <item android:state_focused="true" android:color="@color/atv_cell_text_detail_highlighted_text" />
+    <item android:color="@color/atv_value1_cell_detail_text" />
+</selector>

@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="ATableViewCell">
+        <attr name="textLabel" format="reference" />
+        <attr name="detailTextLabel" format="reference" />
+    </declare-styleable>
+</resources>

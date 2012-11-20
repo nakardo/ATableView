@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/contentView"
+    style="@style/Widget.ATableViewCell"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    
+    android:orientation="vertical" >
+
+    <com.nakardo.atableview.uikit.UILabel
+        android:id="@+id/textLabel"
+        style="@style/Widget.ATableViewCell.TextLabel.Subtitle"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="Title" />
+
+    <com.nakardo.atableview.uikit.UILabel
+        android:id="@+id/detailTextLabel"
+        style="@style/Widget.ATableViewCell.DetailTextLabel.Subtitle"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="Detail" />
+
+</LinearLayout>

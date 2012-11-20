@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- ATableView -->
+    <color name="atv_separator">#CCCCCC</color>
+    
+    <!-- ATableViewCell -->
+    <color name="atv_cell_background">#FFFFFF</color>
+    
+    <!-- ATableViewCellSelectionStyle.Blue -->
+    <color name="atv_cell_selection_style_blue_start">#058CF5</color>
+    <color name="atv_cell_selection_style_blue_end">#015EE6</color>
+    
+    <!-- ATableViewCellSelectionStyle.Gray -->
+    <color name="atv_cell_selection_style_gray_start">#CECECE</color>
+    <color name="atv_cell_selection_style_gray_end">#ABABAB</color>
+    
+    <!-- ATableViewCellStyle.Default -->
+    <color name="atv_default_cell_text">#000000</color>
+    
+    <!-- ATableViewCellStyle.Subtitle -->
+    <color name="atv_subtitle_cell_text">#000000</color>
+    <color name="atv_subtitle_cell_detail_text">#808080</color>
+    
+    <!-- ATableViewCellStyle.Value1 -->
+    <color name="atv_value1_cell_text">#000000</color>
+    <color name="atv_value1_cell_detail_text">#385487</color>
+    
+    <!-- ATableViewCellStyle.Value2 -->
+    <color name="atv_value2_cell_text">#526691</color>
+    <color name="atv_value2_cell_detail_text">#000000</color>
+    
+    <color name="atv_cell_text_detail_highlighted_text">#FFFFFF</color>
+</resources>
