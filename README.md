@@ -1,4 +1,4 @@
-ATableView
+ATableView (UITableView for Android)
 ==========
 
-iOS fashion tables on Android
+iOS like tables on Android
