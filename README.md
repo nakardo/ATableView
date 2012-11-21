@@ -1,14 +1,17 @@
-# ATableView (UITableView for Android)
+# ATableView (UITableView)
 
 ## Summary
 
-Create iOS-like tables (UITableView) for Android. ATableView intends to imitate same object model proposed on UIKit for building tables, so it's not only limited on theming Android ListView.
+ATableView intends to imitate same object model proposed on UIKit for building tables, so it's not only limited on theming Android ListView. If you've some background on iOS development you may jump over some of the sections below, you'll find a lot of similarities with the native framework.
 
-If you've some background on iOS development you may jump over some of the sections below, you'll find a lot of similarities with the native framework.
+If not, you should be good with the examples below.
 
 ## Screenshots
 
-## Usage
+![ATableView](http://oi47.tinypic.com/dwx43p.jpg)
+![ATableView](http://oi50.tinypic.com/v5y6ad.jpg)
+
+## How to use it
 
 ### Creating tables
 
@@ -50,7 +53,8 @@ More on how this methods works can be found on the iOS [UITableViewDataSource Pr
         // ATableViewCellStyle.Default, Subtitle, Value1 & Value2 supported.
         ATableViewCellStyle style = ATableViewCellStyle.Default;
         
-        // reuse cells. if the table has different row types it will result on performance issues. Use ATableViewDataSourceExt on this cases.
+        // reuse cells. if the table has different row types it will result on performance issues.
+        // Use ATableViewDataSourceExt on this cases.
         // please notice we ask the datasource for a cell instead the table as we do on ios.
         ATableViewCell cell = dequeueReusableCellWithIdentifier(cellIdentifier);
         if (cell == null) {
@@ -62,13 +66,30 @@ More on how this methods works can be found on the iOS [UITableViewDataSource Pr
         // set title.
         cell.getTextLabel().setText("Buenos Aires");
         
-        // set detail text. careful, detail text is not present on every cell style. null references are not as neat as in obj-c.
+        // set detail text. careful, detail text is not present on every cell style.
+        // null references are not as neat as in obj-c.
         TextView detailTextLabel = cell.getDetailTextLabel();
         if (detailTextLabel != null) {
             detailTextLabel.setText("Argentina");
         }
 			
         return cell;
+    }
+    
+    @Override
+    public int numberOfRowsInSection(ATableView tableView, int section) {
+        // return number of rows for this section.
+        if (section == 1) {
+            return 4;
+        }
+        
+        return 2;
+    }
+    
+    @Override
+    public int numberOfSectionsInTableView(ATableView tableView) {
+        // defaults to 1.
+        return 2;
     }
 
 #### Table styles (ATableViewStyle)
@@ -87,6 +108,8 @@ All [UITableViewCellStyles](http://developer.apple.com/library/ios/#documentatio
 * ATableViewCellStyle.Value1
 * ATableViewCellStyle.Value2
 
+![ATableViewCellStyle](http://oi45.tinypic.com/auyv8.jpg)
+
 Custom cells are currently not supported, it should be possible to implement quite easily extending ATableViewCell and defining your own layout for it.
 
 #### Cell selection styles (ATableViewCellSelectionStyle)
@@ -96,6 +119,8 @@ All [UITableViewCellSelectionStyle](http://developer.apple.com/library/ios/#docu
 * ATableViewCellSelectionStyle.None
 * ATableViewCellSelectionStyle.Blue (Default)
 * ATableViewCellSelectionStyle.Gray
+
+![ATableViewCellSelectionStyle](http://oi47.tinypic.com/2l8c2e8.jpg)
 
 ### Implementing a delegate
 
@@ -146,8 +171,11 @@ You'll have additionally to implement the following methods:
 * Support for UITableViewCell accessoryType (UITableViewCell built in styles and custom).
 * Support for UITableViewCell imageView.
 * Ability to define titles per section (Plain & Grouped).
+* Better examples app bundled.
 * More.
 
 ## License
+
+Copyright 2012 Diego Acosta - Contact me diegonake [@Email from Google] .com
 
 Released under the [Beerware](http://en.wikipedia.org/wiki/Beerware) license. And just in case under the [Apache 2.0.](http://www.apache.org/licenses/LICENSE-2.0.html) license.
