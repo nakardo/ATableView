@@ -6,7 +6,7 @@ import java.util.List;
 
 import android.app.Activity;
 import android.os.Bundle;
-import android.widget.RelativeLayout;
+import android.widget.FrameLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -21,7 +21,6 @@ import com.nakardo.atableview.view.ATableViewCell.ATableViewCellSelectionStyle;
 import com.nakardo.atableview.view.ATableViewCell.ATableViewCellStyle;
 
 public class MainActivity extends Activity {
-	private ATableView mTableView;
 	private List<List<String>> mCapitals;
 	private List<List<String>> mProvinces;
 	private String[] mRegions = {
@@ -57,17 +56,17 @@ public class MainActivity extends Activity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.main);
         
         mCapitals = createCapitalsList();
         mProvinces = createProvincesList();
         
-        mTableView = new ATableView(ATableViewStyle.Grouped, this);
-        mTableView.setDataSource(new SampleATableViewDataSource());
-        mTableView.setDelegate(new SampleATableViewDelegate());
+        ATableView tableView = new ATableView(ATableViewStyle.Grouped, this);
+        tableView.setDataSource(new SampleATableViewDataSource());
+        tableView.setDelegate(new SampleATableViewDelegate());
         
-        RelativeLayout container = (RelativeLayout)findViewById(R.id.uitableview_container);
-        container.addView(mTableView);
+        FrameLayout container = (FrameLayout)findViewById(android.R.id.content);
+        container.addView(tableView);
     }
 
 	private class SampleATableViewDataSource extends ATableViewDataSourceExt {
@@ -89,16 +88,19 @@ public class MainActivity extends Activity {
 				style = ATableViewCellStyle.Value2;
 			} 
 			
-			ATableViewCell cell = dequeueReusableCellWithIdentifier(cellIdentifier);
+			MyATableViewCell cell = (MyATableViewCell)dequeueReusableCellWithIdentifier(cellIdentifier);
 			if (cell == null) {
-				cell = new ATableViewCell(style, cellIdentifier, MainActivity.this);
+				cell = new MyATableViewCell(cellIdentifier, MainActivity.this);
 				cell.setSelectionStyle(ATableViewCellSelectionStyle.Blue);
 			}
 			
 			int row = indexPath.getRow();
 			
-			String province = mProvinces.get(section).get(row);
-			cell.getTextLabel().setText(province);
+			TextView textLabel = cell.getTextLabel();
+			if (textLabel != null) {
+				String province = mProvinces.get(section).get(row);
+				textLabel.setText(province);
+			}
 			
 			TextView detailTextLabel = cell.getDetailTextLabel();
 			if (detailTextLabel != null) {
@@ -111,7 +113,8 @@ public class MainActivity extends Activity {
 
 		@Override
 		public int numberOfRowsInSection(ATableView tableView, int section) {
-			return mCapitals.get(section).size();
+//			return mCapitals.get(section).size();
+			return 3;
 		}
 		
 		@Override

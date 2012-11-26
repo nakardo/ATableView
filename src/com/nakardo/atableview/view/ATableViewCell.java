@@ -18,7 +18,7 @@ public class ATableViewCell extends FrameLayout {
 	private int mBackgroundColor = getResources().getColor(R.color.atv_cell_background);
 	private ATableViewCellSelectionStyle mSelectionStyle = ATableViewCellSelectionStyle.Blue;
 	
-	private static int getLayout(ATableViewCellStyle style) {
+	protected int getLayout(ATableViewCellStyle style) {
 		switch (style) {
 			case Subtitle:
 				return R.layout.atv_cell_subtitle;
