@@ -19,14 +19,16 @@ public class UILabel extends TextView {
         super(context, attrs, defStyle);
     }
 
+    /*
     @Override
     public void setTypeface (Typeface tf, int style) {
     	if (!isInEditMode()) {
     		if (style == Typeface.BOLD) {
-    			super.setTypeface(Typeface.createFromAsset(getContext().getAssets(), "fonts/Roboto-Bold.ttf"));
+    			super.setTypeface(Typeface.createFromAsset(getContext().getAssets(), "fonts/roboto_bold.ttf"));
     		} else {
-    			super.setTypeface(Typeface.createFromAsset(getContext().getAssets(), "fonts/Roboto-Regular.ttf"));
+    			super.setTypeface(Typeface.createFromAsset(getContext().getAssets(), "fonts/roboto_regular.ttf"));
     		}
 		}
     }
+    */
 }

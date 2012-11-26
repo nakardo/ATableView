@@ -1,4 +1,4 @@
-package com.nakardo.atableview.sample;
+package com.nakardo.atableview.demo;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -10,7 +10,6 @@ import android.widget.FrameLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.nakardo.atableview.R;
 import com.nakardo.atableview.foundation.NSIndexPath;
 import com.nakardo.atableview.protocol.ATableViewDataSourceExt;
 import com.nakardo.atableview.protocol.ATableViewDelegate;
@@ -88,9 +87,9 @@ public class MainActivity extends Activity {
 				style = ATableViewCellStyle.Value2;
 			} 
 			
-			MyATableViewCell cell = (MyATableViewCell)dequeueReusableCellWithIdentifier(cellIdentifier);
+			ATableViewCell cell = dequeueReusableCellWithIdentifier(cellIdentifier);
 			if (cell == null) {
-				cell = new MyATableViewCell(cellIdentifier, MainActivity.this);
+				cell = new ATableViewCell(style, cellIdentifier, MainActivity.this);
 				cell.setSelectionStyle(ATableViewCellSelectionStyle.Blue);
 			}
 			

@@ -1,6 +1,4 @@
 <resources xmlns:android="http://schemas.android.com/apk/res/android">
-    <style name="AppTheme" parent="android:Theme.Holo.Light" />
-    
     <style name="Widget"></style>
     
     <style name="Widget.ATableViewCell">
