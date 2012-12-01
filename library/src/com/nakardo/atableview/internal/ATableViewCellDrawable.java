@@ -1,4 +1,4 @@
-package com.nakardo.atableview.view;
+package com.nakardo.atableview.internal;
 
 import android.content.res.Resources;
 import android.graphics.Canvas;
@@ -12,6 +12,8 @@ import android.graphics.drawable.ShapeDrawable;
 import android.graphics.drawable.shapes.RoundRectShape;
 import android.graphics.drawable.shapes.Shape;
 
+import com.nakardo.atableview.R;
+import com.nakardo.atableview.view.ATableView;
 import com.nakardo.atableview.view.ATableView.ATableViewStyle;
 
 public class ATableViewCellDrawable extends ShapeDrawable {
@@ -61,13 +63,17 @@ public class ATableViewCellDrawable extends ShapeDrawable {
 			int backgroundColor) {
 		
 		super(getShape(tableView.getStyle(), backgroundStyle));
+		
+		Resources res = tableView.getResources();
+		int margin = (int)res.getDimension(R.dimen.atv_cell_content_view_padding);
+		setPadding(margin, 0, margin, 0);
+		
 		mTableViewStyle = tableView.getStyle();
 		mCellBackgroundStyle = backgroundStyle;
 		
 		mFillPaint = new Paint(this.getPaint());
 		mFillPaint.setColor(backgroundColor);
 
-		Resources res = tableView.getResources();
 		mStrokeWidth = CELL_STROKE_WIDTH_DP * res.getDisplayMetrics().density;
 		
 		mStrokePaint = new Paint(mFillPaint);

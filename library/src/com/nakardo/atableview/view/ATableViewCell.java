@@ -2,8 +2,9 @@ package com.nakardo.atableview.view;
 
 import android.content.Context;
 import android.util.AttributeSet;
-import android.view.View;
+import android.view.LayoutInflater;
 import android.widget.FrameLayout;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.nakardo.atableview.R;
@@ -33,7 +34,8 @@ public class ATableViewCell extends FrameLayout {
 	
 	public ATableViewCell(ATableViewCellStyle style, String reuseIdentifier, Context context) {
 		this(context);
-		View.inflate(context, getLayout(style), this);
+		LinearLayout contentView = (LinearLayout)LayoutInflater.from(context).inflate(getLayout(style), null);
+		addView(contentView);
 		
 		mReuseIdentifier = reuseIdentifier;
 		mTextLabel = (TextView)findViewById(R.id.textLabel);

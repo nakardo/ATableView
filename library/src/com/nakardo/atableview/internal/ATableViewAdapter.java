@@ -15,6 +15,7 @@ import android.widget.ListView;
 
 import com.nakardo.atableview.R;
 import com.nakardo.atableview.foundation.NSIndexPath;
+import com.nakardo.atableview.internal.ATableViewCellDrawable.ATableViewCellBackgroundStyle;
 import com.nakardo.atableview.protocol.ATableViewDataSource;
 import com.nakardo.atableview.protocol.ATableViewDataSourceExt;
 import com.nakardo.atableview.protocol.ATableViewDelegate;
@@ -22,8 +23,6 @@ import com.nakardo.atableview.view.ATableView;
 import com.nakardo.atableview.view.ATableView.ATableViewStyle;
 import com.nakardo.atableview.view.ATableViewCell;
 import com.nakardo.atableview.view.ATableViewCell.ATableViewCellSelectionStyle;
-import com.nakardo.atableview.view.ATableViewCellDrawable;
-import com.nakardo.atableview.view.ATableViewCellDrawable.ATableViewCellBackgroundStyle;
 
 public class ATableViewAdapter extends BaseAdapter {
 	private List<Integer> mRows = new ArrayList<Integer>();

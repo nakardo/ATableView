@@ -1,15 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <dimen name="atv_style_grouped_margins">10dp</dimen>
+    <dimen name="atv_cell_content_view_padding">10dp</dimen>
     
+    <!-- ATableViewCellStyle.Default -->
     <dimen name="atv_default_cell_text_size">20sp</dimen>
     
+    <!-- ATableViewCellStyle.Subtitle -->
     <dimen name="atv_subtitle_cell_text_size">18sp</dimen>
     <dimen name="atv_subtitle_cell_detail_text_size">14sp</dimen>
     
+    <!-- ATableViewCellStyle.Value1 -->
     <dimen name="atv_value1_cell_text_size">17sp</dimen>
     <dimen name="atv_value1_cell_detail_text_size">17sp</dimen>
     
+    <!-- ATableViewCellStyle.Value2 -->
     <dimen name="atv_value2_cell_text_size">12sp</dimen>
     <dimen name="atv_value2_cell_details_text_size">15sp</dimen>
 </resources>
