@@ -5,6 +5,11 @@
         <item name="android:gravity">center_vertical</item>
     </style>
     
+    <style name="Widget.ATableViewCell.ImageView" parent="@style/Widget">
+        <item name="android:adjustViewBounds">true</item>
+        <item name="android:scaleType">centerInside</item>
+    </style>
+    
     <style name="Widget.ATableViewCell.TextLabel" parent="@style/Widget">
         <item name="android:duplicateParentState">true</item>
         <item name="android:textStyle">bold</item>

@@ -17,14 +17,14 @@ import com.nakardo.atableview.view.ATableView;
 import com.nakardo.atableview.view.ATableView.ATableViewStyle;
 
 public class ATableViewCellDrawable extends ShapeDrawable {
+	public static final float CELL_STROKE_WIDTH_DP = 1f;
 	private static final float CELL_GROUPED_STYLE_BACKGROUND_RADIUS = 16;
-	private static final float CELL_STROKE_WIDTH_DP = 1f;
 	
 	private ATableViewStyle mTableViewStyle;
 	private ATableViewCellBackgroundStyle mCellBackgroundStyle;
 	private Paint mFillPaint;
 	private Paint mStrokePaint;
-	private float mStrokeWidth;
+	private int mStrokeWidth;
 	
 	public enum ATableViewCellBackgroundStyle { Top, Middle, Bottom };
 
@@ -64,17 +64,17 @@ public class ATableViewCellDrawable extends ShapeDrawable {
 		
 		super(getShape(tableView.getStyle(), backgroundStyle));
 		
-		Resources res = tableView.getResources();
-		int margin = (int)res.getDimension(R.dimen.atv_cell_content_view_padding);
-		setPadding(margin, 0, margin, 0);
-		
 		mTableViewStyle = tableView.getStyle();
 		mCellBackgroundStyle = backgroundStyle;
 		
 		mFillPaint = new Paint(this.getPaint());
 		mFillPaint.setColor(backgroundColor);
 
-		mStrokeWidth = CELL_STROKE_WIDTH_DP * res.getDisplayMetrics().density;
+		Resources res = tableView.getResources();
+		mStrokeWidth = (int)(CELL_STROKE_WIDTH_DP * res.getDisplayMetrics().density);
+		
+		int marginBottom = backgroundStyle == ATableViewCellBackgroundStyle.Bottom ? mStrokeWidth : 0;
+		setPadding(mStrokeWidth, mStrokeWidth, 0, marginBottom);
 		
 		mStrokePaint = new Paint(mFillPaint);
 		mStrokePaint.setStyle(Paint.Style.STROKE);

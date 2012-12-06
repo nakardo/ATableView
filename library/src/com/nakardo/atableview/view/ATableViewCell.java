@@ -4,6 +4,7 @@ import android.content.Context;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -16,6 +17,7 @@ public class ATableViewCell extends FrameLayout {
 	private String mReuseIdentifier;
 	private TextView mTextLabel;
 	private TextView mDetailTextLabel;
+	private ImageView mImageView;
 	private int mBackgroundColor = getResources().getColor(R.color.atv_cell_background);
 	private ATableViewCellSelectionStyle mSelectionStyle = ATableViewCellSelectionStyle.Blue;
 	
@@ -40,6 +42,7 @@ public class ATableViewCell extends FrameLayout {
 		mReuseIdentifier = reuseIdentifier;
 		mTextLabel = (TextView)findViewById(R.id.textLabel);
 		mDetailTextLabel = (TextView)findViewById(R.id.detailTextLabel);
+		mImageView = (ImageView)findViewById(R.id.imageView);
 	}
 	
 	public ATableViewCell(Context context) {
@@ -72,6 +75,10 @@ public class ATableViewCell extends FrameLayout {
 
 	public TextView getDetailTextLabel() {
 		return mDetailTextLabel;
+	}
+	
+	public ImageView getImageView() {
+		return mImageView;
 	}
 	
 	public ATableViewCellSelectionStyle getSelectionStyle() {

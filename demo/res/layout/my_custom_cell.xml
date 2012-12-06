@@ -5,17 +5,16 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent" >
 
-    <ImageView
-        android:id="@+id/imageView"
-        style="@style/Widget.ATableViewCell.ImageView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
-
     <com.nakardo.atableview.uikit.UILabel
-        android:id="@+id/textLabel"
+        android:id="@+id/custom_cell_label"
         style="@style/Widget.ATableViewCell.TextLabel.Default"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
+        android:shadowColor="#CCCCCC"
+        android:shadowRadius="1"
+        android:shadowDx="2"
+        android:shadowDy="2"
         android:layout_marginLeft="@dimen/atv_cell_label_margin"
         android:layout_marginRight="@dimen/atv_cell_label_margin"
         android:text="Title" />

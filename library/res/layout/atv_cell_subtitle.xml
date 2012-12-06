@@ -3,21 +3,37 @@
     android:id="@+id/contentView"
     style="@style/Widget.ATableViewCell"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical" >
+    android:layout_height="match_parent" >
 
-    <com.nakardo.atableview.uikit.UILabel
-        android:id="@+id/textLabel"
-        style="@style/Widget.ATableViewCell.TextLabel.Subtitle"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:text="Title" />
+    <ImageView
+        android:id="@+id/imageView"
+        style="@style/Widget.ATableViewCell.ImageView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
 
-    <com.nakardo.atableview.uikit.UILabel
-        android:id="@+id/detailTextLabel"
-        style="@style/Widget.ATableViewCell.DetailTextLabel.Subtitle"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:text="Detail" />
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center_vertical"
+        android:orientation="vertical" >
+
+        <com.nakardo.atableview.uikit.UILabel
+            android:id="@+id/textLabel"
+            style="@style/Widget.ATableViewCell.TextLabel.Subtitle"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/atv_cell_label_margin"
+            android:layout_marginRight="@dimen/atv_cell_label_margin"
+            android:text="Title" />
+
+        <com.nakardo.atableview.uikit.UILabel
+            android:id="@+id/detailTextLabel"
+            style="@style/Widget.ATableViewCell.DetailTextLabel.Subtitle"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/atv_cell_label_margin"
+            android:layout_marginRight="@dimen/atv_cell_label_margin"
+            android:text="Detail" />
+    </LinearLayout>
 
 </LinearLayout>

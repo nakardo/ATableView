@@ -68,7 +68,12 @@ public class ATableViewAdapter extends BaseAdapter {
 	
 	private int getRowHeight(NSIndexPath indexPath) {
 		Resources res = mTableView.getContext().getResources();
+		
+		// last row has double line, so we've to add extra line to row height to keep same aspect.
 		int rowHeight = mRowsHeight.get(indexPath.getSection()).get(indexPath.getRow());
+		if (indexPath.getRow() == mRows.get(indexPath.getSection()) - 1) {
+			rowHeight += (int)ATableViewCellDrawable.CELL_STROKE_WIDTH_DP;
+		}
 		
 		return (int)(rowHeight * res.getDisplayMetrics().density);
 	}
@@ -103,7 +108,7 @@ public class ATableViewAdapter extends BaseAdapter {
 		cell.setLayoutParams(params);
 	}
 	
-	private void setupDrawables(ATableViewCell cell, NSIndexPath indexPath) {
+	private void setupBackgroundDrawable(ATableViewCell cell, NSIndexPath indexPath) {
 		ATableViewCellBackgroundStyle backgroundStyle = ATableViewCellBackgroundStyle.Middle;
 		
 		// get row style for using specific drawable.
@@ -141,6 +146,10 @@ public class ATableViewAdapter extends BaseAdapter {
 		
 		LinearLayout contentView = (LinearLayout)cell.findViewById(R.id.contentView);
 		contentView.setBackgroundDrawable(drawable);
+	}
+	
+	private void setupAccessoryDrawable() {
+		
 	}
 	
 	@Override
@@ -193,7 +202,8 @@ public class ATableViewAdapter extends BaseAdapter {
 		cell = dataSource.cellForRowAtIndexPath(mTableView, indexPath);
 		
 		setupLayout(cell, indexPath);
-		setupDrawables(cell, indexPath);
+		setupBackgroundDrawable(cell, indexPath);
+		setupAccessoryDrawable();
 		
 		return cell;
 	}

@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import android.app.Activity;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.widget.FrameLayout;
 import android.widget.TextView;
@@ -23,7 +24,7 @@ public class MainActivity extends Activity {
 	private List<List<String>> mCapitals;
 	private List<List<String>> mProvinces;
 	private String[] mRegions = {
-		"Northwest", "Gran Chaco", "Mesopotamia", "Cuyo", /* "Pampas", "Patagonia" */
+		"Northwest", "Gran Chaco", "Mesopotamia", "Pampas", "Cuyo", "Patagonia"
 	};
 	
 	private static List<List<String>> createProvincesList() {
@@ -32,8 +33,8 @@ public class MainActivity extends Activity {
 		provinces.add(Arrays.asList(new String[] { "Jujuy", "Salta", "Tucumán", "Catamarca" }));
 		provinces.add(Arrays.asList(new String[] { "Formosa", "Chaco", "Santiago del Estero" }));
 		provinces.add(Arrays.asList(new String[] { "Misiones", "Entre Ríos", "Corrientes" }));
-		provinces.add(Arrays.asList(new String[] { "San Juan", "La Rioja", "Mendoza", "San Luis" }));
 		provinces.add(Arrays.asList(new String[] { "Córdoba", "Santa Fe", "La Pampa", "Buenos Aires" }));
+		provinces.add(Arrays.asList(new String[] { "San Juan", "La Rioja", "Mendoza", "San Luis" }));
 		provinces.add(Arrays.asList(new String[] { "Rio Negro", "Neuquén", "Chubut", "Santa Cruz", "Tierra del Fuego" }));
 		
 		return provinces;
@@ -45,8 +46,8 @@ public class MainActivity extends Activity {
 		capitals.add(Arrays.asList(new String[] { "San Salvador de Jujuy", "Salta", "San Miguel de Tucuman", "S.F.V. de Catamarca" }));
 		capitals.add(Arrays.asList(new String[] { "Formosa", "Resistencia", "Santiago del Estero" }));
 		capitals.add(Arrays.asList(new String[] { "Posadas", "Parana", "Corrientes" }));
-		capitals.add(Arrays.asList(new String[] { "San Juan", "La Rioja", "Mendoza", "San Luis" }));
 		capitals.add(Arrays.asList(new String[] { "Cordoba", "Santa Fe", "Santa Rosa", "Capital Federal" }));
+		capitals.add(Arrays.asList(new String[] { "San Juan", "La Rioja", "Mendoza", "San Luis" }));
 		capitals.add(Arrays.asList(new String[] { "Viedma", "Neuquén", "Rawson", "Rio Gallegos", "Ushuaia" }));
 		
 		return capitals;
@@ -68,6 +69,26 @@ public class MainActivity extends Activity {
         container.addView(tableView);
     }
 
+    private Drawable getDrawableForRow(int row) {
+    	Drawable drawable = null;
+		switch (row) {
+			case 0:
+				drawable = getResources().getDrawable(R.drawable.san_juan);
+				break;
+			case 1:
+				drawable = getResources().getDrawable(R.drawable.la_rioja);
+				break;
+			case 2:
+				drawable = getResources().getDrawable(R.drawable.mendoza);
+				break;
+			default:
+				drawable = getResources().getDrawable(R.drawable.san_luis);
+				break;
+		}
+		
+		return drawable;
+    }
+    
 	private class SampleATableViewDataSource extends ATableViewDataSourceExt {
 		
 		@Override
@@ -75,6 +96,7 @@ public class MainActivity extends Activity {
 			String cellIdentifier = "CellIdentifier0";
 			ATableViewCellStyle style = ATableViewCellStyle.Default;
 			
+			// set proper style and identifier for cells on each section.
 			int section = indexPath.getSection();
 			if (section == 0) {
 				cellIdentifier = "CellIdentifier1";
@@ -85,26 +107,49 @@ public class MainActivity extends Activity {
 			} else if (section == 2) {
 				cellIdentifier = "CellIdentifier3";
 				style = ATableViewCellStyle.Value2;
-			} 
-			
-			ATableViewCell cell = dequeueReusableCellWithIdentifier(cellIdentifier);
-			if (cell == null) {
-				cell = new ATableViewCell(style, cellIdentifier, MainActivity.this);
-				cell.setSelectionStyle(ATableViewCellSelectionStyle.Blue);
+			}  else if (section == 5) {
+				cellIdentifier = "CustomCellIdentifier";
 			}
 			
+			// get row data.
 			int row = indexPath.getRow();
+			String province = mProvinces.get(section).get(row);
 			
-			TextView textLabel = cell.getTextLabel();
-			if (textLabel != null) {
-				String province = mProvinces.get(section).get(row);
-				textLabel.setText(province);
-			}
-			
-			TextView detailTextLabel = cell.getDetailTextLabel();
-			if (detailTextLabel != null) {
-				String capital = mCapitals.get(section).get(row);
-				detailTextLabel.setText(capital);
+			ATableViewCell cell = null;
+			if (section != 5) {
+				cell = dequeueReusableCellWithIdentifier(cellIdentifier);
+				if (cell == null) {
+					cell = new ATableViewCell(style, cellIdentifier, MainActivity.this);
+					cell.setSelectionStyle(ATableViewCellSelectionStyle.Blue);
+				}
+				
+				// imageView
+				if (indexPath.getSection() == 4) {
+					int paddingLeft = (int)(8 * getResources().getDisplayMetrics().density);
+					cell.getImageView().setPadding(paddingLeft, 0, 0, 0);
+					cell.getImageView().setImageDrawable(getDrawableForRow(row));
+				}
+				
+				// textLabel
+				cell.getTextLabel().setText(province);
+				
+				// detailTextLabel
+				TextView detailTextLabel = cell.getDetailTextLabel();
+				if (detailTextLabel != null) {
+					String capital = mCapitals.get(section).get(row);
+					detailTextLabel.setText(capital);
+				}
+			} else {
+				MyCustomCell customCell = (MyCustomCell)dequeueReusableCellWithIdentifier(cellIdentifier);
+				if (cell == null) {
+					customCell = new MyCustomCell(ATableViewCellStyle.Default, cellIdentifier, MainActivity.this);
+					customCell.setSelectionStyle(ATableViewCellSelectionStyle.Gray);
+				}
+				
+				// customLabel
+				customCell.getCustomLabel().setText(province);
+				
+				cell = customCell;
 			}
 			
 			return cell;
@@ -112,8 +157,7 @@ public class MainActivity extends Activity {
 
 		@Override
 		public int numberOfRowsInSection(ATableView tableView, int section) {
-//			return mCapitals.get(section).size();
-			return 3;
+			return mCapitals.get(section).size();
 		}
 		
 		@Override
@@ -128,7 +172,12 @@ public class MainActivity extends Activity {
 
 		@Override
 		public int styleForRowAtIndexPath(NSIndexPath indexPath) {
-			return indexPath.getSection();
+			int section = indexPath.getSection();
+			if (section < 4) {
+				return section;
+			}
+			
+			return 0;
 		}
 	}
 	

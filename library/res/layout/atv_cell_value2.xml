@@ -5,27 +5,29 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent" >
 
-    <LinearLayout
-        android:layout_width="fill_parent"
+    <ImageView
+        android:id="@+id/imageView"
+        style="@style/Widget.ATableViewCell.ImageView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+    
+    <com.nakardo.atableview.uikit.UILabel
+        android:id="@+id/textLabel"
+        style="@style/Widget.ATableViewCell.TextLabel.Value2"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:orientation="horizontal" >
+        android:layout_marginLeft="@dimen/atv_cell_label_margin"
+        android:layout_weight=".25"
+        android:text="Title" />
 
-        <com.nakardo.atableview.uikit.UILabel
-            android:id="@+id/textLabel"
-            style="@style/Widget.ATableViewCell.TextLabel.Value2"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight=".75"
-            android:text="Title" />
-
-        <com.nakardo.atableview.uikit.UILabel
-            android:id="@+id/detailTextLabel"
-            style="@style/Widget.ATableViewCell.DetailTextLabel.Value2"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="10dp"
-            android:layout_weight=".25"
-            android:text="Detail" />
-    </LinearLayout>
+    <com.nakardo.atableview.uikit.UILabel
+        android:id="@+id/detailTextLabel"
+        style="@style/Widget.ATableViewCell.DetailTextLabel.Value2"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/atv_cell_label_margin"
+        android:layout_marginRight="@dimen/atv_cell_label_margin"
+        android:layout_weight=".75"
+        android:text="Detail" />
 
 </LinearLayout>

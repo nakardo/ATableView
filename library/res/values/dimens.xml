@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <dimen name="atv_style_grouped_margins">10dp</dimen>
-    <dimen name="atv_cell_content_view_padding">10dp</dimen>
+    
+    <!-- margins between labels and cell borders -->
+    <dimen name="atv_cell_label_margin">10dp</dimen>
     
     <!-- ATableViewCellStyle.Default -->
     <dimen name="atv_default_cell_text_size">20sp</dimen>
