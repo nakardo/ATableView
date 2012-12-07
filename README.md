@@ -105,7 +105,7 @@ All [UITableViewStyle](http://developer.apple.com/library/ios/#documentation/UIK
 * ATableViewStyle.Plain
 * ATableViewStyle.Grouped
 
-## Creating cells
+### Creating cells
 
 You can use cell styles included by default, or extend `ATableViewCell` to create your own cells.
 
