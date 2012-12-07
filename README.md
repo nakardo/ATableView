@@ -4,7 +4,7 @@
 
 ATableView intends to imitate same object model proposed on UIKit for building tables, so it's not only limited on theming Android ListView. If you've some background on iOS development you may jump over some of the sections below, you'll find a lot of similarities with the native framework.
 
-If not, you should be good with the examples below.
+If not, you should be good with the examples included here and the demo project.
 
 ## Screenshots
 
@@ -41,8 +41,8 @@ public void onCreate(Bundle savedInstanceState) {
 It's your responsability to implement the required methods when extending `ATableViewDataSource`. The following are supported:
 
 ```java
-public ATableViewCell cellForRowAtIndexPath(ATableView tableView, NSIndexPath indexPath); (Required)
-public int numberOfRowsInSection(ATableView tableView, int section); (Required)
+public ATableViewCell cellForRowAtIndexPath(ATableView tableView, NSIndexPath indexPath); [Required]
+public int numberOfRowsInSection(ATableView tableView, int section); [Required]
 public int numberOfSectionsInTableView(ATableView tableView);
 ```
 
@@ -77,7 +77,7 @@ public ATableViewCell cellForRowAtIndexPath(ATableView tableView, NSIndexPath in
     if (detailTextLabel != null) {
         detailTextLabel.setText("Argentina");
     }
-        	
+            
     return cell;
 }
     
@@ -98,14 +98,18 @@ public int numberOfSectionsInTableView(ATableView tableView) {
 }
 ```
 
-#### Table styles (ATableViewStyle)
+### Table styles (ATableViewStyle)
 
 All [UITableViewStyle](http://developer.apple.com/library/ios/#documentation/UIKit/Reference/UITableView_Class/Reference/Reference.html#//apple_ref/c/tdef/UITableViewStyle) styles are supported. These are:
 
 * ATableViewStyle.Plain
 * ATableViewStyle.Grouped
 
-#### Cell styles (ATableViewCellStyle)
+## Creating cells
+
+You can use cell styles included by default, or extend `ATableViewCell` to create your own cells.
+
+### Cell styles (ATableViewCellStyle)
 
 All [UITableViewCellStyles](http://developer.apple.com/library/ios/#documentation/uikit/reference/UITableViewCell_Class/Reference/Reference.html#//apple_ref/c/tdef/UITableViewCellStyle) styles are supported. These are:
 
@@ -116,9 +120,7 @@ All [UITableViewCellStyles](http://developer.apple.com/library/ios/#documentatio
 
 ![ATableViewCellStyle](http://oi45.tinypic.com/auyv8.jpg)
 
-Custom cells are currently not supported, it should be possible to implement quite easily extending `ATableViewCell` and defining your own layout for it.
-
-#### Cell selection styles (ATableViewCellSelectionStyle)
+### Cell selection styles (ATableViewCellSelectionStyle)
 
 All [UITableViewCellSelectionStyle](http://developer.apple.com/library/ios/#documentation/uikit/reference/UITableViewCell_Class/Reference/Reference.html#//apple_ref/doc/c_ref/UITableViewCellSelectionStyle) styles are supported These are:
 
@@ -128,9 +130,48 @@ All [UITableViewCellSelectionStyle](http://developer.apple.com/library/ios/#docu
 
 ![ATableViewCellSelectionStyle](http://oi47.tinypic.com/2l8c2e8.jpg)
 
+### Adding images to cells (imageView)
+
+imageView is shown automatically when an image is defined for it, otherwise is hidden by default on each cell.
+
+![imageView](http://i45.tinypic.com/34508zd.jpg)
+
+#### Example
+
+```java
+Drawable drawable = getResources().getDrawable(R.drawable.some_image);
+cell.getImageView().setImageDrawable(drawable);
+```
+
+### Creating custom cells
+
+Creating custom cells is as simple as extending `ATableViewCellStyle` and indicate the layout you want your cell to use.
+
+#### Example
+
+```java
+public class MyCustomCell extends ATableViewCell {
+    private UILabel mCustomLabel;
+    
+    protected int getLayout(ATableViewCellStyle style) {
+        // here it goes your custom cell layout.
+        return R.layout.my_custom_cell;
+    }
+    
+    public MyCustomCell(ATableViewCellStyle style, String reuseIdentifier, Context context) {
+        super(style, reuseIdentifier, context);
+        mCustomLabel = (UILabel)findViewById(R.id.custom_cell_label);
+    }
+    
+    public UILabel getCustomLabel() {
+        return mCustomLabel;
+    }
+}
+```
+
 ### Implementing a delegate
 
-Adding a delegate to the table it's optional. [UITableViewDelegate](http://developer.apple.com/library/ios/#documentation/UIKit/Reference/UITableViewDelegate_Protocol/Reference/Reference.html) defines many methods to describe how the table should look and behave. Only a few of them are currently supported on the `ATableViewDelegate`. These are:
+Adding a delegate to the table is optional. [UITableViewDelegate](http://developer.apple.com/library/ios/#documentation/UIKit/Reference/UITableViewDelegate_Protocol/Reference/Reference.html) defines many methods to describe how the table should look and behave. Only a few of them are currently supported on `ATableViewDelegate`. These are:
 
 ```java
 public void didSelectRowAtIndexPath(ATableView tableView, NSIndexPath indexPath);
@@ -142,7 +183,7 @@ public int heightForRowAtIndexPath(ATableView tableView, NSIndexPath indexPath);
 ```java
 @Override
 public void didSelectRowAtIndexPath(ATableView tableView, NSIndexPath indexPath) {
-// do something when the row is selected. rows are identified by it's indexPath.    
+// do something when the row is selected. rows are identified by its indexPath.    
 }
 		
 @Override
@@ -154,13 +195,13 @@ public int heightForRowAtIndexPath(ATableView tableView, NSIndexPath indexPath) 
     
 ### Table data source additional methods (ATableViewDataSourceExt)
 
-On the case you need to use different cell styles on the same table, you should extend class this instead of `ATableViewDataSource`. This is necessary since ListView uses different pools for reusing cells, a pool for each cell type.
+On the case you need to use different cell styles on the same table, you should extend `ATableViewDataSourceExt` to avoid performance issues when scrolling. This is necessary since Android ListView uses different pools for reusing cells, a pool for each cell type. `ATableViewDataSourceExt` is used to specify how many rows and pools should be created to run smoothly.
 
 You'll have additionally to implement the following methods:
 
 ```java
-public int numberOfRowStyles(); (Required)
-public int styleForRowAtIndexPath(NSIndexPath indexPath); (Required)
+public int numberOfRowStyles(); [Required]
+public int styleForRowAtIndexPath(NSIndexPath indexPath); [Required]
 ```
 
 #### Example
@@ -179,17 +220,26 @@ public int styleForRowAtIndexPath(NSIndexPath indexPath) {
 }
 ```
 
+## Extra stuff
+
+### UILabel
+
+ATableView uses [Roboto](http://developer.android.com/design/style/typography.html) font, which make labels look-alike in iOS and it's rendered great by Android. Roboto font is available from ICS and above, so it should be included on your project `/assets` folder.
+
+Both **Roboto-Regular.ttf** and **Roboto-Bold.ttf** are included on the demo project.
+
 ## Roadmap
 
-* Support for custom cells.
 * Support for UITableViewCell accessoryType (UITableViewCell built in styles and custom).
-* Support for UITableViewCell imageView.
 * Ability to define titles per section (Plain & Grouped).
+* Add UITableViewCellSeparatorStyleSingleLineEtched table style.
 * Better examples app bundled.
 * More.
 
 ## License
 
-Copyright 2012 Diego Acosta - Contact me at diegonake[@Email from Google].com
+Copyright 2012 Diego Acosta - Contact me at diegonake@gmail.com / @nakardo
 
 Released under the [Beerware](http://en.wikipedia.org/wiki/Beerware) license. ...And just in case under the [Apache 2.0.](http://www.apache.org/licenses/LICENSE-2.0.html) license as well.
+
+Roboto font by Google Android - Licensed under the Apache License.
