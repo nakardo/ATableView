@@ -15,6 +15,7 @@ import android.widget.ListView;
 
 import com.nakardo.atableview.R;
 import com.nakardo.atableview.foundation.NSIndexPath;
+import com.nakardo.atableview.internal.ATableViewCellAccessoryView.ATableViewCellAccessoryType;
 import com.nakardo.atableview.internal.ATableViewCellDrawable.ATableViewCellBackgroundStyle;
 import com.nakardo.atableview.protocol.ATableViewDataSource;
 import com.nakardo.atableview.protocol.ATableViewDataSourceExt;
@@ -148,8 +149,17 @@ public class ATableViewAdapter extends BaseAdapter {
 		contentView.setBackgroundDrawable(drawable);
 	}
 	
-	private void setupAccessoryDrawable() {
-		
+	private void setupAccessoryButtonDelegateCallback(ATableViewCell cell, final NSIndexPath indexPath) {
+		ATableViewCellAccessoryType accessoryType = cell.getAccessoryType();
+		if (accessoryType == ATableViewCellAccessoryType.DisclosureButton) {
+			View accessoryView = cell.findViewById(R.id.accessoryView);
+			accessoryView.setOnClickListener(new View.OnClickListener() {
+				public void onClick(View v) {
+					ATableViewDelegate delegate = mTableView.getDelegate();
+					delegate.accessoryButtonTappedForRowWithIndexPath(mTableView, indexPath);
+				}
+			});
+		}
 	}
 	
 	@Override
@@ -203,7 +213,7 @@ public class ATableViewAdapter extends BaseAdapter {
 		
 		setupLayout(cell, indexPath);
 		setupBackgroundDrawable(cell, indexPath);
-		setupAccessoryDrawable();
+		setupAccessoryButtonDelegateCallback(cell, indexPath);
 		
 		return cell;
 	}

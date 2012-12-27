@@ -12,8 +12,9 @@
         android:layout_height="wrap_content" />
 
     <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_width="0dip"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
         android:gravity="center_vertical"
         android:orientation="vertical" >
 
@@ -22,8 +23,8 @@
             style="@style/Widget.ATableViewCell.TextLabel.Subtitle"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="@dimen/atv_cell_label_margin"
-            android:layout_marginRight="@dimen/atv_cell_label_margin"
+            android:layout_marginLeft="@dimen/atv_cell_content_margin"
+            android:layout_marginRight="@dimen/atv_cell_content_margin"
             android:text="Title" />
 
         <com.nakardo.atableview.uikit.UILabel
@@ -31,8 +32,8 @@
             style="@style/Widget.ATableViewCell.DetailTextLabel.Subtitle"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="@dimen/atv_cell_label_margin"
-            android:layout_marginRight="@dimen/atv_cell_label_margin"
+            android:layout_marginLeft="@dimen/atv_cell_content_margin"
+            android:layout_marginRight="@dimen/atv_cell_content_margin"
             android:text="Detail" />
     </LinearLayout>
 

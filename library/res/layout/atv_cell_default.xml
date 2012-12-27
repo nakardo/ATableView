@@ -14,10 +14,11 @@
     <com.nakardo.atableview.uikit.UILabel
         android:id="@+id/textLabel"
         style="@style/Widget.ATableViewCell.TextLabel.Default"
-        android:layout_width="fill_parent"
+        android:layout_width="0dip"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="@dimen/atv_cell_label_margin"
-        android:layout_marginRight="@dimen/atv_cell_label_margin"
+        android:layout_marginLeft="@dimen/atv_cell_content_margin"
+        android:layout_marginRight="@dimen/atv_cell_content_margin"
+        android:layout_weight="1"
         android:text="Title" />
 
 </LinearLayout>

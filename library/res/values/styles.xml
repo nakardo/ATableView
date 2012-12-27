@@ -11,14 +11,12 @@
     </style>
     
     <style name="Widget.ATableViewCell.TextLabel" parent="@style/Widget">
-        <item name="android:duplicateParentState">true</item>
         <item name="android:textStyle">bold</item>
         <item name="android:maxLines">1</item>
         <item name="android:ellipsize">end</item>
         <item name="android:includeFontPadding">false</item>
     </style>
     <style name="Widget.ATableViewCell.DetailTextLabel" parent="@style/Widget.ATableViewCell.TextLabel">
-        <item name="android:id">@+id/atv_cell_detailtextlabel</item>
     </style>
     
     <style name="Widget.ATableViewCell.TextLabel.Default" parent="@style/Widget.ATableViewCell.TextLabel">

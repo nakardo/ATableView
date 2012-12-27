@@ -12,7 +12,6 @@ import android.graphics.drawable.ShapeDrawable;
 import android.graphics.drawable.shapes.RoundRectShape;
 import android.graphics.drawable.shapes.Shape;
 
-import com.nakardo.atableview.R;
 import com.nakardo.atableview.view.ATableView;
 import com.nakardo.atableview.view.ATableView.ATableViewStyle;
 

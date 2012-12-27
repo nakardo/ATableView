@@ -12,6 +12,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.nakardo.atableview.foundation.NSIndexPath;
+import com.nakardo.atableview.internal.ATableViewCellAccessoryView.ATableViewCellAccessoryType;
 import com.nakardo.atableview.protocol.ATableViewDataSourceExt;
 import com.nakardo.atableview.protocol.ATableViewDelegate;
 import com.nakardo.atableview.view.ATableView;
@@ -94,19 +95,23 @@ public class MainActivity extends Activity {
 		@Override
 		public ATableViewCell cellForRowAtIndexPath(ATableView tableView, NSIndexPath indexPath) {
 			String cellIdentifier = "CellIdentifier0";
-			ATableViewCellStyle style = ATableViewCellStyle.Default;
+			ATableViewCellStyle cellStyle = ATableViewCellStyle.Default;
+			ATableViewCellAccessoryType accessoryType = ATableViewCellAccessoryType.None;
 			
 			// set proper style and identifier for cells on each section.
 			int section = indexPath.getSection();
 			if (section == 0) {
 				cellIdentifier = "CellIdentifier1";
-				style = ATableViewCellStyle.Subtitle;
+				cellStyle = ATableViewCellStyle.Subtitle;
+				accessoryType = ATableViewCellAccessoryType.DisclosureIndicator;
 			} else if (section == 1) {
 				cellIdentifier = "CellIdentifier2";
-				style = ATableViewCellStyle.Value1;
+				cellStyle = ATableViewCellStyle.Value1;
+				accessoryType = ATableViewCellAccessoryType.DisclosureButton;
 			} else if (section == 2) {
 				cellIdentifier = "CellIdentifier3";
-				style = ATableViewCellStyle.Value2;
+				cellStyle = ATableViewCellStyle.Value2;
+				accessoryType = ATableViewCellAccessoryType.Checkmark;
 			}  else if (section == 5) {
 				cellIdentifier = "CustomCellIdentifier";
 			}
@@ -119,8 +124,9 @@ public class MainActivity extends Activity {
 			if (section != 5) {
 				cell = dequeueReusableCellWithIdentifier(cellIdentifier);
 				if (cell == null) {
-					cell = new ATableViewCell(style, cellIdentifier, MainActivity.this);
+					cell = new ATableViewCell(cellStyle, cellIdentifier, MainActivity.this);
 					cell.setSelectionStyle(ATableViewCellSelectionStyle.Blue);
+					cell.setAccessoryType(accessoryType);
 				}
 				
 				// imageView
@@ -184,15 +190,24 @@ public class MainActivity extends Activity {
 	private class SampleATableViewDelegate extends ATableViewDelegate {
 		
 		@Override
+		public int heightForRowAtIndexPath(ATableView tableView, NSIndexPath indexPath) {
+			return 44;
+		}
+		
+		@Override
 		public void didSelectRowAtIndexPath(ATableView tableView, NSIndexPath indexPath) {
-			CharSequence text = String.format("Selected IndexPath [%d, %d]", indexPath.getSection(), indexPath.getRow());
+			CharSequence text = String.format("Selected IndexPath [%d, %d]",
+					indexPath.getSection(), indexPath.getRow());
 			Toast toast = Toast.makeText(getApplicationContext(), text, Toast.LENGTH_SHORT);
 			toast.show();
 		}
 		
 		@Override
-		public int heightForRowAtIndexPath(ATableView tableView, NSIndexPath indexPath) {
-			return 44;
+		public void accessoryButtonTappedForRowWithIndexPath(ATableView tableView, NSIndexPath indexPath) {
+			CharSequence text = String.format("Tapped DisclosureButton at indexPath [%d, %d]",
+					indexPath.getSection(), indexPath.getRow());
+			Toast toast = Toast.makeText(getApplicationContext(), text, Toast.LENGTH_SHORT);
+			toast.show();
 		}
 	}
 }

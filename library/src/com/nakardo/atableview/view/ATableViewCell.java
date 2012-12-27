@@ -9,6 +9,8 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.nakardo.atableview.R;
+import com.nakardo.atableview.internal.ATableViewCellAccessoryView;
+import com.nakardo.atableview.internal.ATableViewCellAccessoryView.ATableViewCellAccessoryType;
 
 public class ATableViewCell extends FrameLayout {
 	public enum ATableViewCellStyle { Default, Subtitle, Value1, Value2 };
@@ -19,6 +21,8 @@ public class ATableViewCell extends FrameLayout {
 	private TextView mDetailTextLabel;
 	private ImageView mImageView;
 	private int mBackgroundColor = getResources().getColor(R.color.atv_cell_background);
+	private ATableViewCellAccessoryType mAccessoryType = ATableViewCellAccessoryType.None;
+//	private View mAccessoryView;
 	private ATableViewCellSelectionStyle mSelectionStyle = ATableViewCellSelectionStyle.Blue;
 	
 	protected int getLayout(ATableViewCellStyle style) {
@@ -36,7 +40,8 @@ public class ATableViewCell extends FrameLayout {
 	
 	public ATableViewCell(ATableViewCellStyle style, String reuseIdentifier, Context context) {
 		this(context);
-		LinearLayout contentView = (LinearLayout)LayoutInflater.from(context).inflate(getLayout(style), null);
+		LayoutInflater inflater = LayoutInflater.from(context);
+		LinearLayout contentView = (LinearLayout)inflater.inflate(getLayout(style), null);
 		addView(contentView);
 		
 		mReuseIdentifier = reuseIdentifier;
@@ -80,6 +85,25 @@ public class ATableViewCell extends FrameLayout {
 	public ImageView getImageView() {
 		return mImageView;
 	}
+	
+	public ATableViewCellAccessoryType getAccessoryType() {
+		return mAccessoryType;
+	}
+	
+	public void setAccessoryType(ATableViewCellAccessoryType accessoryType) {
+		mAccessoryType = accessoryType;
+		ATableViewCellAccessoryView.setup(this, accessoryType);
+	}
+	
+	/*
+	public View getAccessoryView() {
+		return mAccessoryView;
+	}
+	
+	public void setAccessoryView(View accessoryView) {
+		mAccessoryView = accessoryView;
+	}
+	*/
 	
 	public ATableViewCellSelectionStyle getSelectionStyle() {
 		return mSelectionStyle;

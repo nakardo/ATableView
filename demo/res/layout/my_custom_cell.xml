@@ -15,8 +15,8 @@
         android:shadowRadius="1"
         android:shadowDx="2"
         android:shadowDy="2"
-        android:layout_marginLeft="@dimen/atv_cell_label_margin"
-        android:layout_marginRight="@dimen/atv_cell_label_margin"
+        android:layout_marginLeft="@dimen/atv_cell_content_margin"
+        android:layout_marginRight="@dimen/atv_cell_content_margin"
         android:text="Title" />
 
 </LinearLayout>

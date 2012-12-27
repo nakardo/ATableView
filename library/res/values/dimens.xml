@@ -2,8 +2,11 @@
 <resources>
     <dimen name="atv_style_grouped_margins">10dp</dimen>
     
-    <!-- margins between labels and cell borders -->
-    <dimen name="atv_cell_label_margin">10dp</dimen>
+    <!-- margins between labels and cell borders, used also by imageView and accessoryView -->
+    <dimen name="atv_cell_content_margin">10dp</dimen>
+    
+    <!-- marginRight for ATableViewCellAccessoryType.DisclosureButton accessoryView -->
+    <dimen name="atv_cell_disclosure_button_margin_right">8dp</dimen>
     
     <!-- ATableViewCellStyle.Default -->
     <dimen name="atv_default_cell_text_size">20sp</dimen>
@@ -17,6 +20,7 @@
     <dimen name="atv_value1_cell_detail_text_size">17sp</dimen>
     
     <!-- ATableViewCellStyle.Value2 -->
+    <dimen name="atv_value2_cell_text_label_width">67dp</dimen>
     <dimen name="atv_value2_cell_text_size">12sp</dimen>
     <dimen name="atv_value2_cell_details_text_size">15sp</dimen>
 </resources>
