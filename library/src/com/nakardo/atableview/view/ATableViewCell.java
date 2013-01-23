@@ -3,9 +3,9 @@ package com.nakardo.atableview.view;
 import android.content.Context;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
+import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.nakardo.atableview.R;
@@ -40,8 +40,7 @@ public class ATableViewCell extends FrameLayout {
 	
 	public ATableViewCell(ATableViewCellStyle style, String reuseIdentifier, Context context) {
 		this(context);
-		LayoutInflater inflater = LayoutInflater.from(context);
-		LinearLayout contentView = (LinearLayout)inflater.inflate(getLayout(style), null);
+		View contentView = LayoutInflater.from(context).inflate(getLayout(style), null);
 		addView(contentView);
 		
 		mReuseIdentifier = reuseIdentifier;

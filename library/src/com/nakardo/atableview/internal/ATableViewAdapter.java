@@ -9,7 +9,6 @@ import android.graphics.drawable.StateListDrawable;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 
@@ -85,24 +84,18 @@ public class ATableViewAdapter extends BaseAdapter {
 		
 		// add margins for grouped style.
 		if (mTableView.getStyle() == ATableViewStyle.Grouped) {
-			FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT,
-					FrameLayout.LayoutParams.MATCH_PARENT);
-			
 			int margin = (int)res.getDimension(R.dimen.atv_style_grouped_margins);
 			
 			int row = indexPath.getRow();
 			if (row == 0) {
-				params.setMargins(margin, margin, margin, 0);
+				cell.setPadding(margin, margin, margin, 0);
 				rowHeight += margin;
 			} else if (row == mRows.get(indexPath.getSection()) - 1) {
-				params.setMargins(margin, 0, margin, margin);
+				cell.setPadding(margin, 0, margin, margin);
 				rowHeight += margin;
 			} else {
-				params.setMargins(margin, 0, margin, 0);
+				cell.setPadding(margin, 0, margin, 0);
 			}
-			
-			LinearLayout contentView = (LinearLayout)cell.findViewById(R.id.contentView);
-			contentView.setLayoutParams(params);
 		}
 		
 		ListView.LayoutParams params = new ListView.LayoutParams(ListView.LayoutParams.MATCH_PARENT, rowHeight);

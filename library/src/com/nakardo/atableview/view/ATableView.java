@@ -31,6 +31,7 @@ public class ATableView extends ListView {
 		setDivider(null);
 		setDividerHeight(0);
 		setScrollBarStyle(View.SCROLLBARS_OUTSIDE_OVERLAY);
+		setScrollingCacheEnabled(false);
 	}
 	
 	public ATableView(Context context) {

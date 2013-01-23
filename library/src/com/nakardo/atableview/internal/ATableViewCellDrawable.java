@@ -30,7 +30,7 @@ public class ATableViewCellDrawable extends ShapeDrawable {
 	private static RoundRectShape getShape(ATableViewStyle tableStyle,
 			ATableViewCellBackgroundStyle backgroundStyle) {
 		
-		float[] radius = null;
+		float[] radius = new float[] { 0, 0, 0, 0, 0, 0, 0, 0 };
 		if (tableStyle == ATableViewStyle.Grouped) {
 			float radii = CELL_GROUPED_STYLE_BACKGROUND_RADIUS;
 			if (backgroundStyle == ATableViewCellBackgroundStyle.Top) {
