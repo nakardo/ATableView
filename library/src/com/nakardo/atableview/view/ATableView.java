@@ -3,6 +3,7 @@ package com.nakardo.atableview.view;
 import android.content.Context;
 import android.util.AttributeSet;
 import android.view.View;
+import android.widget.HeaderViewListAdapter;
 import android.widget.ListView;
 
 import com.nakardo.atableview.R;
@@ -72,6 +73,24 @@ public class ATableView extends ListView {
 
 	public void setDelegate(ATableViewDelegate delegate) {
 		mDelegate = delegate;
+	}
+	
+	public ATableViewAdapter getInternalAdapter() {
+		
+		// fixes bugs for tables which includes header / footer.
+		ATableViewAdapter adapter = null;
+		if (getAdapter() instanceof HeaderViewListAdapter) {
+			HeaderViewListAdapter headerAdapter = (HeaderViewListAdapter) getAdapter();
+			adapter = (ATableViewAdapter) headerAdapter.getWrappedAdapter();
+		} else {
+			adapter = (ATableViewAdapter) getAdapter();
+		}
+		
+		return adapter;
+	}
+	
+	public void reloadData() {
+		getInternalAdapter().notifyDataSetChanged();
 	}
 	
 	@Override

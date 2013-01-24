@@ -25,16 +25,17 @@ import com.nakardo.atableview.view.ATableViewCell;
 import com.nakardo.atableview.view.ATableViewCell.ATableViewCellSelectionStyle;
 
 public class ATableViewAdapter extends BaseAdapter {
-	private List<Integer> mRows = new ArrayList<Integer>();
-	private List<List<Integer>> mRowsHeight = new ArrayList<List<Integer>>();
+	private List<Integer> mRows;
+	private List<List<Integer>> mRowsHeight;
 	
 	protected ATableView mTableView;
 
-	public ATableViewAdapter(ATableView tableView) {
-		mTableView = tableView;
-		
+	private void initialize() {
 		ATableViewDataSource dataSource = mTableView.getDataSource();
 		ATableViewDelegate delegate = mTableView.getDelegate();
+		
+		mRows = new ArrayList<Integer>();
+		mRowsHeight = new ArrayList<List<Integer>>();
 		
 		int sections = dataSource.numberOfSectionsInTableView(mTableView);
 		for (int s = 0; s < sections; s++) {
@@ -51,6 +52,17 @@ public class ATableViewAdapter extends BaseAdapter {
 			} 
 			mRowsHeight.add(sHeights);
 		}
+	}
+	
+	public ATableViewAdapter(ATableView tableView) {
+		mTableView = tableView;
+		initialize();
+	}
+	
+	@Override
+	public void notifyDataSetChanged() {
+		initialize();
+		super.notifyDataSetChanged();
 	}
 	
 	public NSIndexPath getIndexPath(int position) {

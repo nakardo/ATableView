@@ -16,8 +16,9 @@ public class ATableViewRowClickListener implements OnItemClickListener {
 
 	@Override
 	public void onItemClick(AdapterView<?> adapter, View view, int pos, long id) {
+		ATableViewAdapter tableViewAdapter = mTableView.getInternalAdapter();
+		
 		ATableViewDelegate delegate = mTableView.getDelegate();
-		ATableViewAdapter tableViewAdapter = (ATableViewAdapter)adapter.getAdapter();
 		delegate.didSelectRowAtIndexPath(mTableView, tableViewAdapter.getIndexPath(pos));
 	}
 }
