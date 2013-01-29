@@ -25,37 +25,38 @@ import com.nakardo.atableview.view.ATableViewCell;
 import com.nakardo.atableview.view.ATableViewCell.ATableViewCellSelectionStyle;
 
 public class ATableViewAdapter extends BaseAdapter {
+	private List<String> mHeaders;
 	private List<Integer> mRows;
 	private List<List<Integer>> mRowsHeight;
 	
-	protected ATableView mTableView;
+	private ATableView mTableView;
 
 	private void initialize() {
+		mHeaders = new ArrayList<String>();
 		mRows = new ArrayList<Integer>();
 		mRowsHeight = new ArrayList<List<Integer>>();
 		
 		int sections = 0;
 		
-		// datasource.
 		ATableViewDataSource dataSource = mTableView.getDataSource();
+		ATableViewDelegate delegate = mTableView.getDelegate();
+		
+		// datasource & delegate setup.
 		if (dataSource != null) {
 			sections = dataSource.numberOfSectionsInTableView(mTableView);
 			for (int s = 0; s < sections; s++) {
+				mHeaders.add(dataSource.titleForHeaderInSection(mTableView, s));
 				mRows.add(dataSource.numberOfRowsInSection(mTableView, s));
+				
+				List<Integer> sectionHeights = new ArrayList<Integer>();
+				
+				int rows = mRows.get(s);
+				for (int r = 0; r < rows; r++) {
+					NSIndexPath indexPath = NSIndexPath.indexPathForRowInSection(r, s);
+					sectionHeights.add(delegate.heightForRowAtIndexPath(mTableView, indexPath));
+				} 
+				mRowsHeight.add(sectionHeights);
 			}
-		}
-		
-		// delegate.
-		ATableViewDelegate delegate = mTableView.getDelegate();
-		for (int s = 0; s < sections; s++) {
-			List<Integer> sectionHeights = new ArrayList<Integer>();
-			
-			int rows = mRows.get(s);
-			for (int r = 0; r < rows; r++) {
-				NSIndexPath indexPath = NSIndexPath.indexPathForRowInSection(r, s);
-				sectionHeights.add(delegate.heightForRowAtIndexPath(mTableView, indexPath));
-			} 
-			mRowsHeight.add(sectionHeights);
 		}
 	}
 	

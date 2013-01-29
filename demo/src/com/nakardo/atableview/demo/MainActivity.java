@@ -177,6 +177,15 @@ public class MainActivity extends Activity {
 		public int numberOfSectionsInTableView(ATableView tableView) {
 			return mRegions.length;
 		}
+		
+		@Override
+		public String titleForHeaderInSection(ATableView tableView, int section) {
+			if (section < mRegions.length) {
+				return mRegions[section];
+			}
+			
+			return null;
+		}
 
 		@Override
 		public int numberOfRowStyles() {
