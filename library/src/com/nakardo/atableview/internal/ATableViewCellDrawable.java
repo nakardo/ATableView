@@ -17,7 +17,8 @@ import com.nakardo.atableview.view.ATableView.ATableViewStyle;
 
 public class ATableViewCellDrawable extends ShapeDrawable {
 	public static final float CELL_STROKE_WIDTH_DP = 1f;
-	private static final float CELL_GROUPED_STYLE_BACKGROUND_RADIUS = 16;
+//	private static final float CELL_GROUPED_STYLE_BACKGROUND_RADIUS = 16;
+	private static final float CELL_GROUPED_STYLE_BACKGROUND_RADIUS = 0;
 	
 	private ATableViewStyle mTableViewStyle;
 	private ATableViewCellBackgroundStyle mCellBackgroundStyle;
