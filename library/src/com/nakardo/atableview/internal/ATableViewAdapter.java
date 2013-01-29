@@ -78,16 +78,29 @@ public class ATableViewAdapter extends BaseAdapter {
 		return null;
 	}
 	
+	private boolean isSingleRow(NSIndexPath indexPath) {
+		return indexPath.getRow() == 0 && mRows.get(indexPath.getSection()) == 1;
+	}
+	
+	private boolean isTopRow(NSIndexPath indexPath) {
+		return indexPath.getRow() == 0 && mRows.get(indexPath.getSection()) > 1;
+	}
+	
+	private boolean isBottomRow(NSIndexPath indexPath) {
+		return indexPath.getRow() == mRows.get(indexPath.getSection()) - 1;
+	}
+	
 	private int getRowHeight(NSIndexPath indexPath) {
 		Resources res = mTableView.getContext().getResources();
 		
-		// last row has double line, so we've to add extra line to row height to keep same aspect.
+		// bottom and single rows have double line, so we've to add extra line to row
+		// height to keep same aspect.
 		int rowHeight = mRowsHeight.get(indexPath.getSection()).get(indexPath.getRow());
-		if (indexPath.getRow() == mRows.get(indexPath.getSection()) - 1) {
-			rowHeight += (int)ATableViewCellDrawable.CELL_STROKE_WIDTH_DP;
+		if (isSingleRow(indexPath) || isBottomRow(indexPath)) {
+			rowHeight += (int) ATableViewCellDrawable.CELL_STROKE_WIDTH_DP;
 		}
 		
-		return (int)(rowHeight * res.getDisplayMetrics().density);
+		return (int) (rowHeight * res.getDisplayMetrics().density);
 	}
 	
 	private void setupLayout(ATableViewCell cell, NSIndexPath indexPath) {
@@ -96,13 +109,15 @@ public class ATableViewAdapter extends BaseAdapter {
 		
 		// add margins for grouped style.
 		if (mTableView.getStyle() == ATableViewStyle.Grouped) {
-			int margin = (int)res.getDimension(R.dimen.atv_style_grouped_margins);
+			int margin = (int) res.getDimension(R.dimen.atv_style_grouped_margins);
 			
-			int row = indexPath.getRow();
-			if (row == 0) {
+			if (isSingleRow(indexPath))  {
+				cell.setPadding(margin, margin, margin, margin);
+				rowHeight += margin * 2;
+			} else if (isTopRow(indexPath)) {
 				cell.setPadding(margin, margin, margin, 0);
 				rowHeight += margin;
-			} else if (row == mRows.get(indexPath.getSection()) - 1) {
+			} else if (isBottomRow(indexPath)) {
 				cell.setPadding(margin, 0, margin, margin);
 				rowHeight += margin;
 			} else {
@@ -115,13 +130,14 @@ public class ATableViewAdapter extends BaseAdapter {
 	}
 	
 	private void setupBackgroundDrawable(ATableViewCell cell, NSIndexPath indexPath) {
-		ATableViewCellBackgroundStyle backgroundStyle = ATableViewCellBackgroundStyle.Middle;
 		
 		// get row style for using specific drawable.
-		int row = indexPath.getRow();
-		if (row == 0) {
+		ATableViewCellBackgroundStyle backgroundStyle = ATableViewCellBackgroundStyle.Middle;
+		if (isSingleRow(indexPath)) {
+			backgroundStyle = ATableViewCellBackgroundStyle.Single;
+		} else if (isTopRow(indexPath)) {
 			backgroundStyle = ATableViewCellBackgroundStyle.Top;
-		} else if (row == mRows.get(indexPath.getSection()) - 1) {
+		} else if (isBottomRow(indexPath)) {
 			backgroundStyle = ATableViewCellBackgroundStyle.Bottom;
 		}
 		
