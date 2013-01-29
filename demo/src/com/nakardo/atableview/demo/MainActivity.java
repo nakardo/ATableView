@@ -8,6 +8,7 @@ import android.app.Activity;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -25,7 +26,7 @@ public class MainActivity extends Activity {
 	private List<List<String>> mCapitals;
 	private List<List<String>> mProvinces;
 	private String[] mRegions = {
-		"Northwest", "Gran Chaco", "Mesopotamia", "Pampas", "Cuyo", "Patagonia"
+		"Northwest", "Gran Chaco", "Mesopotamia", "Pampas", "Cuyo", "Patagonia", "Single"
 	};
 	
 	private static List<List<String>> createProvincesList() {
@@ -37,6 +38,7 @@ public class MainActivity extends Activity {
 		provinces.add(Arrays.asList(new String[] { "Córdoba", "Santa Fe", "La Pampa", "Buenos Aires" }));
 		provinces.add(Arrays.asList(new String[] { "San Juan", "La Rioja", "Mendoza", "San Luis" }));
 		provinces.add(Arrays.asList(new String[] { "Rio Negro", "Neuquén", "Chubut", "Santa Cruz", "Tierra del Fuego" }));
+		provinces.add(Arrays.asList(new String[] { "Single Province" }));
 		
 		return provinces;
 	}
@@ -50,6 +52,7 @@ public class MainActivity extends Activity {
 		capitals.add(Arrays.asList(new String[] { "Cordoba", "Santa Fe", "Santa Rosa", "Capital Federal" }));
 		capitals.add(Arrays.asList(new String[] { "San Juan", "La Rioja", "Mendoza", "San Luis" }));
 		capitals.add(Arrays.asList(new String[] { "Viedma", "Neuquén", "Rawson", "Rio Gallegos", "Ushuaia" }));
+		capitals.add(Arrays.asList(new String[] { "Single Capital" }));
 		
 		return capitals;
 	}
@@ -130,10 +133,14 @@ public class MainActivity extends Activity {
 				}
 				
 				// imageView
+				ImageView imageView = cell.getImageView();
 				if (indexPath.getSection() == 4) {
-					int paddingLeft = (int)(8 * getResources().getDisplayMetrics().density);
-					cell.getImageView().setPadding(paddingLeft, 0, 0, 0);
-					cell.getImageView().setImageDrawable(getDrawableForRow(row));
+					int paddingLeft = (int) (8 * getResources().getDisplayMetrics().density);
+					imageView.setPadding(paddingLeft, 0, 0, 0);
+					imageView.setImageDrawable(getDrawableForRow(row));
+				} else {
+					imageView.setPadding(0, 0, 0, 0);
+					imageView.setImageDrawable(null);
 				}
 				
 				// textLabel
@@ -173,7 +180,7 @@ public class MainActivity extends Activity {
 
 		@Override
 		public int numberOfRowStyles() {
-			return 4;
+			return 5;
 		}
 
 		@Override
@@ -181,9 +188,11 @@ public class MainActivity extends Activity {
 			int section = indexPath.getSection();
 			if (section < 4) {
 				return section;
+			} else if (section == 4 || section == 6) {
+				return 3;
 			}
 			
-			return 0;
+			return 4;
 		}
 	}
 	

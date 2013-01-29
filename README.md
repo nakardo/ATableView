@@ -183,7 +183,7 @@ public int heightForRowAtIndexPath(ATableView tableView, NSIndexPath indexPath);
 ```java
 @Override
 public void didSelectRowAtIndexPath(ATableView tableView, NSIndexPath indexPath) {
-// do something when the row is selected. rows are identified by its indexPath.    
+	// do something when the row is selected. rows are identified by its indexPath.    
 }
 		
 @Override

@@ -26,7 +26,7 @@ public class ATableViewCellDrawable extends ShapeDrawable {
 	private Paint mStrokePaint;
 	private int mStrokeWidth;
 	
-	public enum ATableViewCellBackgroundStyle { Top, Middle, Bottom };
+	public enum ATableViewCellBackgroundStyle { Single, Top, Middle, Bottom };
 
 	private static RoundRectShape getShape(ATableViewStyle tableStyle,
 			ATableViewCellBackgroundStyle backgroundStyle) {
@@ -34,7 +34,9 @@ public class ATableViewCellDrawable extends ShapeDrawable {
 		float[] radius = new float[] { 0, 0, 0, 0, 0, 0, 0, 0 };
 		if (tableStyle == ATableViewStyle.Grouped) {
 			float radii = CELL_GROUPED_STYLE_BACKGROUND_RADIUS;
-			if (backgroundStyle == ATableViewCellBackgroundStyle.Top) {
+			if (backgroundStyle == ATableViewCellBackgroundStyle.Single) {
+				radius = new float[] { radii, radii, radii, radii, radii, radii, radii, radii };
+			} else if (backgroundStyle == ATableViewCellBackgroundStyle.Top) {
 				radius = new float[] { radii, radii, radii, radii, 0, 0, 0, 0 };
 			} else if (backgroundStyle == ATableViewCellBackgroundStyle.Bottom) {
 				radius = new float[] { 0, 0, 0, 0, radii, radii, radii, radii };
@@ -51,7 +53,8 @@ public class ATableViewCellDrawable extends ShapeDrawable {
 		
 		RectF rect = new RectF(padding, padding, bounds.right - padding, bounds.bottom + padding);
 		if (tableViewStyle == ATableViewStyle.Grouped) {
-			if (backgroundStyle == ATableViewCellBackgroundStyle.Bottom) {
+			if (backgroundStyle == ATableViewCellBackgroundStyle.Single ||
+				backgroundStyle == ATableViewCellBackgroundStyle.Bottom) {
 				rect = new RectF(padding, padding, bounds.right - padding, bounds.bottom - padding);
 			}
 		}
@@ -73,8 +76,13 @@ public class ATableViewCellDrawable extends ShapeDrawable {
 		Resources res = tableView.getResources();
 		mStrokeWidth = (int)(CELL_STROKE_WIDTH_DP * res.getDisplayMetrics().density);
 		
-		int marginBottom = backgroundStyle == ATableViewCellBackgroundStyle.Bottom ? mStrokeWidth : 0;
-		setPadding(mStrokeWidth, mStrokeWidth, 0, marginBottom);
+		// add padding to avoid content to overlap with cell stroke lines.
+		int marginBottom = 0;
+		if (backgroundStyle == ATableViewCellBackgroundStyle.Single ||
+			backgroundStyle == ATableViewCellBackgroundStyle.Bottom) {
+			marginBottom = mStrokeWidth;
+		}
+		setPadding(mStrokeWidth, mStrokeWidth, mStrokeWidth, marginBottom);
 		
 		mStrokePaint = new Paint(mFillPaint);
 		mStrokePaint.setStyle(Paint.Style.STROKE);
