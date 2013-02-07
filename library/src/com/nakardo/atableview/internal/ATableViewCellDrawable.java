@@ -23,7 +23,7 @@ public class ATableViewCellDrawable extends ShapeDrawable {
 	private ATableViewCellBackgroundStyle mCellBackgroundStyle;
 	private Paint mFillPaint;
 	private Paint mStrokePaint;
-	private int mStrokeWidth;
+	private float mStrokeWidth;
 	
 	public enum ATableViewCellBackgroundStyle { Single, Top, Middle, Bottom };
 
@@ -69,23 +69,26 @@ public class ATableViewCellDrawable extends ShapeDrawable {
 		mTableViewStyle = tableView.getStyle();
 		mCellBackgroundStyle = backgroundStyle;
 		
-		mFillPaint = new Paint(this.getPaint());
+		// background.
+		mFillPaint = new Paint(getPaint());
 		mFillPaint.setColor(backgroundColor);
-
+		
 		Resources res = tableView.getResources();
-		mStrokeWidth = (int)(CELL_STROKE_WIDTH_DP * res.getDisplayMetrics().density);
+		mStrokeWidth = CELL_STROKE_WIDTH_DP * res.getDisplayMetrics().density;
+		int roundedStrokeWidth = (int) Math.ceil(mStrokeWidth);
 		
 		// add padding to avoid content to overlap with cell stroke lines.
 		int marginBottom = 0;
 		if (backgroundStyle == ATableViewCellBackgroundStyle.Single ||
 			backgroundStyle == ATableViewCellBackgroundStyle.Bottom) {
-			marginBottom = mStrokeWidth;
+			marginBottom = roundedStrokeWidth;
 		}
-		setPadding(mStrokeWidth, mStrokeWidth, mStrokeWidth, marginBottom);
+		setPadding(roundedStrokeWidth, roundedStrokeWidth, roundedStrokeWidth, marginBottom);
 		
-		mStrokePaint = new Paint(mFillPaint);
+		// stroke.
+		mStrokePaint = new Paint(getPaint());
 		mStrokePaint.setStyle(Paint.Style.STROKE);
-		mStrokePaint.setStrokeWidth(mStrokeWidth);
+		mStrokePaint.setStrokeWidth(roundedStrokeWidth);
 		mStrokePaint.setColor(tableView.getSeparatorColor());
 	}
 	

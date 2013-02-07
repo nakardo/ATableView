@@ -6,6 +6,8 @@ import java.util.List;
 import android.content.res.Resources;
 import android.graphics.drawable.ShapeDrawable;
 import android.graphics.drawable.StateListDrawable;
+import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
@@ -72,16 +74,36 @@ public class ATableViewAdapter extends BaseAdapter {
 	}
 	
 	public NSIndexPath getIndexPath(int position) {
+		int offset = 0;
+		
 		int sections = mRows.size();
 		for (int s = 0; s < sections; s++) {
+			
+			// offset is given by the accumulative number of headers in the table.
+			if (mHeaders.get(s) != null) offset += 1;
+			
 			int rows = mRows.get(s);
-			if (position < rows) {
-				return NSIndexPath.indexPathForRowInSection(position, s);
+			int positionWithOffset = position - offset;
+			if (positionWithOffset < rows) {
+				return NSIndexPath.indexPathForRowInSection(positionWithOffset, s);
 			}
 			position -= rows;
 		}
 		
 		return null;
+	}
+	
+	private boolean isHeaderRow(int position) {
+		int sections = mRows.size();
+		for (int s = 0; s < sections; s++) {
+			boolean hasHeader = mHeaders.get(s) != null;
+			if (position == 0 && hasHeader) {
+				return true;
+			}
+			position -= mRows.get(s) + (hasHeader ? 1 : 0);
+		}
+		
+		return false;
 	}
 	
 	private boolean isSingleRow(NSIndexPath indexPath) {
@@ -191,17 +213,21 @@ public class ATableViewAdapter extends BaseAdapter {
 	
 	@Override
 	public int getCount() {
-		int rows = 0;
-		for (int iRows : mRows) rows += iRows;
+		int count = 0;
+		for (int i = 0; i < mRows.size(); i++) {
+			// count is given by the number of rows on each section plus its header if defined.
+			count += mRows.get(i) + (mHeaders.get(i) != null ? 1 : 0);
+		}
 		
-		return rows;
+		return count;
 	}
 
 	@Override
 	public int getViewTypeCount() {
 		ATableViewDataSource dataSource = mTableView.getDataSource();
 	    if (dataSource instanceof ATableViewDataSourceExt) {
-			return ((ATableViewDataSourceExt) dataSource).numberOfRowStyles();
+	    	// TODO: additional style for headers. Also custom header should be handled here when supported.
+			return ((ATableViewDataSourceExt) dataSource).numberOfRowStyles() + 1;
 		}
 	    
 	    return 1;
@@ -209,13 +235,17 @@ public class ATableViewAdapter extends BaseAdapter {
 	
 	@Override
 	public int getItemViewType(int position) {
-		ATableViewDataSource dataSource = mTableView.getDataSource();
-		if (dataSource instanceof ATableViewDataSourceExt) {
-			NSIndexPath indexPath = getIndexPath(position);
-			return ((ATableViewDataSourceExt) dataSource).styleForRowAtIndexPath(indexPath);			
+		if (isHeaderRow(position)) {
+			return getViewTypeCount() - 1; // additional style for headers.
+		} else {
+			ATableViewDataSource dataSource = mTableView.getDataSource();
+			if (dataSource instanceof ATableViewDataSourceExt) {
+				NSIndexPath indexPath = getIndexPath(position);
+				return ((ATableViewDataSourceExt) dataSource).styleForRowAtIndexPath(indexPath);			
+			}
 		}
 		
-		return 1;
+		return IGNORE_ITEM_VIEW_TYPE;
 	}
 	
 	@Override
@@ -232,16 +262,22 @@ public class ATableViewAdapter extends BaseAdapter {
 	public View getView(int position, View convertView, ViewGroup parent) {
 		ATableViewDataSource dataSource = mTableView.getDataSource();
 		
-		ATableViewCell cell = (ATableViewCell)convertView;
-		dataSource.setReusableCell(cell);
-		
-		NSIndexPath indexPath = getIndexPath(position);
-		cell = dataSource.cellForRowAtIndexPath(mTableView, indexPath);
-		
-		setupLayout(cell, indexPath);
-		setupBackgroundDrawable(cell, indexPath);
-		setupAccessoryButtonDelegateCallback(cell, indexPath);
-		
-		return cell;
+		if (isHeaderRow(position)) {
+			convertView = LayoutInflater.from(mTableView.getContext()).inflate(R.layout.atv_cell_default, null);
+			return convertView;
+		} else {
+			ATableViewCell cell = (ATableViewCell)convertView;
+			dataSource.setReusableCell(cell);
+			
+			NSIndexPath indexPath = getIndexPath(position);
+			Log.i("IP", "position:" + position + "indexPath row:" + indexPath.getRow() + "section:" + indexPath.getSection());
+			cell = dataSource.cellForRowAtIndexPath(mTableView, indexPath);
+			
+			setupLayout(cell, indexPath);
+			setupBackgroundDrawable(cell, indexPath);
+			setupAccessoryButtonDelegateCallback(cell, indexPath);
+			
+			return cell;
+		}
 	}
 }

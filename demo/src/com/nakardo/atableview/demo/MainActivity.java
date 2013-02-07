@@ -180,11 +180,7 @@ public class MainActivity extends Activity {
 		
 		@Override
 		public String titleForHeaderInSection(ATableView tableView, int section) {
-			if (section < mRegions.length) {
-				return mRegions[section];
-			}
-			
-			return null;
+			return mRegions[section];
 		}
 
 		@Override
