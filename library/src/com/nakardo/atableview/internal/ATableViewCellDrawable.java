@@ -17,7 +17,7 @@ import com.nakardo.atableview.view.ATableView.ATableViewStyle;
 
 public class ATableViewCellDrawable extends ShapeDrawable {
 	public static final float CELL_STROKE_WIDTH_DP = 1f;
-	private static final float CELL_GROUPED_STYLE_BACKGROUND_RADIUS = 16;
+	private static final float CELL_GROUPED_STYLE_CORNER_RADIUS = 10;
 	
 	private ATableViewStyle mTableViewStyle;
 	private ATableViewCellBackgroundStyle mCellBackgroundStyle;
@@ -32,7 +32,7 @@ public class ATableViewCellDrawable extends ShapeDrawable {
 		
 		float[] radius = new float[] { 0, 0, 0, 0, 0, 0, 0, 0 };
 		if (tableStyle == ATableViewStyle.Grouped) {
-			float radii = CELL_GROUPED_STYLE_BACKGROUND_RADIUS;
+			float radii = CELL_GROUPED_STYLE_CORNER_RADIUS;
 			if (backgroundStyle == ATableViewCellBackgroundStyle.Single) {
 				radius = new float[] { radii, radii, radii, radii, radii, radii, radii, radii };
 			} else if (backgroundStyle == ATableViewCellBackgroundStyle.Top) {
@@ -50,11 +50,11 @@ public class ATableViewCellDrawable extends ShapeDrawable {
 		
 		float padding = strokeWidth / 2;
 		
-		RectF rect = new RectF(padding, padding, bounds.right - padding, bounds.bottom + padding);
+		RectF rect = new RectF(padding, padding, bounds.right - padding, bounds.bottom + strokeWidth);
 		if (tableViewStyle == ATableViewStyle.Grouped) {
 			if (backgroundStyle == ATableViewCellBackgroundStyle.Single ||
 				backgroundStyle == ATableViewCellBackgroundStyle.Bottom) {
-				rect = new RectF(padding, padding, bounds.right - padding, bounds.bottom - padding);
+				rect = new RectF(padding, padding, bounds.right - padding, bounds.bottom - strokeWidth);
 			}
 		}
 		
@@ -86,7 +86,7 @@ public class ATableViewCellDrawable extends ShapeDrawable {
 		setPadding(roundedStrokeWidth, roundedStrokeWidth, roundedStrokeWidth, marginBottom);
 		
 		// stroke.
-		mStrokePaint = new Paint(getPaint());
+		mStrokePaint = new Paint(mFillPaint);
 		mStrokePaint.setStyle(Paint.Style.STROKE);
 		mStrokePaint.setStrokeWidth(roundedStrokeWidth);
 		mStrokePaint.setColor(tableView.getSeparatorColor());

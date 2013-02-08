@@ -6,13 +6,13 @@ import java.util.List;
 import android.content.res.Resources;
 import android.graphics.drawable.ShapeDrawable;
 import android.graphics.drawable.StateListDrawable;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import com.nakardo.atableview.R;
 import com.nakardo.atableview.foundation.NSIndexPath;
@@ -27,14 +27,14 @@ import com.nakardo.atableview.view.ATableViewCell;
 import com.nakardo.atableview.view.ATableViewCell.ATableViewCellSelectionStyle;
 
 public class ATableViewAdapter extends BaseAdapter {
-	private List<String> mHeaders;
+	private List<Integer> mHeadersHeight;
 	private List<Integer> mRows;
 	private List<List<Integer>> mRowsHeight;
 	
 	private ATableView mTableView;
 
 	private void initialize() {
-		mHeaders = new ArrayList<String>();
+		mHeadersHeight = new ArrayList<Integer>();
 		mRows = new ArrayList<Integer>();
 		mRowsHeight = new ArrayList<List<Integer>>();
 		
@@ -47,7 +47,7 @@ public class ATableViewAdapter extends BaseAdapter {
 		if (dataSource != null) {
 			sections = dataSource.numberOfSectionsInTableView(mTableView);
 			for (int s = 0; s < sections; s++) {
-				mHeaders.add(dataSource.titleForHeaderInSection(mTableView, s));
+				mHeadersHeight.add(delegate.heightForHeaderInSection(mTableView, s));
 				mRows.add(dataSource.numberOfRowsInSection(mTableView, s));
 				
 				List<Integer> sectionHeights = new ArrayList<Integer>();
@@ -74,16 +74,12 @@ public class ATableViewAdapter extends BaseAdapter {
 	}
 	
 	public NSIndexPath getIndexPath(int position) {
-		int offset = 0;
-		
 		int sections = mRows.size();
 		for (int s = 0; s < sections; s++) {
+			int rows = mRows.get(s);
 			
 			// offset is given by the accumulative number of headers in the table.
-			if (mHeaders.get(s) != null) offset += 1;
-			
-			int rows = mRows.get(s);
-			int positionWithOffset = position - offset;
+			int positionWithOffset = position - (s + 1);
 			if (positionWithOffset < rows) {
 				return NSIndexPath.indexPathForRowInSection(positionWithOffset, s);
 			}
@@ -96,11 +92,10 @@ public class ATableViewAdapter extends BaseAdapter {
 	private boolean isHeaderRow(int position) {
 		int sections = mRows.size();
 		for (int s = 0; s < sections; s++) {
-			boolean hasHeader = mHeaders.get(s) != null;
-			if (position == 0 && hasHeader) {
+			if (position == 0) {
 				return true;
 			}
-			position -= mRows.get(s) + (hasHeader ? 1 : 0);
+			position -= mRows.get(s) + 1;
 		}
 		
 		return false;
@@ -138,19 +133,7 @@ public class ATableViewAdapter extends BaseAdapter {
 		// add margins for grouped style.
 		if (mTableView.getStyle() == ATableViewStyle.Grouped) {
 			int margin = (int) res.getDimension(R.dimen.atv_style_grouped_margins);
-			
-			if (isSingleRow(indexPath))  {
-				cell.setPadding(margin, margin, margin, margin);
-				rowHeight += margin * 2;
-			} else if (isTopRow(indexPath)) {
-				cell.setPadding(margin, margin, margin, 0);
-				rowHeight += margin;
-			} else if (isBottomRow(indexPath)) {
-				cell.setPadding(margin, 0, margin, margin);
-				rowHeight += margin;
-			} else {
-				cell.setPadding(margin, 0, margin, 0);
-			}
+			cell.setPadding(margin, 0, margin, 0);
 		}
 		
 		ListView.LayoutParams params = new ListView.LayoutParams(ListView.LayoutParams.MATCH_PARENT, rowHeight);
@@ -213,10 +196,9 @@ public class ATableViewAdapter extends BaseAdapter {
 	
 	@Override
 	public int getCount() {
-		int count = 0;
+		int count = mRows.size();
 		for (int i = 0; i < mRows.size(); i++) {
-			// count is given by the number of rows on each section plus its header if defined.
-			count += mRows.get(i) + (mHeaders.get(i) != null ? 1 : 0);
+			count += mRows.get(i);
 		}
 		
 		return count;
@@ -262,17 +244,22 @@ public class ATableViewAdapter extends BaseAdapter {
 	public View getView(int position, View convertView, ViewGroup parent) {
 		ATableViewDataSource dataSource = mTableView.getDataSource();
 		
+		NSIndexPath indexPath = getIndexPath(position);
 		if (isHeaderRow(position)) {
-			convertView = LayoutInflater.from(mTableView.getContext()).inflate(R.layout.atv_cell_default, null);
+			LayoutInflater inflater = LayoutInflater.from(mTableView.getContext());
+			convertView = inflater.inflate(R.layout.atv_grouped_header, null);
+			
+			String headerText = dataSource.titleForHeaderInSection(mTableView, indexPath.getSection());
+			TextView textLabel = (TextView) convertView.findViewById(R.id.textLabel);
+			textLabel.setText(headerText);
 			return convertView;
 		} else {
 			ATableViewCell cell = (ATableViewCell)convertView;
 			dataSource.setReusableCell(cell);
 			
-			NSIndexPath indexPath = getIndexPath(position);
-			Log.i("IP", "position:" + position + "indexPath row:" + indexPath.getRow() + "section:" + indexPath.getSection());
 			cell = dataSource.cellForRowAtIndexPath(mTableView, indexPath);
 			
+			// setup.
 			setupLayout(cell, indexPath);
 			setupBackgroundDrawable(cell, indexPath);
 			setupAccessoryButtonDelegateCallback(cell, indexPath);
