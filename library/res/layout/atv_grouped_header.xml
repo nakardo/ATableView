@@ -2,21 +2,16 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:minHeight="54dp"
     android:orientation="vertical" >
 
     <com.nakardo.atableview.uikit.UILabel
         android:id="@+id/textLabel"
+        style="@style/Widget.ATableView.Grouped.SectionHeader.TextLabel"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom"
-        android:layout_marginBottom="8dp"
-        android:layout_marginLeft="20dp"
-        android:textColor="#4C566C"
-        android:textSize="20sp"
-        android:shadowColor="@android:color/white"
-        android:shadowDy="2"
-        android:shadowRadius="1"
-        android:textStyle="bold" />
+        android:layout_marginTop="16dp"
+        android:layout_marginBottom="@dimen/atv_grouped_section_header_text_margin_bottom"
+        android:layout_marginLeft="@dimen/atv_grouped_section_header_text_margin_left" />
 
 </FrameLayout>

@@ -1,11 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <dimen name="atv_style_grouped_margins">10dp</dimen>
+    
+    <!-- groped table header -->
+    <dimen name="atv_grouped_section_header_text_margin_left">20dp</dimen>
+    <dimen name="atv_grouped_section_header_text_margin_bottom">8dp</dimen>
+    
+    <!-- grouped style cell -->
+    <dimen name="atv_cell_grouped_margins">10dp</dimen>
     
     <!-- cell default height given in px, later converted into dps !-->
     <dimen name="atv_cell_default_row_height">44px</dimen>
     
-    <!-- table grouped & plain headers and footers -->
+    <!-- table grouped header -->
+    <dimen name="atv_grouped_header_text_size">20sp</dimen>
     <dimen name="atv_grouped_header_height">44px</dimen>
     
     <!-- margins between labels and cell borders, used also by imageView and accessoryView -->

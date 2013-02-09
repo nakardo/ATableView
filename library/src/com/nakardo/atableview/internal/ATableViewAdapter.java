@@ -132,7 +132,7 @@ public class ATableViewAdapter extends BaseAdapter {
 		
 		// add margins for grouped style.
 		if (mTableView.getStyle() == ATableViewStyle.Grouped) {
-			int margin = (int) res.getDimension(R.dimen.atv_style_grouped_margins);
+			int margin = (int) res.getDimension(R.dimen.atv_cell_grouped_margins);
 			cell.setPadding(margin, 0, margin, 0);
 		}
 		
