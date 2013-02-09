@@ -17,7 +17,7 @@ import com.nakardo.atableview.view.ATableView.ATableViewStyle;
 
 public class ATableViewCellDrawable extends ShapeDrawable {
 	public static final float CELL_STROKE_WIDTH_DP = 1f;
-	private static final float CELL_GROUPED_STYLE_CORNER_RADIUS = 10;
+	private static final float CELL_GROUPED_STYLE_CORNER_RADIUS = 14;
 	
 	private ATableViewStyle mTableViewStyle;
 	private ATableViewCellBackgroundStyle mCellBackgroundStyle;
@@ -50,11 +50,11 @@ public class ATableViewCellDrawable extends ShapeDrawable {
 		
 		float padding = strokeWidth / 2;
 		
-		RectF rect = new RectF(padding, padding, bounds.right - padding, bounds.bottom + strokeWidth);
+		RectF rect = new RectF(padding, padding, bounds.right - padding, bounds.bottom + padding);
 		if (tableViewStyle == ATableViewStyle.Grouped) {
 			if (backgroundStyle == ATableViewCellBackgroundStyle.Single ||
 				backgroundStyle == ATableViewCellBackgroundStyle.Bottom) {
-				rect = new RectF(padding, padding, bounds.right - padding, bounds.bottom - strokeWidth);
+				rect = new RectF(padding, padding, bounds.right - padding, bounds.bottom - padding);
 			}
 		}
 		
