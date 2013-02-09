@@ -89,7 +89,7 @@ public class ATableViewAdapter extends BaseAdapter {
 		return null;
 	}
 	
-	private boolean isHeaderRow(int position) {
+	public boolean isHeaderRow(int position) {
 		int sections = mRows.size();
 		for (int s = 0; s < sections; s++) {
 			if (position == 0) {
