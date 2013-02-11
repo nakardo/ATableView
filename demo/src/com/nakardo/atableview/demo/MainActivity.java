@@ -185,7 +185,7 @@ public class MainActivity extends Activity {
 		
 		@Override
 		public String titleForFooterInSection(ATableView tableView, int section) {
-			return "Footer Footer Footer Footer Footer Footer Footer Footer Footer Footer Footer Footer";
+			return "Footer Footer Footer Footer Footer Footer Footer Footer Footer";
 		}
 
 		@Override

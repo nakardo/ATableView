@@ -22,7 +22,7 @@ public class ATableViewHeaderFooterCell extends FrameLayout {
 				return R.layout.atv_grouped_header;
 			}
 			
-			return R.layout.atv_grouped_header;
+			return R.layout.atv_grouped_footer;
 		}
 		
 		return -1;
