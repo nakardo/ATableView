@@ -18,6 +18,10 @@ public abstract class ATableViewDataSource {
 		return null;
 	}
 	
+	public String titleForFooterInSection(ATableView tableView, int section) {
+		return null;
+	}
+	
 	public ATableViewCell dequeueReusableCellWithIdentifier(String cellIdentifier) {
 		if (cellIdentifier != null && mReusableCell != null &&
 			cellIdentifier.equals(mReusableCell.getReuseIdentifier())) {

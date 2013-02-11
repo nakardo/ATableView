@@ -15,6 +15,9 @@
     <dimen name="atv_grouped_header_text_size">20sp</dimen>
     <dimen name="atv_grouped_header_height">44px</dimen>
     
+    <!-- table grouped footer -->
+    <dimen name="atv_grouped_footer_height">22px</dimen>
+    
     <!-- margins between labels and cell borders, used also by imageView and accessoryView -->
     <dimen name="atv_cell_content_margin">10dp</dimen>
     

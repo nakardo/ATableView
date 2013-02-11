@@ -182,6 +182,11 @@ public class MainActivity extends Activity {
 		public String titleForHeaderInSection(ATableView tableView, int section) {
 			return mRegions[section];
 		}
+		
+		@Override
+		public String titleForFooterInSection(ATableView tableView, int section) {
+			return "Footer Footer Footer Footer Footer Footer Footer Footer Footer Footer Footer Footer";
+		}
 
 		@Override
 		public int numberOfRowStyles() {

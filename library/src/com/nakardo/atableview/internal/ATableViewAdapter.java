@@ -6,18 +6,17 @@ import java.util.List;
 import android.content.res.Resources;
 import android.graphics.drawable.ShapeDrawable;
 import android.graphics.drawable.StateListDrawable;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.LinearLayout;
 import android.widget.ListView;
-import android.widget.TextView;
 
 import com.nakardo.atableview.R;
 import com.nakardo.atableview.foundation.NSIndexPath;
 import com.nakardo.atableview.internal.ATableViewCellAccessoryView.ATableViewCellAccessoryType;
 import com.nakardo.atableview.internal.ATableViewCellDrawable.ATableViewCellBackgroundStyle;
+import com.nakardo.atableview.internal.ATableViewHeaderFooterCell.ATableViewHeaderFooterCellType;
 import com.nakardo.atableview.protocol.ATableViewDataSource;
 import com.nakardo.atableview.protocol.ATableViewDataSourceExt;
 import com.nakardo.atableview.protocol.ATableViewDelegate;
@@ -27,7 +26,10 @@ import com.nakardo.atableview.view.ATableViewCell;
 import com.nakardo.atableview.view.ATableViewCell.ATableViewCellSelectionStyle;
 
 public class ATableViewAdapter extends BaseAdapter {
+	private static final int ADDITIONAL_ROWS_PER_SECTION = 2;
+	
 	private List<Integer> mHeadersHeight;
+	private List<Integer> mFootersHeight;
 	private List<Integer> mRows;
 	private List<List<Integer>> mRowsHeight;
 	
@@ -35,6 +37,7 @@ public class ATableViewAdapter extends BaseAdapter {
 
 	private void initialize() {
 		mHeadersHeight = new ArrayList<Integer>();
+		mFootersHeight = new ArrayList<Integer>();
 		mRows = new ArrayList<Integer>();
 		mRowsHeight = new ArrayList<List<Integer>>();
 		
@@ -48,16 +51,17 @@ public class ATableViewAdapter extends BaseAdapter {
 			sections = dataSource.numberOfSectionsInTableView(mTableView);
 			for (int s = 0; s < sections; s++) {
 				mHeadersHeight.add(delegate.heightForHeaderInSection(mTableView, s));
+				mFootersHeight.add(delegate.heightForFooterInSection(mTableView, s));
 				mRows.add(dataSource.numberOfRowsInSection(mTableView, s));
 				
-				List<Integer> sectionHeights = new ArrayList<Integer>();
+				List<Integer> sectionRowHeights = new ArrayList<Integer>();
 				
 				int rows = mRows.get(s);
 				for (int r = 0; r < rows; r++) {
 					NSIndexPath indexPath = NSIndexPath.indexPathForRowInSection(r, s);
-					sectionHeights.add(delegate.heightForRowAtIndexPath(mTableView, indexPath));
+					sectionRowHeights.add(delegate.heightForRowAtIndexPath(mTableView, indexPath));
 				} 
-				mRowsHeight.add(sectionHeights);
+				mRowsHeight.add(sectionRowHeights);
 			}
 		}
 	}
@@ -74,16 +78,20 @@ public class ATableViewAdapter extends BaseAdapter {
 	}
 	
 	public NSIndexPath getIndexPath(int position) {
+		int offset = 1, count = 0, limit = 0;
+		
 		int sections = mRows.size();
 		for (int s = 0; s < sections; s++) {
 			int rows = mRows.get(s);
 			
-			// offset is given by the accumulative number of headers in the table.
-			int positionWithOffset = position - (s + 1);
-			if (positionWithOffset < rows) {
+			limit += rows + ADDITIONAL_ROWS_PER_SECTION;
+			if (position < limit) {
+				// offset is given by current pos, accumulated headers, footers and rows.
+				int positionWithOffset = position - offset - count;
 				return NSIndexPath.indexPathForRowInSection(positionWithOffset, s);
 			}
-			position -= rows;
+			offset += ADDITIONAL_ROWS_PER_SECTION;
+			count += rows;
 		}
 		
 		return null;
@@ -95,7 +103,21 @@ public class ATableViewAdapter extends BaseAdapter {
 			if (position == 0) {
 				return true;
 			}
-			position -= mRows.get(s) + 1;
+			position -= mRows.get(s) + ADDITIONAL_ROWS_PER_SECTION;
+		}
+		
+		return false;
+	}
+	
+	public boolean isFooterRow(int position) {
+		int positionWithOffset = 0;
+		
+		int sections = mRows.size();
+		for (int s = 0; s < sections; s++) {
+			positionWithOffset += mRows.get(s) + ADDITIONAL_ROWS_PER_SECTION;
+			if (position - positionWithOffset == -1) {
+				return true;
+			}
 		}
 		
 		return false;
@@ -196,9 +218,9 @@ public class ATableViewAdapter extends BaseAdapter {
 	
 	@Override
 	public int getCount() {
-		int count = mRows.size();
+		int count = 0;
 		for (int i = 0; i < mRows.size(); i++) {
-			count += mRows.get(i);
+			count += mRows.get(i) + ADDITIONAL_ROWS_PER_SECTION;
 		}
 		
 		return count;
@@ -208,8 +230,8 @@ public class ATableViewAdapter extends BaseAdapter {
 	public int getViewTypeCount() {
 		ATableViewDataSource dataSource = mTableView.getDataSource();
 	    if (dataSource instanceof ATableViewDataSourceExt) {
-	    	// TODO: additional style for headers. Also custom header should be handled here when supported.
-			return ((ATableViewDataSourceExt) dataSource).numberOfRowStyles() + 1;
+	    	// TODO: additional style for header and footers. Also custom header should be handled here when supported.
+			return ((ATableViewDataSourceExt) dataSource).numberOfRowStyles() + ADDITIONAL_ROWS_PER_SECTION;
 		}
 	    
 	    return 1;
@@ -218,7 +240,9 @@ public class ATableViewAdapter extends BaseAdapter {
 	@Override
 	public int getItemViewType(int position) {
 		if (isHeaderRow(position)) {
-			return getViewTypeCount() - 1; // additional style for headers.
+			return getViewTypeCount() - 2; // additional style for headers.
+		} else if (isFooterRow(position)) {
+			return getViewTypeCount() - 1; // additional style for footers.
 		} else {
 			ATableViewDataSource dataSource = mTableView.getDataSource();
 			if (dataSource instanceof ATableViewDataSourceExt) {
@@ -244,15 +268,31 @@ public class ATableViewAdapter extends BaseAdapter {
 	public View getView(int position, View convertView, ViewGroup parent) {
 		ATableViewDataSource dataSource = mTableView.getDataSource();
 		
+		boolean isHeaderRow = isHeaderRow(position);
+		boolean isFooterRow = isFooterRow(position);
+		
 		NSIndexPath indexPath = getIndexPath(position);
-		if (isHeaderRow(position)) {
-			LayoutInflater inflater = LayoutInflater.from(mTableView.getContext());
-			convertView = inflater.inflate(R.layout.atv_grouped_header, null);
+		if (isHeaderRow || isFooterRow) {
+			ATableViewHeaderFooterCell cell = (ATableViewHeaderFooterCell) convertView;
+			if (cell == null) {
+				ATableViewHeaderFooterCellType type = ATableViewHeaderFooterCellType.Header;
+				if (isFooterRow) {
+					type = ATableViewHeaderFooterCellType.Footer;
+				}
+				cell = new ATableViewHeaderFooterCell(type, mTableView);
+			}
 			
-			String headerText = dataSource.titleForHeaderInSection(mTableView, indexPath.getSection());
-			TextView textLabel = (TextView) convertView.findViewById(R.id.textLabel);
-			textLabel.setText(headerText);
-			return convertView;
+			int section = indexPath.getSection();
+			
+			String headerText = null;
+			if (isHeaderRow) {
+				headerText = dataSource.titleForHeaderInSection(mTableView, section);
+			} else {
+				headerText = dataSource.titleForFooterInSection(mTableView, section);
+			}
+			cell.getTextLabel().setText(headerText);
+			
+			return cell;
 		} else {
 			ATableViewCell cell = (ATableViewCell)convertView;
 			dataSource.setReusableCell(cell);

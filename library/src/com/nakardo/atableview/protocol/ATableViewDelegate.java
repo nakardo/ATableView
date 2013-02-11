@@ -17,6 +17,11 @@ public class ATableViewDelegate {
 		return (int) res.getDimension(R.dimen.atv_grouped_header_height);
 	}
 	
+	public int heightForFooterInSection(ATableView tableView, int section) {
+		Resources res = tableView.getResources();
+		return (int) res.getDimension(R.dimen.atv_grouped_footer_height);
+	}
+	
 	public void didSelectRowAtIndexPath(ATableView tableView, NSIndexPath indexPath) {
 		return;
 	}

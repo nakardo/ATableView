@@ -1,7 +1,6 @@
 package com.nakardo.atableview.view;
 
 import android.content.Context;
-import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.FrameLayout;
@@ -39,7 +38,7 @@ public class ATableViewCell extends FrameLayout {
 	}
 	
 	public ATableViewCell(ATableViewCellStyle style, String reuseIdentifier, Context context) {
-		this(context);
+		super(context);
 		View contentView = LayoutInflater.from(context).inflate(getLayout(style), null);
 		addView(contentView);
 		
@@ -51,14 +50,6 @@ public class ATableViewCell extends FrameLayout {
 	
 	public ATableViewCell(Context context) {
 		super(context);
-	}
-	
-	public ATableViewCell(Context context, AttributeSet attrs) {
-		super(context, attrs);
-	}
-	
-	public ATableViewCell(Context context, AttributeSet attrs, int defStyle) {
-		super(context, attrs, defStyle);
 	}
 	
 	public int getBackgroundColor() {
