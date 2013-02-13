@@ -26,7 +26,13 @@ public class MainActivity extends Activity {
 	private List<List<String>> mCapitals;
 	private List<List<String>> mProvinces;
 	private String[] mRegions = {
-		"Northwest", "Gran Chaco", "Mesopotamia", "Pampas", "Cuyo", "Patagonia", "Single"
+		"Northwest", "Gran Chaco", "Mesopotamia", "Pampas", "Cuyo", "Patagonia", "Capital City"
+	};
+	private String[] mNotes = {
+		null, "Southwestern Santiago del Estero is sometimes considered part of the Sierras area.",
+		null, "Southern part of La Pampa is sometimes called Dry Pampa and included in Patagonia.",
+		"La Rioja is sometimes considered part of Cuyo region instead of the Northwest.", null,
+		null, null
 	};
 	
 	private static List<List<String>> createProvincesList() {
@@ -38,7 +44,7 @@ public class MainActivity extends Activity {
 		provinces.add(Arrays.asList(new String[] { "Córdoba", "Santa Fe", "La Pampa", "Buenos Aires" }));
 		provinces.add(Arrays.asList(new String[] { "San Juan", "La Rioja", "Mendoza", "San Luis" }));
 		provinces.add(Arrays.asList(new String[] { "Rio Negro", "Neuquén", "Chubut", "Santa Cruz", "Tierra del Fuego" }));
-		provinces.add(Arrays.asList(new String[] { "Single Province" }));
+		provinces.add(Arrays.asList(new String[] { "Autonomous City of Buenos Aires" }));
 		
 		return provinces;
 	}
@@ -185,9 +191,9 @@ public class MainActivity extends Activity {
 		
 		@Override
 		public String titleForFooterInSection(ATableView tableView, int section) {
-			return "Footer Footer Footer Footer Footer Footer Footer Footer Footer";
+			return mNotes[section];
 		}
-
+		
 		@Override
 		public int numberOfRowStyles() {
 			return 5;

@@ -1,9 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     
-    <!-- groped table header -->
-    <dimen name="atv_grouped_section_header_text_margin_left">20dp</dimen>
-    <dimen name="atv_grouped_section_header_text_margin_bottom">8dp</dimen>
+    <!-- grouped table header & footer -->
+    <dimen name="atv_grouped_section_header_footer_text_margin_top_bottom">8dp</dimen>
+    <dimen name="atv_grouped_section_header_footer_text_margin_left_right">20dp</dimen>
+    <dimen name="atv_grouped_section_header_footer_min_height">10dp</dimen>
+    
+    <!-- grouped table header -->
+    <dimen name="atv_grouped_section_header_first_row_text_margin_top">16dp</dimen>
+    <dimen name="atv_grouped_section_header_text_margin_top">6dp</dimen>
+    
+    <!-- grouped table footer -->
+    <dimen name="atv_grouped_section_footer_last_row_text_margin_bottom">10dp</dimen>
+    <dimen name="atv_grouped_section_footer_text_margin_bottom">6dp</dimen>
     
     <!-- grouped style cell -->
     <dimen name="atv_cell_grouped_margins">10dp</dimen>
@@ -13,10 +22,6 @@
     
     <!-- table grouped header -->
     <dimen name="atv_grouped_header_text_size">20sp</dimen>
-    <dimen name="atv_grouped_header_height">44px</dimen>
-    
-    <!-- table grouped footer -->
-    <dimen name="atv_grouped_footer_height">22px</dimen>
     
     <!-- margins between labels and cell borders, used also by imageView and accessoryView -->
     <dimen name="atv_cell_content_margin">10dp</dimen>

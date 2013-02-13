@@ -1,6 +1,7 @@
 package com.nakardo.atableview.protocol;
 
 import android.content.res.Resources;
+import android.widget.ListView;
 
 import com.nakardo.atableview.R;
 import com.nakardo.atableview.foundation.NSIndexPath;
@@ -13,13 +14,11 @@ public class ATableViewDelegate {
 	}
 	
 	public int heightForHeaderInSection(ATableView tableView, int section) {
-		Resources res = tableView.getResources();
-		return (int) res.getDimension(R.dimen.atv_grouped_header_height);
+		return ListView.LayoutParams.WRAP_CONTENT;
 	}
 	
 	public int heightForFooterInSection(ATableView tableView, int section) {
-		Resources res = tableView.getResources();
-		return (int) res.getDimension(R.dimen.atv_grouped_footer_height);
+		return ListView.LayoutParams.WRAP_CONTENT;
 	}
 	
 	public void didSelectRowAtIndexPath(ATableView tableView, NSIndexPath indexPath) {
