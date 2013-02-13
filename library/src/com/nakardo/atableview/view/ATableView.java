@@ -8,7 +8,7 @@ import android.widget.ListView;
 
 import com.nakardo.atableview.R;
 import com.nakardo.atableview.internal.ATableViewAdapter;
-import com.nakardo.atableview.internal.ATableViewRowClickListener;
+import com.nakardo.atableview.internal.ATableViewCellClickListener;
 import com.nakardo.atableview.protocol.ATableViewDataSource;
 import com.nakardo.atableview.protocol.ATableViewDelegate;
 
@@ -96,7 +96,7 @@ public class ATableView extends ListView {
 	@Override
 	protected void onAttachedToWindow() {
 		setAdapter(new ATableViewAdapter(this));
-		setOnItemClickListener(new ATableViewRowClickListener(this));
+		setOnItemClickListener(new ATableViewCellClickListener(this));
 		super.onAttachedToWindow();
 	}
 }

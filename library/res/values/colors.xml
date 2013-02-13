@@ -3,6 +3,9 @@
     <!-- ATableView -->
     <color name="atv_separator">#CCCCCC</color>
     
+    <!-- ATableView grouped header -->
+    <color name="atv_grouped_section_header_text">#4C566C</color>
+    
     <!-- ATableViewCell -->
     <color name="atv_cell_background">#FFFFFF</color>
     

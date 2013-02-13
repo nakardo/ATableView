@@ -9,13 +9,16 @@ import android.graphics.drawable.StateListDrawable;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import com.nakardo.atableview.R;
 import com.nakardo.atableview.foundation.NSIndexPath;
 import com.nakardo.atableview.internal.ATableViewCellAccessoryView.ATableViewCellAccessoryType;
 import com.nakardo.atableview.internal.ATableViewCellDrawable.ATableViewCellBackgroundStyle;
+import com.nakardo.atableview.internal.ATableViewHeaderFooterCell.ATableViewHeaderFooterCellType;
 import com.nakardo.atableview.protocol.ATableViewDataSource;
 import com.nakardo.atableview.protocol.ATableViewDataSourceExt;
 import com.nakardo.atableview.protocol.ATableViewDelegate;
@@ -25,37 +28,43 @@ import com.nakardo.atableview.view.ATableViewCell;
 import com.nakardo.atableview.view.ATableViewCell.ATableViewCellSelectionStyle;
 
 public class ATableViewAdapter extends BaseAdapter {
+	private static final int ADDITIONAL_ROWS_PER_SECTION = 2;
+	
+	private List<Integer> mHeadersHeight;
+	private List<Integer> mFootersHeight;
 	private List<Integer> mRows;
 	private List<List<Integer>> mRowsHeight;
 	
-	protected ATableView mTableView;
+	private ATableView mTableView;
 
 	private void initialize() {
+		mHeadersHeight = new ArrayList<Integer>();
+		mFootersHeight = new ArrayList<Integer>();
 		mRows = new ArrayList<Integer>();
 		mRowsHeight = new ArrayList<List<Integer>>();
 		
 		int sections = 0;
 		
-		// datasource.
 		ATableViewDataSource dataSource = mTableView.getDataSource();
+		ATableViewDelegate delegate = mTableView.getDelegate();
+		
+		// datasource & delegate setup.
 		if (dataSource != null) {
 			sections = dataSource.numberOfSectionsInTableView(mTableView);
 			for (int s = 0; s < sections; s++) {
+				mHeadersHeight.add(delegate.heightForHeaderInSection(mTableView, s));
+				mFootersHeight.add(delegate.heightForFooterInSection(mTableView, s));
 				mRows.add(dataSource.numberOfRowsInSection(mTableView, s));
+				
+				List<Integer> sectionRowHeights = new ArrayList<Integer>();
+				
+				int rows = mRows.get(s);
+				for (int r = 0; r < rows; r++) {
+					NSIndexPath indexPath = NSIndexPath.indexPathForRowInSection(r, s);
+					sectionRowHeights.add(delegate.heightForRowAtIndexPath(mTableView, indexPath));
+				} 
+				mRowsHeight.add(sectionRowHeights);
 			}
-		}
-		
-		// delegate.
-		ATableViewDelegate delegate = mTableView.getDelegate();
-		for (int s = 0; s < sections; s++) {
-			List<Integer> sectionHeights = new ArrayList<Integer>();
-			
-			int rows = mRows.get(s);
-			for (int r = 0; r < rows; r++) {
-				NSIndexPath indexPath = NSIndexPath.indexPathForRowInSection(r, s);
-				sectionHeights.add(delegate.heightForRowAtIndexPath(mTableView, indexPath));
-			} 
-			mRowsHeight.add(sectionHeights);
 		}
 	}
 	
@@ -71,16 +80,49 @@ public class ATableViewAdapter extends BaseAdapter {
 	}
 	
 	public NSIndexPath getIndexPath(int position) {
+		int offset = 1, count = 0, limit = 0;
+		
 		int sections = mRows.size();
 		for (int s = 0; s < sections; s++) {
 			int rows = mRows.get(s);
-			if (position < rows) {
-				return NSIndexPath.indexPathForRowInSection(position, s);
+			
+			limit += rows + ADDITIONAL_ROWS_PER_SECTION;
+			if (position < limit) {
+				// offset is given by current pos, accumulated headers, footers and rows.
+				int positionWithOffset = position - offset - count;
+				return NSIndexPath.indexPathForRowInSection(positionWithOffset, s);
 			}
-			position -= rows;
+			offset += ADDITIONAL_ROWS_PER_SECTION;
+			count += rows;
 		}
 		
 		return null;
+	}
+	
+	public boolean isHeaderRow(int position) {
+		int sections = mRows.size();
+		for (int s = 0; s < sections; s++) {
+			if (position == 0) {
+				return true;
+			}
+			position -= mRows.get(s) + ADDITIONAL_ROWS_PER_SECTION;
+		}
+		
+		return false;
+	}
+	
+	public boolean isFooterRow(int position) {
+		int positionWithOffset = 0;
+		
+		int sections = mRows.size();
+		for (int s = 0; s < sections; s++) {
+			positionWithOffset += mRows.get(s) + ADDITIONAL_ROWS_PER_SECTION;
+			if (position - positionWithOffset == -1) {
+				return true;
+			}
+		}
+		
+		return false;
 	}
 	
 	private boolean isSingleRow(NSIndexPath indexPath) {
@@ -108,33 +150,101 @@ public class ATableViewAdapter extends BaseAdapter {
 		return (int) (rowHeight * res.getDisplayMetrics().density);
 	}
 	
-	private void setupLayout(ATableViewCell cell, NSIndexPath indexPath) {
+	private int getHeaderFooterRowHeight(NSIndexPath indexPath, boolean isFooterRow) {
+		ATableViewDelegate delegate = mTableView.getDelegate();
+		int section = indexPath.getSection();
+		
+		// pull height, it will default on delegate to WRAP_CONTENT if not overridden.
+		int rowHeight = ListView.LayoutParams.WRAP_CONTENT;
+		if (isFooterRow) {
+			rowHeight = delegate.heightForFooterInSection(mTableView, section);
+		} else {
+			rowHeight = delegate.heightForHeaderInSection(mTableView, section);
+		}
+		
+		// calculate dips when overridden.
+		if (rowHeight != ListView.LayoutParams.WRAP_CONTENT) {
+			Resources res = mTableView.getResources();
+			rowHeight = (int) (rowHeight * res.getDisplayMetrics().density);
+		}
+		
+		return rowHeight;
+	}
+	
+	private ATableViewHeaderFooterCell getReusableHeaderFooterCell(View convertView, boolean isFooterRow) {
+		ATableViewHeaderFooterCell cell = (ATableViewHeaderFooterCell) convertView;
+		if (cell == null) {
+			ATableViewHeaderFooterCellType type = ATableViewHeaderFooterCellType.Header;
+			if (isFooterRow) {
+				type = ATableViewHeaderFooterCellType.Footer;
+			}
+			cell = new ATableViewHeaderFooterCell(type, mTableView);
+		}
+		
+		return cell;
+	}
+	
+	private void setupHeaderFooterRowLayout(ATableViewHeaderFooterCell cell, NSIndexPath indexPath, boolean isFooterRow) {
+		ATableViewDataSource dataSource = mTableView.getDataSource();
+		int section = indexPath.getSection();
+		
+		TextView textLabel = cell.getTextLabel();
+		
+		// get text.
+		String headerText = null;
+		if (isFooterRow) {
+			headerText = dataSource.titleForFooterInSection(mTableView, section);
+		} else {
+			headerText = dataSource.titleForHeaderInSection(mTableView, section);
+		}
+		textLabel.setText(headerText);
+		
+		boolean hasText = headerText != null && headerText.length() > 0;
+		Resources res = mTableView.getResources();
+		
+		// if we're on the very first header of the table, we've to add an extra margin top to textView.
+		if (hasText && !isFooterRow && section == 0) {
+			int marginTop = (int) res.getDimension(R.dimen.atv_grouped_section_header_first_row_text_margin_top);
+			
+			FrameLayout.LayoutParams params = (FrameLayout.LayoutParams) textLabel.getLayoutParams();
+			params.topMargin = marginTop;
+			textLabel.setLayoutParams(params);
+		}
+		
+		// if we're on the last footer of the table, extra margin applies here as well.
+		if (hasText && isFooterRow && section == mRows.size() - 1) {
+			int marginBottom = (int) res.getDimension(R.dimen.atv_grouped_section_footer_last_row_text_margin_bottom);
+			
+			FrameLayout.LayoutParams params = (FrameLayout.LayoutParams) textLabel.getLayoutParams();
+			params.bottomMargin = marginBottom;
+			textLabel.setLayoutParams(params);
+		}
+		
+		// hide header or footer text if it's null.
+		int visibility = hasText ? View.VISIBLE : View.GONE;
+		textLabel.setVisibility(visibility);
+		
+		// setup layout height.
+		int rowHeight = getHeaderFooterRowHeight(indexPath, isFooterRow);
+		ListView.LayoutParams params = new ListView.LayoutParams(ListView.LayoutParams.MATCH_PARENT, rowHeight);
+		cell.setLayoutParams(params);
+	}
+	
+	private void setupRowLayout(ATableViewCell cell, NSIndexPath indexPath) {
 		Resources res = mTableView.getContext().getResources();
 		int rowHeight = getRowHeight(indexPath);
 		
 		// add margins for grouped style.
 		if (mTableView.getStyle() == ATableViewStyle.Grouped) {
-			int margin = (int) res.getDimension(R.dimen.atv_style_grouped_margins);
-			
-			if (isSingleRow(indexPath))  {
-				cell.setPadding(margin, margin, margin, margin);
-				rowHeight += margin * 2;
-			} else if (isTopRow(indexPath)) {
-				cell.setPadding(margin, margin, margin, 0);
-				rowHeight += margin;
-			} else if (isBottomRow(indexPath)) {
-				cell.setPadding(margin, 0, margin, margin);
-				rowHeight += margin;
-			} else {
-				cell.setPadding(margin, 0, margin, 0);
-			}
+			int margin = (int) res.getDimension(R.dimen.atv_cell_grouped_margins);
+			cell.setPadding(margin, 0, margin, 0);
 		}
 		
 		ListView.LayoutParams params = new ListView.LayoutParams(ListView.LayoutParams.MATCH_PARENT, rowHeight);
 		cell.setLayoutParams(params);
 	}
 	
-	private void setupBackgroundDrawable(ATableViewCell cell, NSIndexPath indexPath) {
+	private void setupRowBackgroundDrawable(ATableViewCell cell, NSIndexPath indexPath) {
 		
 		// get row style for using specific drawable.
 		ATableViewCellBackgroundStyle backgroundStyle = ATableViewCellBackgroundStyle.Middle;
@@ -175,7 +285,7 @@ public class ATableViewAdapter extends BaseAdapter {
 		contentView.setBackgroundDrawable(drawable);
 	}
 	
-	private void setupAccessoryButtonDelegateCallback(ATableViewCell cell, final NSIndexPath indexPath) {
+	private void setupRowAccessoryButtonDelegateCallback(ATableViewCell cell, final NSIndexPath indexPath) {
 		ATableViewCellAccessoryType accessoryType = cell.getAccessoryType();
 		if (accessoryType == ATableViewCellAccessoryType.DisclosureButton) {
 			View accessoryView = cell.findViewById(R.id.accessoryView);
@@ -190,17 +300,20 @@ public class ATableViewAdapter extends BaseAdapter {
 	
 	@Override
 	public int getCount() {
-		int rows = 0;
-		for (int iRows : mRows) rows += iRows;
+		int count = 0;
+		for (int i = 0; i < mRows.size(); i++) {
+			count += mRows.get(i) + ADDITIONAL_ROWS_PER_SECTION;
+		}
 		
-		return rows;
+		return count;
 	}
 
 	@Override
 	public int getViewTypeCount() {
 		ATableViewDataSource dataSource = mTableView.getDataSource();
 	    if (dataSource instanceof ATableViewDataSourceExt) {
-			return ((ATableViewDataSourceExt) dataSource).numberOfRowStyles();
+	    	// TODO: additional style for header and footers. Also custom header should be handled here when supported.
+			return ((ATableViewDataSourceExt) dataSource).numberOfRowStyles() + ADDITIONAL_ROWS_PER_SECTION;
 		}
 	    
 	    return 1;
@@ -208,13 +321,19 @@ public class ATableViewAdapter extends BaseAdapter {
 	
 	@Override
 	public int getItemViewType(int position) {
-		ATableViewDataSource dataSource = mTableView.getDataSource();
-		if (dataSource instanceof ATableViewDataSourceExt) {
-			NSIndexPath indexPath = getIndexPath(position);
-			return ((ATableViewDataSourceExt) dataSource).styleForRowAtIndexPath(indexPath);			
+		if (isHeaderRow(position)) {
+			return getViewTypeCount() - 2; // additional style for headers.
+		} else if (isFooterRow(position)) {
+			return getViewTypeCount() - 1; // additional style for footers.
+		} else {
+			ATableViewDataSource dataSource = mTableView.getDataSource();
+			if (dataSource instanceof ATableViewDataSourceExt) {
+				NSIndexPath indexPath = getIndexPath(position);
+				return ((ATableViewDataSourceExt) dataSource).styleForRowAtIndexPath(indexPath);			
+			}
 		}
 		
-		return 1;
+		return IGNORE_ITEM_VIEW_TYPE;
 	}
 	
 	@Override
@@ -226,21 +345,36 @@ public class ATableViewAdapter extends BaseAdapter {
 	public long getItemId(int position) {
 		return position;
 	}
-
+	
 	@Override
 	public View getView(int position, View convertView, ViewGroup parent) {
-		ATableViewDataSource dataSource = mTableView.getDataSource();
-		
-		ATableViewCell cell = (ATableViewCell)convertView;
-		dataSource.setReusableCell(cell);
+		boolean isHeaderRow = isHeaderRow(position);
+		boolean isFooterRow = isFooterRow(position);
 		
 		NSIndexPath indexPath = getIndexPath(position);
-		cell = dataSource.cellForRowAtIndexPath(mTableView, indexPath);
+		if (isHeaderRow || isFooterRow) {
+			ATableViewHeaderFooterCell cell = getReusableHeaderFooterCell(convertView, isFooterRow);
+			
+			// setup.
+			setupHeaderFooterRowLayout(cell, indexPath, isFooterRow);
+			
+			convertView = cell;
+		} else {
+			ATableViewCell cell = (ATableViewCell)convertView;
+			
+			ATableViewDataSource dataSource = mTableView.getDataSource();
+			dataSource.setReusableCell(cell);
+			
+			cell = dataSource.cellForRowAtIndexPath(mTableView, indexPath);
+			
+			// setup.
+			setupRowLayout(cell, indexPath);
+			setupRowBackgroundDrawable(cell, indexPath);
+			setupRowAccessoryButtonDelegateCallback(cell, indexPath);
+			
+			convertView = cell;
+		}
 		
-		setupLayout(cell, indexPath);
-		setupBackgroundDrawable(cell, indexPath);
-		setupAccessoryButtonDelegateCallback(cell, indexPath);
-		
-		return cell;
+		return convertView;
 	}
 }

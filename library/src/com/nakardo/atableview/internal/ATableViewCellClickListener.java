@@ -7,18 +7,21 @@ import android.widget.AdapterView.OnItemClickListener;
 import com.nakardo.atableview.protocol.ATableViewDelegate;
 import com.nakardo.atableview.view.ATableView;
 
-public class ATableViewRowClickListener implements OnItemClickListener {
+public class ATableViewCellClickListener implements OnItemClickListener {
 	private ATableView mTableView;
 	
-	public ATableViewRowClickListener(ATableView tableView) {
+	public ATableViewCellClickListener(ATableView tableView) {
 		mTableView = tableView;
 	}
 
 	@Override
 	public void onItemClick(AdapterView<?> adapter, View view, int pos, long id) {
-		ATableViewAdapter tableViewAdapter = mTableView.getInternalAdapter();
+		ATableViewAdapter a = mTableView.getInternalAdapter();
 		
-		ATableViewDelegate delegate = mTableView.getDelegate();
-		delegate.didSelectRowAtIndexPath(mTableView, tableViewAdapter.getIndexPath(pos));
+		// do not send callbacks for header rows.
+		if (!a.isHeaderRow(pos) && !a.isFooterRow(pos)) {
+			ATableViewDelegate delegate = mTableView.getDelegate();
+			delegate.didSelectRowAtIndexPath(mTableView, a.getIndexPath(pos));
+		}
 	}
 }

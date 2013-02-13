@@ -10,6 +10,18 @@ public abstract class ATableViewDataSource {
 	public abstract ATableViewCell cellForRowAtIndexPath(ATableView tableView, NSIndexPath indexPath);
 	public abstract int numberOfRowsInSection(ATableView tableView, int section);
 	
+	public int numberOfSectionsInTableView(ATableView tableView) {
+		return 1;
+	}
+	
+	public String titleForHeaderInSection(ATableView tableView, int section) {
+		return null;
+	}
+	
+	public String titleForFooterInSection(ATableView tableView, int section) {
+		return null;
+	}
+	
 	public ATableViewCell dequeueReusableCellWithIdentifier(String cellIdentifier) {
 		if (cellIdentifier != null && mReusableCell != null &&
 			cellIdentifier.equals(mReusableCell.getReuseIdentifier())) {
@@ -21,9 +33,5 @@ public abstract class ATableViewDataSource {
 	
 	public void setReusableCell(ATableViewCell reusableCell) {
 		mReusableCell = reusableCell;
-	}
-	
-	public int numberOfSectionsInTableView(ATableView tableView) {
-		return 1;
 	}
 }

@@ -20,7 +20,7 @@ public class ATableViewCellAccessoryView {
 			Resources res = cell.getResources();
 			
 			// get marginRight for accessoryView, DisclosureButton has a different one.
-			LayoutParams params = new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
+			LayoutParams params = new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.MATCH_PARENT);
 			int marginRight = (int)res.getDimension(R.dimen.atv_cell_content_margin);
 			if (accessoryType == ATableViewCellAccessoryType.DisclosureButton) {
 				marginRight = (int)res.getDimension(R.dimen.atv_cell_disclosure_button_margin_right);

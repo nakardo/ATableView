@@ -1,56 +1,80 @@
 <resources xmlns:android="http://schemas.android.com/apk/res/android">
+
     <style name="Widget"></style>
+
+    <style name="Widget.ATableView.Grouped.SectionHeaderFooter.TextLabel" parent="@style/Widget">
+        <item name="android:textColor">@color/atv_grouped_section_header_text</item>
+        <item name="android:shadowColor">@android:color/white</item>
+        <item name="android:shadowDy">2</item>
+        <item name="android:shadowRadius">1</item>
+    </style>
+
+    <style name="Widget.ATableView.Grouped.SectionHeader.TextLabel"
+        parent="@style/Widget.ATableView.Grouped.SectionHeaderFooter.TextLabel">
+        <item name="android:textSize">@dimen/atv_grouped_header_text_size</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="Widget.ATableView.Grouped.SectionFooter.TextLabel"
+        parent="@style/Widget.ATableView.Grouped.SectionHeaderFooter.TextLabel">
+        <item name="android:textSize">18sp</item>
+        <item name="android:gravity">center_horizontal</item>
+    </style>
     
     <style name="Widget.ATableViewCell">
         <item name="android:gravity">center_vertical</item>
     </style>
-    
+
     <style name="Widget.ATableViewCell.ImageView" parent="@style/Widget">
         <item name="android:adjustViewBounds">true</item>
         <item name="android:scaleType">centerInside</item>
     </style>
-    
+
     <style name="Widget.ATableViewCell.TextLabel" parent="@style/Widget">
         <item name="android:textStyle">bold</item>
         <item name="android:maxLines">1</item>
         <item name="android:ellipsize">end</item>
         <item name="android:includeFontPadding">false</item>
     </style>
-    <style name="Widget.ATableViewCell.DetailTextLabel" parent="@style/Widget.ATableViewCell.TextLabel">
-    </style>
-    
+
+    <style name="Widget.ATableViewCell.DetailTextLabel" parent="@style/Widget.ATableViewCell.TextLabel"></style>
+
     <style name="Widget.ATableViewCell.TextLabel.Default" parent="@style/Widget.ATableViewCell.TextLabel">
         <item name="android:textColor">@color/atv_default_cell_text_selector</item>
         <item name="android:textSize">@dimen/atv_default_cell_text_size</item>
     </style>
-    
+
     <style name="Widget.ATableViewCell.TextLabel.Subtitle" parent="@style/Widget.ATableViewCell.TextLabel">
         <item name="android:textColor">@color/atv_subtitle_cell_text_selector</item>
         <item name="android:textSize">@dimen/atv_subtitle_cell_text_size</item>
     </style>
+
     <style name="Widget.ATableViewCell.DetailTextLabel.Subtitle" parent="@style/Widget.ATableViewCell.DetailTextLabel">
         <item name="android:textStyle">normal</item>
         <item name="android:textColor">@color/atv_subtitle_cell_detail_text_selector</item>
         <item name="android:textSize">@dimen/atv_subtitle_cell_detail_text_size</item>
     </style>
-    
+
     <style name="Widget.ATableViewCell.TextLabel.Value1" parent="@style/Widget.ATableViewCell.TextLabel">
         <item name="android:textColor">@color/atv_value1_cell_title_text_selector</item>
         <item name="android:textSize">@dimen/atv_value1_cell_text_size</item>
     </style>
+
     <style name="Widget.ATableViewCell.DetailTextLabel.Value1" parent="@style/Widget.ATableViewCell.DetailTextLabel">
         <item name="android:textStyle">normal</item>
         <item name="android:textColor">@color/atv_value1_cell_detail_text_selector</item>
         <item name="android:textSize">@dimen/atv_value1_cell_detail_text_size</item>
     </style>
-    
+
     <style name="Widget.ATableViewCell.TextLabel.Value2" parent="@style/Widget.ATableViewCell.TextLabel">
         <item name="android:gravity">right</item>
         <item name="android:textColor">@color/atv_value2_cell_title_text_selector</item>
         <item name="android:textSize">@dimen/atv_value2_cell_text_size</item>
     </style>
+
     <style name="Widget.ATableViewCell.DetailTextLabel.Value2" parent="@style/Widget.ATableViewCell.DetailTextLabel">
         <item name="android:textColor">@color/atv_value2_cell_detail_text_selector</item>
         <item name="android:textSize">@dimen/atv_value2_cell_details_text_size</item>
     </style>
+
 </resources>
