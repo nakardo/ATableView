@@ -2,22 +2,39 @@
 
     <style name="Widget"></style>
 
-    <style name="Widget.ATableView.Grouped.SectionHeaderFooter.TextLabel" parent="@style/Widget">
-        <item name="android:textColor">@color/atv_grouped_section_header_text</item>
-        <item name="android:shadowColor">@android:color/white</item>
+    <style name="Widget.ATableView.Section.TextLabel" parent="@style/Widget">
+        <item name="android:includeFontPadding">false</item>
         <item name="android:shadowDy">2</item>
         <item name="android:shadowRadius">1</item>
     </style>
+    
+    <style name="Widget.ATableView.Section.Plain.TextLabel" parent="@style/Widget.ATableView.Section.TextLabel">
+        <item name="android:textColor">@android:color/white</item>
+        <item name="android:shadowColor">@color/atv_plain_section_header_text</item>
+        <item name="android:singleLine">true</item>
+        <item name="android:ellipsize">end</item>
+    </style>
+    
+    <style name="Widget.ATableView.Section.Grouped.TextLabel" parent="@style/Widget.ATableView.Section.TextLabel">
+        <item name="android:textColor">@color/atv_grouped_section_header_text</item>
+        <item name="android:shadowColor">@android:color/white</item>
+    </style>
 
-    <style name="Widget.ATableView.Grouped.SectionHeader.TextLabel"
-        parent="@style/Widget.ATableView.Grouped.SectionHeaderFooter.TextLabel">
-        <item name="android:textSize">@dimen/atv_grouped_header_text_size</item>
+    <style name="Widget.ATableView.Section.Plain.Header.TextLabel"
+        parent="@style/Widget.ATableView.Section.Plain.TextLabel">
+        <item name="android:textSize">@dimen/atv_plain_header_text_size</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+    
+    <style name="Widget.ATableView.Section.Grouped.Header.TextLabel"
+        parent="@style/Widget.ATableView.Section.Grouped.TextLabel">
+        <item name="android:textSize">@dimen/atv_grouped_section_header_text_size</item>
         <item name="android:textStyle">bold</item>
     </style>
 
-    <style name="Widget.ATableView.Grouped.SectionFooter.TextLabel"
-        parent="@style/Widget.ATableView.Grouped.SectionHeaderFooter.TextLabel">
-        <item name="android:textSize">18sp</item>
+    <style name="Widget.ATableView.Section.Grouped.Footer.TextLabel"
+        parent="@style/Widget.ATableView.Section.Grouped.TextLabel">
+        <item name="android:textSize">@dimen/atv_grouped_section_footer_text_size</item>
         <item name="android:gravity">center_horizontal</item>
     </style>
     

@@ -26,7 +26,7 @@ public class MainActivity extends Activity {
 	private List<List<String>> mCapitals;
 	private List<List<String>> mProvinces;
 	private String[] mRegions = {
-		"Northwest", "Gran Chaco", "Mesopotamia", "Pampas", "Cuyo", "Patagonia", "Capital City"
+		"Northwest", "Gran Chaco", "Mesopotamia", "Pampas", "Cuyo", "Patagonia", "Autonomous City"
 	};
 	private String[] mNotes = {
 		null, "Southwestern Santiago del Estero is sometimes considered part of the Sierras area.",

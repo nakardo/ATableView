@@ -6,7 +6,7 @@
 
     <com.nakardo.atableview.uikit.UILabel
         android:id="@+id/textLabel"
-        style="@style/Widget.ATableView.Grouped.SectionHeader.TextLabel"
+        style="@style/Widget.ATableView.Section.Grouped.Header.TextLabel"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom"

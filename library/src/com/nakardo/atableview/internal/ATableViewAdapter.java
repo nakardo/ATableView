@@ -186,6 +186,7 @@ public class ATableViewAdapter extends BaseAdapter {
 	
 	private void setupHeaderFooterRowLayout(ATableViewHeaderFooterCell cell, NSIndexPath indexPath, boolean isFooterRow) {
 		ATableViewDataSource dataSource = mTableView.getDataSource();
+		ATableViewStyle tableViewStyle = mTableView.getStyle();
 		int section = indexPath.getSection();
 		
 		TextView textLabel = cell.getTextLabel();
@@ -199,30 +200,33 @@ public class ATableViewAdapter extends BaseAdapter {
 		}
 		textLabel.setText(headerText);
 		
-		boolean hasText = headerText != null && headerText.length() > 0;
-		Resources res = mTableView.getResources();
-		
-		// if we're on the very first header of the table, we've to add an extra margin top to textView.
-		if (hasText && !isFooterRow && section == 0) {
-			int marginTop = (int) res.getDimension(R.dimen.atv_grouped_section_header_first_row_text_margin_top);
-			
+		// setup layout depending on style.
+		if (tableViewStyle == ATableViewStyle.Grouped) {
+			Resources res = mTableView.getResources();
 			FrameLayout.LayoutParams params = (FrameLayout.LayoutParams) textLabel.getLayoutParams();
+			
+			// if we're on the very first header of the table, we've to add an extra margin top to textView.
+			int marginTop = (int) res.getDimension(R.dimen.atv_grouped_section_header_text_margin_top);
+			if (!isFooterRow && section == 0) {
+				marginTop = (int) res.getDimension(R.dimen.atv_grouped_section_header_first_row_text_margin_top);
+			}
 			params.topMargin = marginTop;
-			textLabel.setLayoutParams(params);
-		}
-		
-		// if we're on the last footer of the table, extra margin applies here as well.
-		if (hasText && isFooterRow && section == mRows.size() - 1) {
-			int marginBottom = (int) res.getDimension(R.dimen.atv_grouped_section_footer_last_row_text_margin_bottom);
 			
-			FrameLayout.LayoutParams params = (FrameLayout.LayoutParams) textLabel.getLayoutParams();
+			// if we're on the last footer of the table, extra margin applies here as well.
+			int marginBottom = (int) res.getDimension(R.dimen.atv_grouped_section_footer_text_margin_bottom);
+			if (isFooterRow && section == mRows.size() - 1) {
+				marginBottom = (int) res.getDimension(R.dimen.atv_grouped_section_footer_last_row_text_margin_bottom);			
+			}
 			params.bottomMargin = marginBottom;
+			
 			textLabel.setLayoutParams(params);
+			
+			// hide header or footer text if it's null.
+			int visibility = headerText != null && headerText.length() > 0 ? View.VISIBLE : View.GONE;
+			textLabel.setVisibility(visibility);
+		} else if (tableViewStyle == ATableViewStyle.Plain) {
+			
 		}
-		
-		// hide header or footer text if it's null.
-		int visibility = hasText ? View.VISIBLE : View.GONE;
-		textLabel.setVisibility(visibility);
 		
 		// setup layout height.
 		int rowHeight = getHeaderFooterRowHeight(indexPath, isFooterRow);
