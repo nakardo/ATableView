@@ -25,7 +25,7 @@ public class ATableViewHeaderFooterCell extends FrameLayout {
 			return R.layout.atv_grouped_footer;
 		}
 		
-		return -1;
+		return R.layout.atv_plain_header;
 	}
 	
 	public ATableViewHeaderFooterCell(ATableViewHeaderFooterCellType type, ATableView tableView) {

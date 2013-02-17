@@ -6,7 +6,7 @@
 
     <com.nakardo.atableview.uikit.UILabel
         android:id="@+id/textLabel"
-        style="@style/Widget.ATableView.Grouped.SectionFooter.TextLabel"
+        style="@style/Widget.ATableView.Section.Grouped.Footer.TextLabel"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="@dimen/atv_grouped_section_footer_text_margin_bottom"
