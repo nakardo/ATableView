@@ -79,7 +79,7 @@ public class ATableViewCellDrawable extends ShapeDrawable {
 		mSeparatorPaint = new Paint(getPaint());
 		mSeparatorPaint.setColor(tableView.getSeparatorColor());
 		
-		// stroke.
+		// stroke, use real stroke conversion use rounded with ceil to round up padding with content.
 		mStrokeWidth = CELL_STROKE_WIDTH_DP * tableView.getResources().getDisplayMetrics().density;
 		int roundedStrokeWidth = (int) Math.ceil(mStrokeWidth);
 		

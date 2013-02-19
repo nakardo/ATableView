@@ -28,7 +28,7 @@ public class MainActivity extends Activity {
 	private List<List<String>> mCapitals;
 	private List<List<String>> mProvinces;
 	private String[] mRegions = {
-		"Northwest", "Gran Chaco", "Mesopotamia", "Pampas", "Cuyo", "Patagonia", "Autonomous City"
+		"Northwest", "Gran Chaco", "Mesopotamia", "Pampas", "Cuyo", "Patagonia", "Capital City"
 	};
 	private String[] mNotes = {
 		null, "Southwestern Santiago del Estero is sometimes considered part of the Sierras area.",
@@ -63,7 +63,7 @@ public class MainActivity extends Activity {
 		capitals.add(Arrays.asList(new String[] { "Cordoba", "Santa Fe", "Santa Rosa", "Capital Federal" }));
 		capitals.add(Arrays.asList(new String[] { "San Juan", "La Rioja", "Mendoza", "San Luis" }));
 		capitals.add(Arrays.asList(new String[] { "Viedma", "Neuquén", "Rawson", "Rio Gallegos", "Ushuaia" }));
-		capitals.add(Arrays.asList(new String[] { "Single Capital" }));
+		capitals.add(Arrays.asList(new String[] { "" }));
 		
 		return capitals;
 	}
@@ -185,7 +185,7 @@ public class MainActivity extends Activity {
 				// imageView
 				ImageView imageView = cell.getImageView();
 				if (indexPath.getSection() == 4) {
-					int paddingLeft = (int) (8 * getResources().getDisplayMetrics().density);
+					int paddingLeft = (int) Math.ceil(8 * getResources().getDisplayMetrics().density);
 					imageView.setPadding(paddingLeft, 0, 0, 0);
 					imageView.setImageDrawable(getDrawableForRow(row));
 				} else {

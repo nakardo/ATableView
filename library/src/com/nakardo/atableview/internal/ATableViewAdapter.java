@@ -190,7 +190,7 @@ public class ATableViewAdapter extends BaseAdapter {
 			rowHeight += (int) ATableViewCellDrawable.CELL_STROKE_WIDTH_DP;
 		}
 		
-		return (int) (rowHeight * res.getDisplayMetrics().density);
+		return (int) Math.ceil(rowHeight * res.getDisplayMetrics().density);
 	}
 	
 	private int getHeaderFooterRowHeight(NSIndexPath indexPath, boolean isFooterRow) {
@@ -216,7 +216,7 @@ public class ATableViewAdapter extends BaseAdapter {
 		
 		// convert row height value when an scalar was used.
 		if (rowHeight > -1) {
-			rowHeight = (int) (rowHeight * res.getDisplayMetrics().density);
+			rowHeight = (int) Math.ceil(rowHeight * res.getDisplayMetrics().density);
 		}
 		
 		return rowHeight;
