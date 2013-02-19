@@ -1,15 +1,12 @@
 # ATableView (UITableView)
 
+![ATableView](http://oi45.tinypic.com/vshn2x.jpg)
+
 ## Summary
 
 ATableView intends to imitate same object model proposed on UIKit for building tables, so it's not only limited on theming Android ListView. If you've some background on iOS development you may jump over some of the sections below, you'll find a lot of similarities with the native framework.
 
 If not, you should be good with the examples included here and the demo project.
-
-## Screenshots
-
-![ATableView](http://oi47.tinypic.com/dwx43p.jpg)
-![ATableView](http://oi50.tinypic.com/v5y6ad.jpg)
 
 ## How to use it
 
@@ -230,16 +227,18 @@ Both **Roboto-Regular.ttf** and **Roboto-Bold.ttf** are included on the demo pro
 
 ## Roadmap
 
-* Support for UITableViewCell accessoryType (UITableViewCell built in styles and custom).
-* Ability to define titles per section (Plain & Grouped).
+* Support for pinned headers & footers in UITableViewPlainStyle.
 * Add UITableViewCellSeparatorStyleSingleLineEtched table style.
-* Better examples app bundled.
+* Support for creating the table from layout.
+* ATableViewActivity and ATableViewFragment classes.
 * More.
 
 ## License
 
 Copyright 2012 Diego Acosta - Contact me at diegonake@gmail.com / @nakardo
 
-Released under the [Beerware](http://en.wikipedia.org/wiki/Beerware) license. ...And just in case under the [Apache 2.0.](http://www.apache.org/licenses/LICENSE-2.0.html) license as well.
+Released under the [Apache 2.0.](http://www.apache.org/licenses/LICENSE-2.0.html) license.
 
 Roboto font by Google Android - Licensed under the Apache License.
+
+Awesome Android PSD images by [slaveoffear](http://slaveoffear.deviantart.com).
