@@ -38,7 +38,7 @@ public class MainActivity extends Activity {
 	};
 	
 	private ATableView mTableView;
-	private ATableViewStyle mTableViewStyle = ATableViewStyle.Plain;
+	private ATableViewStyle mTableViewStyle = ATableViewStyle.Grouped;
 	
 	private static List<List<String>> createProvincesList() {
 		List<List<String>> provinces = new ArrayList<List<String>>();
@@ -71,11 +71,11 @@ public class MainActivity extends Activity {
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
-			case R.id.plain:
-				mTableViewStyle = ATableViewStyle.Plain;
-				break;
 			case R.id.grouped:
 				mTableViewStyle = ATableViewStyle.Grouped;
+				break;
+			case R.id.plain:
+				mTableViewStyle = ATableViewStyle.Plain;
 				break;
 			default:
 				return super.onOptionsItemSelected(item);
@@ -257,16 +257,14 @@ public class MainActivity extends Activity {
 		
 		@Override
 		public void didSelectRowAtIndexPath(ATableView tableView, NSIndexPath indexPath) {
-			CharSequence text = String.format("Selected IndexPath [%d, %d]",
-					indexPath.getSection(), indexPath.getRow());
+			String text ="Selected IndexPath [" + indexPath.getSection() + "," + indexPath.getRow() + "]";
 			Toast toast = Toast.makeText(getApplicationContext(), text, Toast.LENGTH_SHORT);
 			toast.show();
 		}
 		
 		@Override
 		public void accessoryButtonTappedForRowWithIndexPath(ATableView tableView, NSIndexPath indexPath) {
-			CharSequence text = String.format("Tapped DisclosureButton at indexPath [%d, %d]",
-					indexPath.getSection(), indexPath.getRow());
+			String text = "Tapped DisclosureButton at indexPath [" + indexPath.getSection() + "," + indexPath.getRow() + "]";
 			Toast toast = Toast.makeText(getApplicationContext(), text, Toast.LENGTH_SHORT);
 			toast.show();
 		}

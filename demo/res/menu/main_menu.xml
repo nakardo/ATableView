@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android" >
-    <item android:id="@+id/plain" android:title="Plain"/>
     <item android:id="@+id/grouped" android:title="Grouped"/>
+    <item android:id="@+id/plain" android:title="Plain"/>
 </menu>
