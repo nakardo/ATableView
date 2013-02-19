@@ -50,16 +50,18 @@ public class ATableViewCellDrawable extends ShapeDrawable {
 	private static RectF getDestinationRectF(Rect bounds, ATableViewStyle tableViewStyle,
 			ATableViewCellBackgroundStyle backgroundStyle, float strokeWidth) {
 		
-		// remove side strokes for plain style.
-		float sideMargin = strokeWidth;
+		RectF rect = new RectF(strokeWidth, strokeWidth, bounds.right - strokeWidth, bounds.bottom - strokeWidth);
 		if (tableViewStyle == ATableViewStyle.Plain) {
-			sideMargin = 0;
-		}
-		
-		RectF rect = new RectF(sideMargin, strokeWidth, bounds.right - sideMargin, bounds.bottom + strokeWidth);
-		if (backgroundStyle == ATableViewCellBackgroundStyle.Single ||
-			backgroundStyle == ATableViewCellBackgroundStyle.Bottom) {
-			rect.bottom = bounds.bottom - strokeWidth;
+			if (backgroundStyle == ATableViewCellBackgroundStyle.Bottom ||
+				backgroundStyle == ATableViewCellBackgroundStyle.Single) {
+				rect.bottom += strokeWidth; 
+			}
+			rect.left = rect.top = 0; rect.right += strokeWidth;
+		} else {
+			if (backgroundStyle == ATableViewCellBackgroundStyle.Top ||
+				backgroundStyle == ATableViewCellBackgroundStyle.Middle) {
+				rect.bottom += strokeWidth;
+			}
 		}
 		
 		return rect;

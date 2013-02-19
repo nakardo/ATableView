@@ -178,10 +178,15 @@ public class ATableViewAdapter extends BaseAdapter {
 	private int getRowHeight(NSIndexPath indexPath) {
 		Resources res = mTableView.getContext().getResources();
 		
-		// bottom and single rows have double line, so we've to add extra line to row
-		// height to keep same aspect.
 		int rowHeight = mRowsHeight.get(indexPath.getSection()).get(indexPath.getRow());
-		if (isSingleRow(indexPath) || isBottomRow(indexPath)) {
+		if (mTableView.getStyle() == ATableViewStyle.Plain) {
+			if (!isBottomRow(indexPath) && !isSingleRow(indexPath)) {
+				rowHeight += (int) ATableViewCellDrawable.CELL_STROKE_WIDTH_DP;
+			}
+		} else {
+			if (isBottomRow(indexPath) || isSingleRow(indexPath)) {
+				rowHeight += (int) ATableViewCellDrawable.CELL_STROKE_WIDTH_DP;
+			}
 			rowHeight += (int) ATableViewCellDrawable.CELL_STROKE_WIDTH_DP;
 		}
 		
