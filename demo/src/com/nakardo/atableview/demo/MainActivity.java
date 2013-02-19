@@ -7,6 +7,8 @@ import java.util.List;
 import android.app.Activity;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -34,6 +36,9 @@ public class MainActivity extends Activity {
 		"La Rioja is sometimes considered part of Cuyo region instead of the Northwest.", null,
 		null, null
 	};
+	
+	private ATableView mTableView;
+	private ATableViewStyle mTableViewStyle = ATableViewStyle.Plain;
 	
 	private static List<List<String>> createProvincesList() {
 		List<List<String>> provinces = new ArrayList<List<String>>();
@@ -63,6 +68,42 @@ public class MainActivity extends Activity {
 		return capitals;
 	}
 	
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		switch (item.getItemId()) {
+			case R.id.plain:
+				mTableViewStyle = ATableViewStyle.Plain;
+				break;
+			case R.id.grouped:
+				mTableViewStyle = ATableViewStyle.Grouped;
+				break;
+			default:
+				return super.onOptionsItemSelected(item);
+		}
+		
+		FrameLayout container = (FrameLayout)findViewById(android.R.id.content);
+		container.removeView(mTableView);
+		
+		createTableView();
+		
+		return true;
+	}
+	
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		getMenuInflater().inflate(R.menu.main_menu, menu);
+		return true;
+	}
+	
+	private void createTableView() {
+		mTableView = new ATableView(mTableViewStyle, this);
+        mTableView.setDataSource(new SampleATableViewDataSource());
+        mTableView.setDelegate(new SampleATableViewDelegate());
+        
+        FrameLayout container = (FrameLayout)findViewById(android.R.id.content);
+        container.addView(mTableView);
+	}
+	
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -71,12 +112,7 @@ public class MainActivity extends Activity {
         mCapitals = createCapitalsList();
         mProvinces = createProvincesList();
         
-        ATableView tableView = new ATableView(ATableViewStyle.Grouped, this);
-        tableView.setDataSource(new SampleATableViewDataSource());
-        tableView.setDelegate(new SampleATableViewDelegate());
-        
-        FrameLayout container = (FrameLayout)findViewById(android.R.id.content);
-        container.addView(tableView);
+        createTableView();
     }
 
     private Drawable getDrawableForRow(int row) {
