@@ -71,7 +71,7 @@ public class ATableViewAdapter extends BaseAdapter {
 					dataSource.titleForFooterInSection(mTableView, s) != null) {
 					hasFooter = true;
 				}
-				mFootersHeight.add(headerHeight);
+				mFootersHeight.add(footerHeight);
 				mHasFooter.add(hasFooter);
 				
 				// pull row count from datasource.
