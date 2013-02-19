@@ -71,7 +71,7 @@ public class MainActivity extends Activity {
         mCapitals = createCapitalsList();
         mProvinces = createProvincesList();
         
-        ATableView tableView = new ATableView(ATableViewStyle.Plain, this);
+        ATableView tableView = new ATableView(ATableViewStyle.Grouped, this);
         tableView.setDataSource(new SampleATableViewDataSource());
         tableView.setDelegate(new SampleATableViewDelegate());
         
@@ -186,22 +186,12 @@ public class MainActivity extends Activity {
 		
 		@Override
 		public String titleForHeaderInSection(ATableView tableView, int section) {
-			String text = mRegions[section];
-			if (text != null) {
-				return "HEADER: " + text;
-			}
-			
-			return null;
+			return mRegions[section];
 		}
 		
 		@Override
 		public String titleForFooterInSection(ATableView tableView, int section) {
-			String text = mNotes[section];
-			if (text != null) {
-				return "FOOTER: " + text;
-			}
-			
-			return null;
+			return mNotes[section];
 		}
 		
 		@Override

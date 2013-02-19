@@ -121,10 +121,26 @@ public class ATableViewAdapter extends BaseAdapter {
 		return null;
 	}
 	
+	public boolean hasHeader(int section) {
+		if (mTableView.getStyle() == ATableViewStyle.Grouped) {
+			return true;
+		}
+		
+		return mHasHeader.get(section);
+	}
+	
+	public boolean hasFooter(int section) {
+		if (mTableView.getStyle() == ATableViewStyle.Grouped) {
+			return true;
+		}
+		
+		return mHasFooter.get(section);
+	}
+	
 	public boolean isHeaderRow(int position) {
 		int sections = mRows.size();
 		for (int s = 0; s < sections; s++) {
-			if (mHasHeader.get(s) && position == 0) {
+			if (hasHeader(s) && position == 0) {
 				return true;
 			}
 			position -= mRows.get(s) + getHeaderFooterCountOffset(s);
@@ -139,7 +155,7 @@ public class ATableViewAdapter extends BaseAdapter {
 		int sections = mRows.size();
 		for (int s = 0; s < sections; s++) {
 			positionWithOffset += mRows.get(s) + getHeaderFooterCountOffset(s);
-			if (mHasFooter.get(s) && position - positionWithOffset == -1) {
+			if (hasFooter(s) && position - positionWithOffset == -1) {
 				return true;
 			}
 		}
@@ -354,7 +370,7 @@ public class ATableViewAdapter extends BaseAdapter {
 	}
 	
 	public int getHeaderFooterCountOffset(int section) {
-		return (mHasHeader.get(section) ? 1 : 0) + (mHasFooter.get(section) ? 1 : 0);
+		return (hasHeader(section) ? 1 : 0) + (hasFooter(section) ? 1 : 0);
 	}
 	
 	@Override
