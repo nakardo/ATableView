@@ -68,6 +68,15 @@ public class MainActivity extends Activity {
 		return capitals;
 	}
 	
+	private void createTableView() {
+		mTableView = new ATableView(mTableViewStyle, this);
+        mTableView.setDataSource(new SampleATableViewDataSource());
+        mTableView.setDelegate(new SampleATableViewDelegate());
+        
+        FrameLayout container = (FrameLayout)findViewById(android.R.id.content);
+        container.addView(mTableView);
+	}
+	
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
@@ -95,13 +104,9 @@ public class MainActivity extends Activity {
 		return true;
 	}
 	
-	private void createTableView() {
-		mTableView = new ATableView(mTableViewStyle, this);
-        mTableView.setDataSource(new SampleATableViewDataSource());
-        mTableView.setDelegate(new SampleATableViewDelegate());
-        
-        FrameLayout container = (FrameLayout)findViewById(android.R.id.content);
-        container.addView(mTableView);
+	@Override
+	public Object onRetainNonConfigurationInstance() {
+		return mTableViewStyle;
 	}
 	
     @Override
@@ -111,6 +116,9 @@ public class MainActivity extends Activity {
         
         mCapitals = createCapitalsList();
         mProvinces = createProvincesList();
+        
+        ATableViewStyle style = (ATableViewStyle) getLastNonConfigurationInstance();
+        if (style != null) mTableViewStyle = style;
         
         createTableView();
     }
