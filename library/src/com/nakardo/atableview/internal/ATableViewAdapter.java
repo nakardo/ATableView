@@ -28,8 +28,8 @@ import com.nakardo.atableview.view.ATableViewCell;
 import com.nakardo.atableview.view.ATableViewCell.ATableViewCellSelectionStyle;
 
 public class ATableViewAdapter extends BaseAdapter {
-	private static final int ADDITIONAL_ROWS_PER_SECTION = 2;
-	
+	private List<Boolean> mHasHeader;
+	private List<Boolean> mHasFooter;
 	private List<Integer> mHeadersHeight;
 	private List<Integer> mFootersHeight;
 	private List<Integer> mRows;
@@ -38,6 +38,8 @@ public class ATableViewAdapter extends BaseAdapter {
 	private ATableView mTableView;
 
 	private void initialize() {
+		mHasHeader = new ArrayList<Boolean>();
+		mHasFooter = new ArrayList<Boolean>();
 		mHeadersHeight = new ArrayList<Integer>();
 		mFootersHeight = new ArrayList<Integer>();
 		mRows = new ArrayList<Integer>();
@@ -52,12 +54,32 @@ public class ATableViewAdapter extends BaseAdapter {
 		if (dataSource != null) {
 			sections = dataSource.numberOfSectionsInTableView(mTableView);
 			for (int s = 0; s < sections; s++) {
-				mHeadersHeight.add(delegate.heightForHeaderInSection(mTableView, s));
-				mFootersHeight.add(delegate.heightForFooterInSection(mTableView, s));
+				Boolean hasHeader = false, hasFooter = false;
+				
+				// mark header if overridden in delegate, otherwise try to pull title instead.
+				int headerHeight = delegate.heightForHeaderInSection(mTableView, s);
+				if (headerHeight != ATableViewCell.LayoutParams.UNDEFINED ||
+					dataSource.titleForHeaderInSection(mTableView, s) != null) {
+					hasHeader = true;
+				}
+				mHeadersHeight.add(headerHeight);
+				mHasHeader.add(hasHeader);
+				
+				// mark footer if overridden in delegate, otherwise try to pull title instead.
+				int footerHeight = delegate.heightForFooterInSection(mTableView, s);
+				if (footerHeight != ATableViewCell.LayoutParams.UNDEFINED ||
+					dataSource.titleForFooterInSection(mTableView, s) != null) {
+					hasFooter = true;
+				}
+				mFootersHeight.add(headerHeight);
+				mHasFooter.add(hasFooter);
+				
+				// pull row count from datasource.
 				mRows.add(dataSource.numberOfRowsInSection(mTableView, s));
 				
 				List<Integer> sectionRowHeights = new ArrayList<Integer>();
 				
+				// pull row heights.
 				int rows = mRows.get(s);
 				for (int r = 0; r < rows; r++) {
 					NSIndexPath indexPath = NSIndexPath.indexPathForRowInSection(r, s);
@@ -86,13 +108,13 @@ public class ATableViewAdapter extends BaseAdapter {
 		for (int s = 0; s < sections; s++) {
 			int rows = mRows.get(s);
 			
-			limit += rows + ADDITIONAL_ROWS_PER_SECTION;
+			limit += rows + getHeaderFooterCountOffset(s);
 			if (position < limit) {
 				// offset is given by current pos, accumulated headers, footers and rows.
 				int positionWithOffset = position - offset - count;
 				return NSIndexPath.indexPathForRowInSection(positionWithOffset, s);
 			}
-			offset += ADDITIONAL_ROWS_PER_SECTION;
+			offset += getHeaderFooterCountOffset(s);
 			count += rows;
 		}
 		
@@ -102,10 +124,10 @@ public class ATableViewAdapter extends BaseAdapter {
 	public boolean isHeaderRow(int position) {
 		int sections = mRows.size();
 		for (int s = 0; s < sections; s++) {
-			if (position == 0) {
+			if (mHasHeader.get(s) && position == 0) {
 				return true;
 			}
-			position -= mRows.get(s) + ADDITIONAL_ROWS_PER_SECTION;
+			position -= mRows.get(s) + getHeaderFooterCountOffset(s);
 		}
 		
 		return false;
@@ -116,8 +138,8 @@ public class ATableViewAdapter extends BaseAdapter {
 		
 		int sections = mRows.size();
 		for (int s = 0; s < sections; s++) {
-			positionWithOffset += mRows.get(s) + ADDITIONAL_ROWS_PER_SECTION;
-			if (position - positionWithOffset == -1) {
+			positionWithOffset += mRows.get(s) + getHeaderFooterCountOffset(s);
+			if (mHasFooter.get(s) && position - positionWithOffset == -1) {
 				return true;
 			}
 		}
@@ -151,20 +173,28 @@ public class ATableViewAdapter extends BaseAdapter {
 	}
 	
 	private int getHeaderFooterRowHeight(NSIndexPath indexPath, boolean isFooterRow) {
-		ATableViewDelegate delegate = mTableView.getDelegate();
+		Resources res = mTableView.getResources();
 		int section = indexPath.getSection();
 		
-		// pull height, it will default on delegate to WRAP_CONTENT if not overridden.
-		int rowHeight = ListView.LayoutParams.WRAP_CONTENT;
+		// pull height, it will default on delegate to UNDEFINED if not overridden.
+		int rowHeight = ATableViewCell.LayoutParams.UNDEFINED;
 		if (isFooterRow) {
-			rowHeight = delegate.heightForFooterInSection(mTableView, section);
+			rowHeight = mFootersHeight.get(section);
 		} else {
-			rowHeight = delegate.heightForHeaderInSection(mTableView, section);
+			rowHeight = mHeadersHeight.get(section);
 		}
 		
-		// calculate dips when overridden.
-		if (rowHeight != ListView.LayoutParams.WRAP_CONTENT) {
-			Resources res = mTableView.getResources();
+		// if undefined, set a valid height depending on table style, otherwise use overridden value.
+		if (rowHeight == ATableViewCell.LayoutParams.UNDEFINED) {
+			if (mTableView.getStyle() == ATableViewStyle.Plain) {
+				rowHeight = (int) res.getDimension(R.dimen.atv_plain_section_header_height);
+			} else {
+				rowHeight = ListView.LayoutParams.WRAP_CONTENT;
+			}
+		}
+		
+		// convert row height value when an scalar was used.
+		if (rowHeight > -1) {
 			rowHeight = (int) (rowHeight * res.getDisplayMetrics().density);
 		}
 		
@@ -302,11 +332,38 @@ public class ATableViewAdapter extends BaseAdapter {
 		}
 	}
 	
+	public int getHeaderFooterStyleCount() {
+		int count = 0;
+		
+		// check if we've a header or a footer at least.
+		int s = 0;
+		while (count < 2 && s < mRows.size()) {
+			int offset = getHeaderFooterCountOffset(s);
+			if (offset > count) count = offset;
+			s++;
+		}
+		
+		// only grouped style tables has different header and footer style.
+		if (mTableView.getStyle() == ATableViewStyle.Grouped && count > 1) {
+			return 2;
+		} else if (count > 0) {
+			return 1;
+		}
+		
+		return 0;
+	}
+	
+	public int getHeaderFooterCountOffset(int section) {
+		return (mHasHeader.get(section) ? 1 : 0) + (mHasFooter.get(section) ? 1 : 0);
+	}
+	
 	@Override
 	public int getCount() {
 		int count = 0;
-		for (int i = 0; i < mRows.size(); i++) {
-			count += mRows.get(i) + ADDITIONAL_ROWS_PER_SECTION;
+		
+		// count is given by number of rows in section plus its header & footer.
+		for (int s = 0; s < mRows.size(); s++) {
+			count += mRows.get(s) + getHeaderFooterCountOffset(s);
 		}
 		
 		return count;
@@ -316,8 +373,8 @@ public class ATableViewAdapter extends BaseAdapter {
 	public int getViewTypeCount() {
 		ATableViewDataSource dataSource = mTableView.getDataSource();
 	    if (dataSource instanceof ATableViewDataSourceExt) {
-	    	// TODO: additional style for header and footers. Also custom header should be handled here when supported.
-			return ((ATableViewDataSourceExt) dataSource).numberOfRowStyles() + ADDITIONAL_ROWS_PER_SECTION;
+	    	// TODO: additional styles for header and footers. Also custom header should be handled here when supported.
+			return ((ATableViewDataSourceExt) dataSource).numberOfRowStyles() + getHeaderFooterStyleCount();
 		}
 	    
 	    return 1;
@@ -325,10 +382,10 @@ public class ATableViewAdapter extends BaseAdapter {
 	
 	@Override
 	public int getItemViewType(int position) {
-		if (isHeaderRow(position)) {
-			return getViewTypeCount() - 2; // additional style for headers.
-		} else if (isFooterRow(position)) {
-			return getViewTypeCount() - 1; // additional style for footers.
+		if (isHeaderRow(position) && mTableView.getStyle() == ATableViewStyle.Grouped) {
+			return getViewTypeCount() - 2; // additional style for groped headers.
+		} else if (isHeaderRow(position) || isFooterRow(position)) {
+			return getViewTypeCount() - 1; // for plain tables, headers and footers share same style.
 		} else {
 			ATableViewDataSource dataSource = mTableView.getDataSource();
 			if (dataSource instanceof ATableViewDataSourceExt) {

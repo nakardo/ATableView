@@ -20,8 +20,7 @@ public class ATableViewCell extends FrameLayout {
 	private TextView mDetailTextLabel;
 	private ImageView mImageView;
 	private int mBackgroundColor = getResources().getColor(R.color.atv_cell_background);
-	private ATableViewCellAccessoryType mAccessoryType = ATableViewCellAccessoryType.None;
-//	private View mAccessoryView;
+	private ATableViewCellAccessoryType mAccessoryType = ATableViewCellAccessoryType.None;;
 	private ATableViewCellSelectionStyle mSelectionStyle = ATableViewCellSelectionStyle.Blue;
 	
 	protected int getLayout(ATableViewCellStyle style) {
@@ -85,21 +84,15 @@ public class ATableViewCell extends FrameLayout {
 		ATableViewCellAccessoryView.setup(this, accessoryType);
 	}
 	
-	/*
-	public View getAccessoryView() {
-		return mAccessoryView;
-	}
-	
-	public void setAccessoryView(View accessoryView) {
-		mAccessoryView = accessoryView;
-	}
-	*/
-	
 	public ATableViewCellSelectionStyle getSelectionStyle() {
 		return mSelectionStyle;
 	}
 	
 	public void setSelectionStyle(ATableViewCellSelectionStyle selectionStyle) {
 		mSelectionStyle = selectionStyle;
+	}
+	
+	public class LayoutParams {
+		public static final int UNDEFINED = -3;
 	}
 }
