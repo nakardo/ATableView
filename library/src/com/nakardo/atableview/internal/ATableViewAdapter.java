@@ -26,6 +26,7 @@ import com.nakardo.atableview.view.ATableView;
 import com.nakardo.atableview.view.ATableView.ATableViewStyle;
 import com.nakardo.atableview.view.ATableViewCell;
 import com.nakardo.atableview.view.ATableViewCell.ATableViewCellSelectionStyle;
+import com.nakardo.atableview.view.ATableViewCell.ATableViewCellSeparatorStyle;
 
 public class ATableViewAdapter extends BaseAdapter {
 	private List<Boolean> mHasHeader;
@@ -184,7 +185,9 @@ public class ATableViewAdapter extends BaseAdapter {
 				rowHeight += (int) ATableViewCellDrawable.CELL_STROKE_WIDTH_DP;
 			}
 		} else {
-			if (isBottomRow(indexPath) || isSingleRow(indexPath)) {
+			if (mTableView.getSeparatorStyle() == ATableViewCellSeparatorStyle.SingleLineEtched && isBottomRow(indexPath)) {
+				rowHeight += (int) ATableViewCellDrawable.CELL_STROKE_WIDTH_DP * 2;
+			} else if (isBottomRow(indexPath) || isSingleRow(indexPath)) {
 				rowHeight += (int) ATableViewCellDrawable.CELL_STROKE_WIDTH_DP;
 			}
 			rowHeight += (int) ATableViewCellDrawable.CELL_STROKE_WIDTH_DP;
@@ -220,6 +223,21 @@ public class ATableViewAdapter extends BaseAdapter {
 		}
 		
 		return rowHeight;
+	}
+	
+	private int getRowBackgroundColor(ATableViewCell cell) {
+		Resources res = mTableView.getResources();
+		
+		// pull cell color, -1 implies color has not being defined so we'll go with the defaults.
+		int color = cell.getBackgroundColor();
+		if (color == -1) {
+			color = res.getColor(R.color.atv_cell_plain_background);
+			if (mTableView.getStyle() == ATableViewStyle.Grouped) {
+				color = res.getColor(R.color.atv_cell_grouped_background);
+			}
+		}
+		
+		return color;
 	}
 	
 	private ATableViewHeaderFooterCell getReusableHeaderFooterCell(View convertView, boolean isFooterRow) {
@@ -275,8 +293,6 @@ public class ATableViewAdapter extends BaseAdapter {
 			// hide header or footer text if it's null.
 			int visibility = headerText != null && headerText.length() > 0 ? View.VISIBLE : View.GONE;
 			textLabel.setVisibility(visibility);
-		} else if (tableViewStyle == ATableViewStyle.Plain) {
-			
 		}
 		
 		// setup layout height.
@@ -312,7 +328,7 @@ public class ATableViewAdapter extends BaseAdapter {
 		}
 		
 		// setup background drawables.
-		ShapeDrawable normal = new ATableViewCellDrawable(mTableView, backgroundStyle, cell.getBackgroundColor());
+		ShapeDrawable normal = new ATableViewCellDrawable(mTableView, backgroundStyle, getRowBackgroundColor(cell));
 		StateListDrawable drawable = new StateListDrawable();
 		
 		Resources res = mTableView.getContext().getResources();
@@ -323,13 +339,13 @@ public class ATableViewAdapter extends BaseAdapter {
 			int startColor = res.getColor(R.color.atv_cell_selection_style_blue_start);
 			int endColor = res.getColor(R.color.atv_cell_selection_style_blue_end);
 			
-			ShapeDrawable pressed = new ATableViewCellDrawable(mTableView, backgroundStyle, rowHeight, startColor, endColor);
 			if (selectionStyle == ATableViewCellSelectionStyle.Gray) {
 				startColor = res.getColor(R.color.atv_cell_selection_style_gray_start);
 				endColor = res.getColor(R.color.atv_cell_selection_style_gray_end);
-				
-				pressed = new ATableViewCellDrawable(mTableView, backgroundStyle, rowHeight, startColor, endColor);
 			}
+			
+			ShapeDrawable pressed = new ATableViewCellDrawable(mTableView, backgroundStyle, getRowBackgroundColor(cell),
+					startColor, endColor, rowHeight);
 			
 			drawable.addState(new int[] { android.R.attr.state_pressed }, pressed);
 			drawable.addState(new int[] { android.R.attr.state_focused }, pressed);

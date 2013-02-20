@@ -70,6 +70,7 @@ public class MainActivity extends Activity {
 	
 	private void createTableView() {
 		mTableView = new ATableView(mTableViewStyle, this);
+		mTableView.setSeparatorStyle(ATableViewCell.ATableViewCellSeparatorStyle.SingleLineEtched);
         mTableView.setDataSource(new SampleATableViewDataSource());
         mTableView.setDelegate(new SampleATableViewDelegate());
         

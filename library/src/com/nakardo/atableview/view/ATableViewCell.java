@@ -14,12 +14,13 @@ import com.nakardo.atableview.internal.ATableViewCellAccessoryView.ATableViewCel
 public class ATableViewCell extends FrameLayout {
 	public enum ATableViewCellStyle { Default, Subtitle, Value1, Value2 };
 	public enum ATableViewCellSelectionStyle { None, Blue, Gray };
+	public enum ATableViewCellSeparatorStyle { None, SingleLine, SingleLineEtched };
 	
 	private String mReuseIdentifier;
 	private TextView mTextLabel;
 	private TextView mDetailTextLabel;
 	private ImageView mImageView;
-	private int mBackgroundColor = getResources().getColor(R.color.atv_cell_background);
+	private int mBackgroundColor = -1;
 	private ATableViewCellAccessoryType mAccessoryType = ATableViewCellAccessoryType.None;;
 	private ATableViewCellSelectionStyle mSelectionStyle = ATableViewCellSelectionStyle.Blue;
 	

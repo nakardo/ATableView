@@ -11,10 +11,12 @@ import com.nakardo.atableview.internal.ATableViewAdapter;
 import com.nakardo.atableview.internal.ATableViewCellClickListener;
 import com.nakardo.atableview.protocol.ATableViewDataSource;
 import com.nakardo.atableview.protocol.ATableViewDelegate;
+import com.nakardo.atableview.view.ATableViewCell.ATableViewCellSeparatorStyle;
 
 public class ATableView extends ListView {
 	private static final ATableViewStyle DEFAULT_STYLE = ATableViewStyle.Plain;
 	
+	private ATableViewCellSeparatorStyle mSeparatorStyle = ATableViewCellSeparatorStyle.SingleLine;
 	private int mSeparatorColor = getResources().getColor(R.color.atv_separator);
 	private ATableViewStyle mStyle = DEFAULT_STYLE;
 	private ATableViewDataSource mDataSource;
@@ -47,6 +49,14 @@ public class ATableView extends ListView {
 		super(context, attrs, defStyle);
 	}
 
+	public ATableViewCellSeparatorStyle getSeparatorStyle() {
+		return mSeparatorStyle;
+	}
+	
+	public void setSeparatorStyle(ATableViewCellSeparatorStyle separatorStyle) {
+		mSeparatorStyle = separatorStyle;
+	}
+	
 	public int getSeparatorColor() {
 		return mSeparatorColor;
 	}

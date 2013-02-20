@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <!-- ATableView -->
-    <color name="atv_separator">#CCCCCC</color>
+    <color name="atv_separator">#9B9B9B</color>
     
     <!-- ATableView plain header -->
     <color name="atv_plain_section_header_text">#555555</color>
@@ -10,7 +10,10 @@
     <color name="atv_grouped_section_header_text">#4C566C</color>
     
     <!-- ATableViewCell -->
-    <color name="atv_cell_background">#FFFFFF</color>
+    <color name="atv_cell_plain_background">#FFFFFF</color>
+    <color name="atv_cell_grouped_background">#F5F5F5</color>
+    <color name="atv_cell_grouped_top_cell_etched_line">#D9D9D9</color>
+    <color name="atv_cell_grouped_etched_line">#FFFFFF</color>
     
     <!-- ATableViewCellSelectionStyle.Blue -->
     <color name="atv_cell_selection_style_blue_start">#058CF5</color>

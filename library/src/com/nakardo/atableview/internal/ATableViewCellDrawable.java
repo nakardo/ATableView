@@ -12,8 +12,11 @@ import android.graphics.drawable.ShapeDrawable;
 import android.graphics.drawable.shapes.RoundRectShape;
 import android.graphics.drawable.shapes.Shape;
 
+import com.nakardo.atableview.R;
 import com.nakardo.atableview.view.ATableView;
 import com.nakardo.atableview.view.ATableView.ATableViewStyle;
+import com.nakardo.atableview.view.ATableViewCell.ATableViewCellSeparatorStyle;
+import com.nakardo.atableview.view.ATableViewCell.ATableViewCellStyle;
 
 public class ATableViewCellDrawable extends ShapeDrawable {
 	public static final float CELL_STROKE_WIDTH_DP = 1f;
@@ -21,11 +24,14 @@ public class ATableViewCellDrawable extends ShapeDrawable {
 	
 	public enum ATableViewCellBackgroundStyle { Single, Top, Middle, Bottom };
 	
-	private ATableViewStyle mTableViewStyle;
+	private ATableView mTableView;
 	private ATableViewCellBackgroundStyle mCellBackgroundStyle;
-	private Paint mSeparatorPaint;
-	private Paint mBackgroundPaint;
 	private float mStrokeWidth;
+	
+	private Paint mSeparatorPaint;
+	private Paint mEtchedPaint;
+	private Paint mBackgroundPaint;
+	private Paint mSelectedPaint;
 	
 	private static RoundRectShape getShape(ATableView tableView, ATableViewCellBackgroundStyle backgroundStyle) {
 		ATableViewStyle tableStyle = tableView.getStyle();
@@ -47,40 +53,22 @@ public class ATableViewCellDrawable extends ShapeDrawable {
 		return new RoundRectShape(radius, null, null);
 	}
 	
-	private static RectF getDestinationRectF(Rect bounds, ATableViewStyle tableViewStyle,
-			ATableViewCellBackgroundStyle backgroundStyle, float strokeWidth) {
-		
-		RectF rect = new RectF(strokeWidth, strokeWidth, bounds.right - strokeWidth, bounds.bottom - strokeWidth);
-		if (tableViewStyle == ATableViewStyle.Plain) {
-			if (backgroundStyle == ATableViewCellBackgroundStyle.Bottom ||
-				backgroundStyle == ATableViewCellBackgroundStyle.Single) {
-				rect.bottom += strokeWidth; 
-			}
-			rect.left = rect.top = 0; rect.right += strokeWidth;
-		} else {
-			if (backgroundStyle == ATableViewCellBackgroundStyle.Top ||
-				backgroundStyle == ATableViewCellBackgroundStyle.Middle) {
-				rect.bottom += strokeWidth;
-			}
-		}
-		
-		return rect;
-	}
-	
 	public ATableViewCellDrawable(ATableView tableView, ATableViewCellBackgroundStyle backgroundStyle,
 			int backgroundColor) {
 		
 		super(getShape(tableView, backgroundStyle));
+		Resources res = tableView.getResources();
 		
-		mTableViewStyle = tableView.getStyle();
+		mTableView = tableView;
 		mCellBackgroundStyle = backgroundStyle;
 		
 		// separator.
 		mSeparatorPaint = new Paint(getPaint());
 		mSeparatorPaint.setColor(tableView.getSeparatorColor());
+//		mSeparatorPaint.setColor(0xFF990000);
 		
-		// stroke, use real stroke conversion use rounded with ceil to round up padding with content.
-		mStrokeWidth = CELL_STROKE_WIDTH_DP * tableView.getResources().getDisplayMetrics().density;
+		// calculate stroke width, use rounded with for padding only.
+		mStrokeWidth = CELL_STROKE_WIDTH_DP * res.getDisplayMetrics().density;
 		int roundedStrokeWidth = (int) Math.ceil(mStrokeWidth);
 		
 		// add padding to avoid content to overlap with cell stroke lines.
@@ -91,22 +79,104 @@ public class ATableViewCellDrawable extends ShapeDrawable {
 		}
 		setPadding(roundedStrokeWidth, roundedStrokeWidth, roundedStrokeWidth, marginBottom);
 		
+		// etched line, only for grouped tables, with SingleLineEtched style.
+		if (mTableView.getStyle() == ATableViewStyle.Grouped &&
+			mTableView.getSeparatorStyle() == ATableViewCellSeparatorStyle.SingleLineEtched) {
+		
+			int etchedLineColor = res.getColor(R.color.atv_cell_grouped_etched_line);
+			if (backgroundStyle == ATableViewCellBackgroundStyle.Top) {
+				etchedLineColor = res.getColor(R.color.atv_cell_grouped_top_cell_etched_line);
+			}
+			mEtchedPaint = new Paint();
+			mEtchedPaint.setColor(etchedLineColor);
+//			mEtchedPaint.setColor(0xDDEEAA00);
+		}
+		
 		// background.
 		mBackgroundPaint = new Paint(getPaint());
 		mBackgroundPaint.setColor(backgroundColor);
+//		mBackgroundPaint.setColor(0xDEDEDE00);
 	}
 	
 	public ATableViewCellDrawable(ATableView tableView, ATableViewCellBackgroundStyle backgroundStyle,
-			int rowHeight, int startColor, int endColor) {
+			int backgroundColor, int startColor, int endColor, int rowHeight) {
 		
-		this(tableView, backgroundStyle, startColor);
+		this(tableView, backgroundStyle, backgroundColor);
+		
+		// selected.
+		mSelectedPaint = new Paint(getPaint());
 		Shader shader = new LinearGradient(0, 0, 0, rowHeight, startColor, endColor, Shader.TileMode.MIRROR);
-		mBackgroundPaint.setShader(shader);	
+		mSelectedPaint.setShader(shader);	
+	}
+	
+	private Matrix getSeparatorPaintMatrix(Rect bounds) {
+		Matrix matrix = new Matrix();
+		if (mTableView.getStyle() == ATableViewStyle.Grouped && mCellBackgroundStyle == ATableViewCellBackgroundStyle.Bottom &&
+			mTableView.getSeparatorStyle() == ATableViewCellSeparatorStyle.SingleLineEtched) {
+			matrix.setRectToRect(new RectF(0, 0, bounds.right, bounds.bottom),
+	        		new RectF(0, 0, bounds.right, bounds.bottom - mStrokeWidth),
+	                Matrix.ScaleToFit.FILL);
+		}
+		
+		return matrix;
+	}
+	
+	private Matrix getEtchedPaintMatrix(Rect bounds) {
+		Matrix matrix = new Matrix();
+        matrix.setRectToRect(new RectF(0, 0, bounds.right, bounds.bottom),
+        		new RectF(mStrokeWidth, mStrokeWidth, bounds.right - mStrokeWidth, bounds.bottom),
+                Matrix.ScaleToFit.FILL);
+        
+        return matrix;
+	}
+	
+	private Matrix getBackgroundPaintMatrix(Rect bounds) {
+		ATableViewStyle tableViewStyle = mTableView.getStyle();
+		
+		RectF rect = new RectF(mStrokeWidth, mStrokeWidth, bounds.right - mStrokeWidth, bounds.bottom - mStrokeWidth);
+		if (tableViewStyle == ATableViewStyle.Plain) {
+			if (mCellBackgroundStyle == ATableViewCellBackgroundStyle.Bottom ||
+				mCellBackgroundStyle == ATableViewCellBackgroundStyle.Single) {
+				rect.bottom += mStrokeWidth; 
+			}
+			rect.left = rect.top = 0; rect.right += mStrokeWidth;
+		} else {
+			rect.top += mStrokeWidth;
+			if (mCellBackgroundStyle == ATableViewCellBackgroundStyle.Bottom &&
+				mTableView.getSeparatorStyle() == ATableViewCellSeparatorStyle.SingleLineEtched) {
+				rect.bottom -= mStrokeWidth;
+			} else if (mCellBackgroundStyle == ATableViewCellBackgroundStyle.Top ||
+				mCellBackgroundStyle == ATableViewCellBackgroundStyle.Middle) {
+				rect.bottom += mStrokeWidth;
+			}
+		}
+		
+		Matrix matrix = new Matrix();
+        matrix.setRectToRect(new RectF(0, 0, bounds.right, bounds.bottom), rect, Matrix.ScaleToFit.FILL);
+		return matrix;
 	}
 	
 	@Override
 	protected void onDraw(Shape shape, Canvas canvas, Paint paint) {
+		canvas.save();
+		Rect bounds = canvas.getClipBounds();
+		
+		// separator.
+		canvas.concat(getSeparatorPaintMatrix(bounds));
 		shape.draw(canvas, mSeparatorPaint);
+		
+        // etched.
+		canvas.concat(getEtchedPaintMatrix(bounds));
+		if (mEtchedPaint != null) shape.draw(canvas, mEtchedPaint);
+		
+		canvas.restore();
+		
+		// background.
+		canvas.concat(getBackgroundPaintMatrix(bounds));
+		shape.draw(canvas, mBackgroundPaint);
+		
+		/*
+		if (mEtchedPaint != null) shape.draw(canvas, mEtchedPaint);
 		
 		Rect bounds = canvas.getClipBounds();
 		
@@ -117,5 +187,6 @@ public class ATableViewCellDrawable extends ShapeDrawable {
         canvas.concat(matrix);
 		
         shape.draw(canvas, mBackgroundPaint);
+        if (mSelectedPaint != null) shape.draw(canvas, mSelectedPaint);*/
 	}
 }
