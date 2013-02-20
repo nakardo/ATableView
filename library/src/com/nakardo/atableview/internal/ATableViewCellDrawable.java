@@ -29,7 +29,8 @@ public class ATableViewCellDrawable extends ShapeDrawable {
 	private float mStrokeWidth;
 	
 	private Paint mSeparatorPaint;
-	private Paint mEtchedPaint;
+	private Paint mTopEtchedPaint;
+	private Paint mBottomEtchedPaint;
 	private Paint mBackgroundPaint;
 	private Paint mSelectedPaint;
 	
@@ -79,7 +80,7 @@ public class ATableViewCellDrawable extends ShapeDrawable {
 		}
 		setPadding(roundedStrokeWidth, roundedStrokeWidth, roundedStrokeWidth, marginBottom);
 		
-		// etched line, only for grouped tables, with SingleLineEtched style.
+		// etched lines, only for grouped tables, with SingleLineEtched style.
 		if (mTableView.getStyle() == ATableViewStyle.Grouped &&
 			mTableView.getSeparatorStyle() == ATableViewCellSeparatorStyle.SingleLineEtched) {
 		
@@ -87,9 +88,13 @@ public class ATableViewCellDrawable extends ShapeDrawable {
 			if (backgroundStyle == ATableViewCellBackgroundStyle.Top) {
 				etchedLineColor = res.getColor(R.color.atv_cell_grouped_top_cell_etched_line);
 			}
-			mEtchedPaint = new Paint();
-			mEtchedPaint.setColor(etchedLineColor);
-//			mEtchedPaint.setColor(0xDDEEAA00);
+			mTopEtchedPaint = new Paint(getPaint());
+			mTopEtchedPaint.setColor(etchedLineColor);
+//			mTopEtchedPaint.setColor(0xDDEEAA00);
+			
+			mBottomEtchedPaint = new Paint(getPaint());
+			mBottomEtchedPaint.setColor(etchedLineColor);
+//			mBottomEtchedPaint.setColor(0xDDEEAA00);
 		}
 		
 		// background.
@@ -121,12 +126,15 @@ public class ATableViewCellDrawable extends ShapeDrawable {
 		return matrix;
 	}
 	
-	private Matrix getEtchedPaintMatrix(Rect bounds) {
+	private Matrix getTopEtchedPaintMatrix(Rect bounds) {
+		RectF rect = new RectF(mStrokeWidth, mStrokeWidth, bounds.right - mStrokeWidth, bounds.bottom);
+		if (mCellBackgroundStyle == ATableViewCellBackgroundStyle.Bottom &&
+			mTableView.getSeparatorStyle() == ATableViewCellSeparatorStyle.SingleLineEtched) {
+			rect.bottom -= mStrokeWidth * 2;
+		}
+		
 		Matrix matrix = new Matrix();
-        matrix.setRectToRect(new RectF(0, 0, bounds.right, bounds.bottom),
-        		new RectF(mStrokeWidth, mStrokeWidth, bounds.right - mStrokeWidth, bounds.bottom),
-                Matrix.ScaleToFit.FILL);
-        
+		matrix.setRectToRect(new RectF(0, 0, bounds.right, bounds.bottom), rect, Matrix.ScaleToFit.FILL);
         return matrix;
 	}
 	
@@ -161,19 +169,24 @@ public class ATableViewCellDrawable extends ShapeDrawable {
 		canvas.save();
 		Rect bounds = canvas.getClipBounds();
 		
+		// bottom etched line.
+		if (mBottomEtchedPaint != null) shape.draw(canvas, mBottomEtchedPaint);
+		canvas.restore(); canvas.save();	
+		
 		// separator.
 		canvas.concat(getSeparatorPaintMatrix(bounds));
 		shape.draw(canvas, mSeparatorPaint);
+		canvas.restore(); canvas.save();
 		
-        // etched.
-		canvas.concat(getEtchedPaintMatrix(bounds));
-		if (mEtchedPaint != null) shape.draw(canvas, mEtchedPaint);
-		
-		canvas.restore();
+        // top etched line.
+		canvas.concat(getTopEtchedPaintMatrix(bounds));
+		if (mTopEtchedPaint != null) shape.draw(canvas, mTopEtchedPaint);
+		canvas.restore(); canvas.save();
 		
 		// background.
 		canvas.concat(getBackgroundPaintMatrix(bounds));
 		shape.draw(canvas, mBackgroundPaint);
+		canvas.restore();
 		
 		/*
 		if (mEtchedPaint != null) shape.draw(canvas, mEtchedPaint);
