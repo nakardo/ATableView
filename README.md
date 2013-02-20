@@ -228,7 +228,6 @@ Both **Roboto-Regular.ttf** and **Roboto-Bold.ttf** are included on the demo pro
 ## Roadmap
 
 * Support for pinned headers & footers in UITableViewPlainStyle.
-* Add UITableViewCellSeparatorStyleSingleLineEtched table style.
 * Support for creating the table from layout.
 * ATableViewActivity and ATableViewFragment classes.
 * More.
