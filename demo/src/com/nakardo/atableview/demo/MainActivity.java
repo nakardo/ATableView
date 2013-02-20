@@ -22,6 +22,7 @@ import com.nakardo.atableview.view.ATableView;
 import com.nakardo.atableview.view.ATableView.ATableViewStyle;
 import com.nakardo.atableview.view.ATableViewCell;
 import com.nakardo.atableview.view.ATableViewCell.ATableViewCellSelectionStyle;
+import com.nakardo.atableview.view.ATableViewCell.ATableViewCellSeparatorStyle;
 import com.nakardo.atableview.view.ATableViewCell.ATableViewCellStyle;
 
 public class MainActivity extends Activity {
@@ -39,6 +40,7 @@ public class MainActivity extends Activity {
 	
 	private ATableView mTableView;
 	private ATableViewStyle mTableViewStyle = ATableViewStyle.Grouped;
+	private ATableViewCellSeparatorStyle mTableViewSeparatorStyle = ATableViewCellSeparatorStyle.SingleLineEtched;
 	
 	private static List<List<String>> createProvincesList() {
 		List<List<String>> provinces = new ArrayList<List<String>>();
@@ -70,7 +72,7 @@ public class MainActivity extends Activity {
 	
 	private void createTableView() {
 		mTableView = new ATableView(mTableViewStyle, this);
-		mTableView.setSeparatorStyle(ATableViewCell.ATableViewCellSeparatorStyle.SingleLineEtched);
+		mTableView.setSeparatorStyle(mTableViewSeparatorStyle);
         mTableView.setDataSource(new SampleATableViewDataSource());
         mTableView.setDelegate(new SampleATableViewDelegate());
         
@@ -81,8 +83,13 @@ public class MainActivity extends Activity {
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
-			case R.id.grouped:
+			case R.id.grouped_etched:
 				mTableViewStyle = ATableViewStyle.Grouped;
+				mTableViewSeparatorStyle = ATableViewCellSeparatorStyle.SingleLineEtched;
+				break;
+			case R.id.grouped_single:
+				mTableViewStyle = ATableViewStyle.Grouped;
+				mTableViewSeparatorStyle = ATableViewCellSeparatorStyle.SingleLine;
 				break;
 			case R.id.plain:
 				mTableViewStyle = ATableViewStyle.Plain;
@@ -107,7 +114,7 @@ public class MainActivity extends Activity {
 	
 	@Override
 	public Object onRetainNonConfigurationInstance() {
-		return mTableViewStyle;
+		return new ConfigurationHolder(this);
 	}
 	
     @Override
@@ -118,8 +125,11 @@ public class MainActivity extends Activity {
         mCapitals = createCapitalsList();
         mProvinces = createProvincesList();
         
-        ATableViewStyle style = (ATableViewStyle) getLastNonConfigurationInstance();
-        if (style != null) mTableViewStyle = style;
+        ConfigurationHolder holder = (ConfigurationHolder) getLastNonConfigurationInstance();
+        if (holder != null) {
+        	mTableViewStyle = holder.tableViewStyle;
+        	mTableViewSeparatorStyle = holder.tableViewSeparatorStyle;
+		}
         
         createTableView();
     }
@@ -276,6 +286,16 @@ public class MainActivity extends Activity {
 			String text = "Tapped DisclosureButton at indexPath [" + indexPath.getSection() + "," + indexPath.getRow() + "]";
 			Toast toast = Toast.makeText(getApplicationContext(), text, Toast.LENGTH_SHORT);
 			toast.show();
+		}
+	}
+	
+	private static class ConfigurationHolder {
+		public ATableViewStyle tableViewStyle;
+		public ATableViewCellSeparatorStyle tableViewSeparatorStyle;
+		
+		public ConfigurationHolder(MainActivity activity) {
+			tableViewStyle = activity.mTableViewStyle;
+			tableViewSeparatorStyle = activity.mTableViewSeparatorStyle;
 		}
 	}
 }

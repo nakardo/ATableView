@@ -6,7 +6,6 @@ import android.view.View;
 import android.widget.HeaderViewListAdapter;
 import android.widget.ListView;
 
-import com.nakardo.atableview.R;
 import com.nakardo.atableview.internal.ATableViewAdapter;
 import com.nakardo.atableview.internal.ATableViewCellClickListener;
 import com.nakardo.atableview.protocol.ATableViewDataSource;
@@ -17,7 +16,7 @@ public class ATableView extends ListView {
 	private static final ATableViewStyle DEFAULT_STYLE = ATableViewStyle.Plain;
 	
 	private ATableViewCellSeparatorStyle mSeparatorStyle = ATableViewCellSeparatorStyle.SingleLine;
-	private int mSeparatorColor = getResources().getColor(R.color.atv_separator);
+	private int mSeparatorColor = -1;
 	private ATableViewStyle mStyle = DEFAULT_STYLE;
 	private ATableViewDataSource mDataSource;
 	private ATableViewDelegate mDelegate = new ATableViewDelegate();

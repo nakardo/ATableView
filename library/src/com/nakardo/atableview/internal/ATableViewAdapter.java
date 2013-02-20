@@ -185,11 +185,13 @@ public class ATableViewAdapter extends BaseAdapter {
 				rowHeight += (int) ATableViewCellDrawable.CELL_STROKE_WIDTH_DP;
 			}
 		} else {
-			if (mTableView.getSeparatorStyle() == ATableViewCellSeparatorStyle.SingleLineEtched && isBottomRow(indexPath)) {
-				rowHeight += (int) ATableViewCellDrawable.CELL_STROKE_WIDTH_DP * 2;
-			} else if (isBottomRow(indexPath) || isSingleRow(indexPath)) {
+			if (isBottomRow(indexPath) || isSingleRow(indexPath)) {
+				if (mTableView.getSeparatorStyle() == ATableViewCellSeparatorStyle.SingleLineEtched) {
+					rowHeight += (int) ATableViewCellDrawable.CELL_STROKE_WIDTH_DP;
+				}
 				rowHeight += (int) ATableViewCellDrawable.CELL_STROKE_WIDTH_DP;
 			}
+
 			rowHeight += (int) ATableViewCellDrawable.CELL_STROKE_WIDTH_DP;
 		}
 		

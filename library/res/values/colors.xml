@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <!-- ATableView -->
-    <color name="atv_separator">#9B9B9B</color>
+    <color name="atv_plain_separator">#D9D9D9</color>
+    <color name="atv_grouped_separator">#9B9B9B</color>
     
     <!-- ATableView plain header -->
     <color name="atv_plain_section_header_text">#555555</color>
