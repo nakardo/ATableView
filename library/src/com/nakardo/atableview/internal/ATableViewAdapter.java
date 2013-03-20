@@ -176,26 +176,34 @@ public class ATableViewAdapter extends BaseAdapter {
 		return indexPath.getRow() == mRows.get(indexPath.getSection()) - 1;
 	}
 	
-	private int getRowHeight(NSIndexPath indexPath) {
+	private int getRowHeight(NSIndexPath indexPath, ATableViewCell cell) {
 		Resources res = mTableView.getContext().getResources();
 		
+		// make height calculations only for valid values, exclude constants.
 		int rowHeight = mRowsHeight.get(indexPath.getSection()).get(indexPath.getRow());
-		if (mTableView.getStyle() == ATableViewStyle.Plain) {
-			if (!isBottomRow(indexPath) && !isSingleRow(indexPath)) {
-				rowHeight += (int) ATableViewCellDrawable.CELL_STROKE_WIDTH_DP;
-			}
-		} else {
-			if (isBottomRow(indexPath) || isSingleRow(indexPath)) {
-				if (mTableView.getSeparatorStyle() == ATableViewCellSeparatorStyle.SingleLineEtched) {
+		if (rowHeight > -1) {
+			if (mTableView.getStyle() == ATableViewStyle.Plain) {
+				if (!isBottomRow(indexPath) && !isSingleRow(indexPath)) {
 					rowHeight += (int) ATableViewCellDrawable.CELL_STROKE_WIDTH_DP;
 				}
+			} else {
+				if (isBottomRow(indexPath) || isSingleRow(indexPath)) {
+					if (mTableView.getSeparatorStyle() == ATableViewCellSeparatorStyle.SingleLineEtched) {
+						rowHeight += (int) ATableViewCellDrawable.CELL_STROKE_WIDTH_DP;
+					}
+					rowHeight += (int) ATableViewCellDrawable.CELL_STROKE_WIDTH_DP;
+				}
+
 				rowHeight += (int) ATableViewCellDrawable.CELL_STROKE_WIDTH_DP;
 			}
-
-			rowHeight += (int) ATableViewCellDrawable.CELL_STROKE_WIDTH_DP;
+			
+			rowHeight = (int) Math.ceil(rowHeight * res.getDisplayMetrics().density);
+		} else {
+			cell.measure(ListView.LayoutParams.MATCH_PARENT, ListView.LayoutParams.WRAP_CONTENT);
+			rowHeight = cell.getMeasuredHeight();
 		}
 		
-		return (int) Math.ceil(rowHeight * res.getDisplayMetrics().density);
+		return rowHeight;
 	}
 	
 	private int getHeaderFooterRowHeight(NSIndexPath indexPath, boolean isFooterRow) {
@@ -305,7 +313,7 @@ public class ATableViewAdapter extends BaseAdapter {
 	
 	private void setupRowLayout(ATableViewCell cell, NSIndexPath indexPath) {
 		Resources res = mTableView.getContext().getResources();
-		int rowHeight = getRowHeight(indexPath);
+		int rowHeight = getRowHeight(indexPath, cell);
 		
 		// add margins for grouped style.
 		if (mTableView.getStyle() == ATableViewStyle.Grouped) {
@@ -334,7 +342,7 @@ public class ATableViewAdapter extends BaseAdapter {
 		StateListDrawable drawable = new StateListDrawable();
 		
 		Resources res = mTableView.getContext().getResources();
-		int rowHeight = getRowHeight(indexPath);
+		int rowHeight = getRowHeight(indexPath, cell);
 		
 		ATableViewCellSelectionStyle selectionStyle = cell.getSelectionStyle();
 		if (selectionStyle != ATableViewCellSelectionStyle.None) {

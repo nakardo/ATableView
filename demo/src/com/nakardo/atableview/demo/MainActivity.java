@@ -11,6 +11,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -50,7 +51,8 @@ public class MainActivity extends Activity {
 		provinces.add(Arrays.asList(new String[] { "Misiones", "Entre Ríos", "Corrientes" }));
 		provinces.add(Arrays.asList(new String[] { "Córdoba", "Santa Fe", "La Pampa", "Buenos Aires" }));
 		provinces.add(Arrays.asList(new String[] { "San Juan", "La Rioja", "Mendoza", "San Luis" }));
-		provinces.add(Arrays.asList(new String[] { "Rio Negro", "Neuquén", "Chubut", "Santa Cruz", "Tierra del Fuego" }));
+		provinces.add(Arrays.asList(new String[] { "Este es un texto super largo que entra en varias lineas y que debería cambiar la altura del row, ya que pasamos WRAP_CONTENT en vez de pasar un alto fijo para la celda.",
+				"Neuquén", "Chubut", "Santa Cruz", "Tierra del Fuego" }));
 		provinces.add(Arrays.asList(new String[] { "Autonomous City of Buenos Aires" }));
 		
 		return provinces;
@@ -271,6 +273,10 @@ public class MainActivity extends Activity {
 		
 		@Override
 		public int heightForRowAtIndexPath(ATableView tableView, NSIndexPath indexPath) {
+			if (indexPath.getSection() == 5 && indexPath.getRow() == 0) {
+				return ListView.LayoutParams.WRAP_CONTENT;
+			}
+			
 			return 44;
 		}
 		
