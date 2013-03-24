@@ -33,6 +33,9 @@ public class ATableViewCellDrawable extends ShapeDrawable {
 	private Paint mBackgroundPaint;
 	private Paint mSelectedPaint;
 	
+	private int mStartColor;
+	private int mEndColor;
+	
 	private static RoundRectShape getShape(ATableView tableView, ATableViewCellBackgroundStyle backgroundStyle) {
 		ATableViewStyle tableStyle = tableView.getStyle();
 		
@@ -114,14 +117,14 @@ public class ATableViewCellDrawable extends ShapeDrawable {
 	}
 	
 	public ATableViewCellDrawable(ATableView tableView, ATableViewCellBackgroundStyle backgroundStyle,
-			int backgroundColor, int startColor, int endColor, int rowHeight) {
+			int startColor, int endColor) {
 		
-		this(tableView, backgroundStyle, backgroundColor);
+		this(tableView, backgroundStyle, android.R.color.transparent);
 		
 		// selected.
 		mSelectedPaint = new Paint(getPaint());
-		Shader shader = new LinearGradient(0, 0, 0, rowHeight, startColor, endColor, Shader.TileMode.MIRROR);
-		mSelectedPaint.setShader(shader);	
+		mStartColor = startColor;
+		mEndColor = endColor;	
 	}
 	
 	private boolean isGroupedDoubleLineEtchedRow() {
@@ -239,6 +242,13 @@ public class ATableViewCellDrawable extends ShapeDrawable {
 		
 		// selected.
 		canvas.concat(getSelectedPaintMatrix(bounds));
-		if (mSelectedPaint != null) shape.draw(canvas, mSelectedPaint);
+		if (mSelectedPaint != null) {
+			
+			// we'll set the selected color on onDraw event since we don't know drawable height up to here.
+			Shader shader = new LinearGradient(0, 0, 0, canvas.getHeight(), mStartColor, mEndColor, Shader.TileMode.MIRROR);
+			mSelectedPaint.setShader(shader);
+			
+			shape.draw(canvas, mSelectedPaint);
+		}
 	}
 }

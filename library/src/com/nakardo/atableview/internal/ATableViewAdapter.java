@@ -198,9 +198,6 @@ public class ATableViewAdapter extends BaseAdapter {
 			}
 			
 			rowHeight = (int) Math.ceil(rowHeight * res.getDisplayMetrics().density);
-		} else {
-			cell.measure(ListView.LayoutParams.MATCH_PARENT, ListView.LayoutParams.WRAP_CONTENT);
-			rowHeight = cell.getMeasuredHeight();
 		}
 		
 		return rowHeight;
@@ -338,14 +335,12 @@ public class ATableViewAdapter extends BaseAdapter {
 		}
 		
 		// setup background drawables.
-		ShapeDrawable normal = new ATableViewCellDrawable(mTableView, backgroundStyle, getRowBackgroundColor(cell));
 		StateListDrawable drawable = new StateListDrawable();
-		
-		Resources res = mTableView.getContext().getResources();
-		int rowHeight = getRowHeight(indexPath, cell);
 		
 		ATableViewCellSelectionStyle selectionStyle = cell.getSelectionStyle();
 		if (selectionStyle != ATableViewCellSelectionStyle.None) {
+			Resources res = mTableView.getContext().getResources();
+			
 			int startColor = res.getColor(R.color.atv_cell_selection_style_blue_start);
 			int endColor = res.getColor(R.color.atv_cell_selection_style_blue_end);
 			
@@ -354,12 +349,12 @@ public class ATableViewAdapter extends BaseAdapter {
 				endColor = res.getColor(R.color.atv_cell_selection_style_gray_end);
 			}
 			
-			ShapeDrawable pressed = new ATableViewCellDrawable(mTableView, backgroundStyle, getRowBackgroundColor(cell),
-					startColor, endColor, rowHeight);
-			
+			ShapeDrawable pressed = new ATableViewCellDrawable(mTableView, backgroundStyle, startColor, endColor);
 			drawable.addState(new int[] { android.R.attr.state_pressed }, pressed);
 			drawable.addState(new int[] { android.R.attr.state_focused }, pressed);
 		}
+		
+		ShapeDrawable normal = new ATableViewCellDrawable(mTableView, backgroundStyle, getRowBackgroundColor(cell));
 		drawable.addState(new int[] {}, normal);
 		
 		LinearLayout contentView = (LinearLayout)cell.findViewById(R.id.contentView);
@@ -479,6 +474,10 @@ public class ATableViewAdapter extends BaseAdapter {
 			setupRowLayout(cell, indexPath);
 			setupRowBackgroundDrawable(cell, indexPath);
 			setupRowAccessoryButtonDelegateCallback(cell, indexPath);
+			
+			// notify delegate we're about drawing the cell, so it can make changes to layout before drawing. 
+			ATableViewDelegate delegate = mTableView.getDelegate();
+			delegate.willDisplayCellForRowAtIndexPath(mTableView, cell, indexPath);
 			
 			convertView = cell;
 		}

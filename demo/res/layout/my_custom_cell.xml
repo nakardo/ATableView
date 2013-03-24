@@ -7,7 +7,7 @@
 
     <!-- style="@style/Widget.ATableViewCell.TextLabel.Default"  -->
     <com.nakardo.atableview.uikit.UILabel
-        android:id="@+id/custom_cell_label"
+        android:id="@+id/textLabel"
         android:textSize="@dimen/atv_default_cell_text_size"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"

@@ -10,6 +10,10 @@ public class ATableViewDelegate {
 		return (int) tableView.getResources().getDimension(R.dimen.atv_cell_default_row_height);
 	}
 	
+	public void willDisplayCellForRowAtIndexPath(ATableView tableView, ATableViewCell cell, NSIndexPath indexPath) {
+		return;
+	}
+	
 	public int heightForHeaderInSection(ATableView tableView, int section) {
 		return ATableViewCell.LayoutParams.UNDEFINED;
 	}
