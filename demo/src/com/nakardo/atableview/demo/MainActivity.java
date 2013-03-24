@@ -11,6 +11,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -29,7 +31,7 @@ public class MainActivity extends Activity {
 	private List<List<String>> mCapitals;
 	private List<List<String>> mProvinces;
 	private String[] mRegions = {
-		"Northwest", "Gran Chaco", "Mesopotamia", "Pampas", "Cuyo", "Patagonia", "Capital City"
+		"Northwest", "Gran Chaco", "Mesopotamia", "Pampas", "Cuyo", "Patagonia", "Capital City", "About"
 	};
 	private String[] mNotes = {
 		null, "Southwestern Santiago del Estero is sometimes considered part of the Sierras area.",
@@ -50,8 +52,10 @@ public class MainActivity extends Activity {
 		provinces.add(Arrays.asList(new String[] { "Misiones", "Entre Ríos", "Corrientes" }));
 		provinces.add(Arrays.asList(new String[] { "Córdoba", "Santa Fe", "La Pampa", "Buenos Aires" }));
 		provinces.add(Arrays.asList(new String[] { "San Juan", "La Rioja", "Mendoza", "San Luis" }));
-		provinces.add(Arrays.asList(new String[] { "Rio Negro", "Neuquén", "Chubut", "Santa Cruz", "Tierra del Fuego" }));
+		provinces.add(Arrays.asList(new String[] { "Neuquén", "Chubut", "Santa Cruz", "Tierra del Fuego" }));
 		provinces.add(Arrays.asList(new String[] { "Autonomous City of Buenos Aires" }));
+		provinces.add(Arrays.asList(new String[] { "ATableView intends to imitate same object model proposed on UIKit for building tables, " +
+				"so it's not only limited on theming Android ListView.\n\nCopyright 2012 Diego Acosta\n\nContact me at diegonake@gmail.com / @nakardo"}));
 		
 		return provinces;
 	}
@@ -65,7 +69,6 @@ public class MainActivity extends Activity {
 		capitals.add(Arrays.asList(new String[] { "Cordoba", "Santa Fe", "Santa Rosa", "Capital Federal" }));
 		capitals.add(Arrays.asList(new String[] { "San Juan", "La Rioja", "Mendoza", "San Luis" }));
 		capitals.add(Arrays.asList(new String[] { "Viedma", "Neuquén", "Rawson", "Rio Gallegos", "Ushuaia" }));
-		capitals.add(Arrays.asList(new String[] { "" }));
 		
 		return capitals;
 	}
@@ -221,7 +224,7 @@ public class MainActivity extends Activity {
 				}
 				
 				// customLabel
-				customCell.getCustomLabel().setText(province);
+				customCell.getTextLabel().setText(province);
 				
 				cell = customCell;
 			}
@@ -231,7 +234,7 @@ public class MainActivity extends Activity {
 
 		@Override
 		public int numberOfRowsInSection(ATableView tableView, int section) {
-			return mCapitals.get(section).size();
+			return mProvinces.get(section).size();
 		}
 		
 		@Override
@@ -259,11 +262,11 @@ public class MainActivity extends Activity {
 			int section = indexPath.getSection();
 			if (section < 4) {
 				return section;
-			} else if (section == 4 || section == 6) {
-				return 3;
+			} else if (section != 5) {
+				return 4;
 			}
 			
-			return 4;
+			return 3;
 		}
 	}
 	
@@ -271,7 +274,26 @@ public class MainActivity extends Activity {
 		
 		@Override
 		public int heightForRowAtIndexPath(ATableView tableView, NSIndexPath indexPath) {
-			return 44;
+			if (indexPath.getSection() == 7) {
+				return ListView.LayoutParams.WRAP_CONTENT;
+			}
+			
+			return super.heightForRowAtIndexPath(tableView, indexPath);
+		}
+		
+		@Override
+		public void willDisplayCellForRowAtIndexPath(ATableView tableView, ATableViewCell cell, NSIndexPath indexPath) {
+			if (indexPath.getSection() == 7) {
+				TextView textLabel = (TextView) cell.findViewById(R.id.textLabel);
+				
+				LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) textLabel.getLayoutParams();
+				params.topMargin = (int) getResources().getDimension(R.dimen.atv_cell_content_margin);
+				params.bottomMargin = (int) getResources().getDimension(R.dimen.atv_cell_content_margin);
+				
+				textLabel.setLayoutParams(params);
+				textLabel.setMaxLines(Integer.MAX_VALUE);
+				textLabel.setEllipsize(null);
+			}
 		}
 		
 		@Override

@@ -5,9 +5,10 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent" >
 
+    <!-- style="@style/Widget.ATableViewCell.TextLabel.Default"  -->
     <com.nakardo.atableview.uikit.UILabel
-        android:id="@+id/custom_cell_label"
-        style="@style/Widget.ATableViewCell.TextLabel.Default"
+        android:id="@+id/textLabel"
+        android:textSize="@dimen/atv_default_cell_text_size"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:gravity="center_horizontal"

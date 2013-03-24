@@ -176,26 +176,31 @@ public class ATableViewAdapter extends BaseAdapter {
 		return indexPath.getRow() == mRows.get(indexPath.getSection()) - 1;
 	}
 	
-	private int getRowHeight(NSIndexPath indexPath) {
+	private int getRowHeight(NSIndexPath indexPath, ATableViewCell cell) {
 		Resources res = mTableView.getContext().getResources();
 		
+		// make height calculations only for valid values, exclude constants.
 		int rowHeight = mRowsHeight.get(indexPath.getSection()).get(indexPath.getRow());
-		if (mTableView.getStyle() == ATableViewStyle.Plain) {
-			if (!isBottomRow(indexPath) && !isSingleRow(indexPath)) {
-				rowHeight += (int) ATableViewCellDrawable.CELL_STROKE_WIDTH_DP;
-			}
-		} else {
-			if (isBottomRow(indexPath) || isSingleRow(indexPath)) {
-				if (mTableView.getSeparatorStyle() == ATableViewCellSeparatorStyle.SingleLineEtched) {
+		if (rowHeight > -1) {
+			if (mTableView.getStyle() == ATableViewStyle.Plain) {
+				if (!isBottomRow(indexPath) && !isSingleRow(indexPath)) {
 					rowHeight += (int) ATableViewCellDrawable.CELL_STROKE_WIDTH_DP;
 				}
+			} else {
+				if (isBottomRow(indexPath) || isSingleRow(indexPath)) {
+					if (mTableView.getSeparatorStyle() == ATableViewCellSeparatorStyle.SingleLineEtched) {
+						rowHeight += (int) ATableViewCellDrawable.CELL_STROKE_WIDTH_DP;
+					}
+					rowHeight += (int) ATableViewCellDrawable.CELL_STROKE_WIDTH_DP;
+				}
+
 				rowHeight += (int) ATableViewCellDrawable.CELL_STROKE_WIDTH_DP;
 			}
-
-			rowHeight += (int) ATableViewCellDrawable.CELL_STROKE_WIDTH_DP;
+			
+			rowHeight = (int) Math.ceil(rowHeight * res.getDisplayMetrics().density);
 		}
 		
-		return (int) Math.ceil(rowHeight * res.getDisplayMetrics().density);
+		return rowHeight;
 	}
 	
 	private int getHeaderFooterRowHeight(NSIndexPath indexPath, boolean isFooterRow) {
@@ -305,7 +310,7 @@ public class ATableViewAdapter extends BaseAdapter {
 	
 	private void setupRowLayout(ATableViewCell cell, NSIndexPath indexPath) {
 		Resources res = mTableView.getContext().getResources();
-		int rowHeight = getRowHeight(indexPath);
+		int rowHeight = getRowHeight(indexPath, cell);
 		
 		// add margins for grouped style.
 		if (mTableView.getStyle() == ATableViewStyle.Grouped) {
@@ -330,14 +335,12 @@ public class ATableViewAdapter extends BaseAdapter {
 		}
 		
 		// setup background drawables.
-		ShapeDrawable normal = new ATableViewCellDrawable(mTableView, backgroundStyle, getRowBackgroundColor(cell));
 		StateListDrawable drawable = new StateListDrawable();
-		
-		Resources res = mTableView.getContext().getResources();
-		int rowHeight = getRowHeight(indexPath);
 		
 		ATableViewCellSelectionStyle selectionStyle = cell.getSelectionStyle();
 		if (selectionStyle != ATableViewCellSelectionStyle.None) {
+			Resources res = mTableView.getContext().getResources();
+			
 			int startColor = res.getColor(R.color.atv_cell_selection_style_blue_start);
 			int endColor = res.getColor(R.color.atv_cell_selection_style_blue_end);
 			
@@ -346,12 +349,12 @@ public class ATableViewAdapter extends BaseAdapter {
 				endColor = res.getColor(R.color.atv_cell_selection_style_gray_end);
 			}
 			
-			ShapeDrawable pressed = new ATableViewCellDrawable(mTableView, backgroundStyle, getRowBackgroundColor(cell),
-					startColor, endColor, rowHeight);
-			
+			ShapeDrawable pressed = new ATableViewCellDrawable(mTableView, backgroundStyle, startColor, endColor);
 			drawable.addState(new int[] { android.R.attr.state_pressed }, pressed);
 			drawable.addState(new int[] { android.R.attr.state_focused }, pressed);
 		}
+		
+		ShapeDrawable normal = new ATableViewCellDrawable(mTableView, backgroundStyle, getRowBackgroundColor(cell));
 		drawable.addState(new int[] {}, normal);
 		
 		LinearLayout contentView = (LinearLayout)cell.findViewById(R.id.contentView);
@@ -471,6 +474,10 @@ public class ATableViewAdapter extends BaseAdapter {
 			setupRowLayout(cell, indexPath);
 			setupRowBackgroundDrawable(cell, indexPath);
 			setupRowAccessoryButtonDelegateCallback(cell, indexPath);
+			
+			// notify delegate we're about drawing the cell, so it can make changes to layout before drawing. 
+			ATableViewDelegate delegate = mTableView.getDelegate();
+			delegate.willDisplayCellForRowAtIndexPath(mTableView, cell, indexPath);
 			
 			convertView = cell;
 		}
