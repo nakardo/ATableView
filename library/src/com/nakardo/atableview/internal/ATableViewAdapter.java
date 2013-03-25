@@ -413,13 +413,15 @@ public class ATableViewAdapter extends BaseAdapter {
 
 	@Override
 	public int getViewTypeCount() {
+		int count = getHeaderFooterStyleCount();
+		
 		ATableViewDataSource dataSource = mTableView.getDataSource();
 	    if (dataSource instanceof ATableViewDataSourceExt) {
 	    	// TODO: additional styles for header and footers. Also custom header should be handled here when supported.
-			return ((ATableViewDataSourceExt) dataSource).numberOfRowStyles() + getHeaderFooterStyleCount();
+			count += ((ATableViewDataSourceExt) dataSource).numberOfRowStyles();
 		}
 	    
-	    return 1;
+	    return count;
 	}
 	
 	@Override
