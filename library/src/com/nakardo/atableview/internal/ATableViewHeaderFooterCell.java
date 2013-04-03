@@ -32,9 +32,9 @@ public class ATableViewHeaderFooterCell extends FrameLayout {
 		super(tableView.getContext());
 		LayoutInflater inflater = LayoutInflater.from(tableView.getContext());
 		
-		View contentView = inflater.inflate(getLayout(type, tableView), null);
-		mTextLabel = (UILabel) contentView.findViewById(R.id.textLabel);
-		addView(contentView);
+		View headerFooterView = inflater.inflate(getLayout(type, tableView), null);
+		mTextLabel = (UILabel) headerFooterView.findViewById(R.id.textLabel);
+		addView(headerFooterView);
 	}
 	
 	public ATableViewHeaderFooterCell(Context context) {

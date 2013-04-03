@@ -10,7 +10,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.FrameLayout;
-import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -357,8 +356,13 @@ public class ATableViewAdapter extends BaseAdapter {
 		ShapeDrawable normal = new ATableViewCellDrawable(mTableView, backgroundStyle, getRowBackgroundColor(cell));
 		drawable.addState(new int[] {}, normal);
 		
-		LinearLayout contentView = (LinearLayout)cell.findViewById(R.id.contentView);
-		contentView.setBackgroundDrawable(drawable);
+		// when extending
+		ViewGroup backgroundView = (ViewGroup) cell.findViewById(R.id.backgroundView);
+		if (backgroundView == null) {
+			throw new RuntimeException("Cannot find R.id.backgroundView on your cell custom layout, " +
+					"please add it to remove this error.");
+		}
+		backgroundView.setBackgroundDrawable(drawable);
 	}
 	
 	private void setupRowAccessoryButtonDelegateCallback(ATableViewCell cell, final NSIndexPath indexPath) {

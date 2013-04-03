@@ -1,23 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/contentView"
-    style="@style/Widget.ATableViewCell"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent" >
 
-    <!-- style="@style/Widget.ATableViewCell.TextLabel.Default"  -->
-    <com.nakardo.atableview.uikit.UILabel
-        android:id="@+id/textLabel"
-        android:textSize="@dimen/atv_default_cell_text_size"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center_horizontal"
-        android:shadowColor="#CCCCCC"
-        android:shadowRadius="1"
-        android:shadowDx="2"
-        android:shadowDy="2"
-        android:layout_marginLeft="@dimen/atv_cell_content_margin"
-        android:layout_marginRight="@dimen/atv_cell_content_margin"
-        android:text="Title" />
+    <FrameLayout
+        android:id="@+id/backgroundView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
 
-</LinearLayout>
+    <LinearLayout
+        android:id="@+id/contentView"
+        style="@style/Widget.ATableViewCell"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" >
+
+        <com.nakardo.atableview.uikit.UILabel
+            android:id="@+id/textLabel"
+            style="@style/Widget.ATableViewCell.TextLabel.Default"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/atv_cell_content_margin"
+            android:layout_marginRight="@dimen/atv_cell_content_margin"
+            android:gravity="center_horizontal"
+            android:shadowColor="#CCCCCC"
+            android:shadowDx="2"
+            android:shadowDy="2"
+            android:shadowRadius="1"
+            android:text="Title"
+            android:textSize="@dimen/atv_default_cell_text_size" />
+    </LinearLayout>
+
+</FrameLayout>

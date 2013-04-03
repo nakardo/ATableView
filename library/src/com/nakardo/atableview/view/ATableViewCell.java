@@ -39,8 +39,8 @@ public class ATableViewCell extends FrameLayout {
 	
 	public ATableViewCell(ATableViewCellStyle style, String reuseIdentifier, Context context) {
 		super(context);
-		View contentView = LayoutInflater.from(context).inflate(getLayout(style), null);
-		addView(contentView);
+		View cell = LayoutInflater.from(context).inflate(getLayout(style), null);
+		addView(cell);
 		
 		mReuseIdentifier = reuseIdentifier;
 		mTextLabel = (TextView)findViewById(R.id.textLabel);

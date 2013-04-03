@@ -1,30 +1,40 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/contentView"
-    style="@style/Widget.ATableViewCell"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent" >
 
-    <ImageView
-        android:id="@+id/imageView"
-        style="@style/Widget.ATableViewCell.ImageView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+    <FrameLayout
+        android:id="@+id/backgroundView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
 
-    <com.nakardo.atableview.uikit.UILabel
-        android:id="@+id/textLabel"
-        style="@style/Widget.ATableViewCell.TextLabel.Value1"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="@dimen/atv_cell_content_margin"
-        android:layout_weight="1" />
+    <LinearLayout
+        android:id="@+id/contentView"
+        style="@style/Widget.ATableViewCell"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" >
 
-    <com.nakardo.atableview.uikit.UILabel
-        android:id="@+id/detailTextLabel"
-        style="@style/Widget.ATableViewCell.DetailTextLabel.Value1"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="@dimen/atv_cell_content_margin"
-        android:layout_marginRight="@dimen/atv_cell_content_margin" />
+        <ImageView
+            android:id="@+id/imageView"
+            style="@style/Widget.ATableViewCell.ImageView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
 
-</LinearLayout>
+        <com.nakardo.atableview.uikit.UILabel
+            android:id="@+id/textLabel"
+            style="@style/Widget.ATableViewCell.TextLabel.Value1"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/atv_cell_content_margin"
+            android:layout_weight="1" />
+
+        <com.nakardo.atableview.uikit.UILabel
+            android:id="@+id/detailTextLabel"
+            style="@style/Widget.ATableViewCell.DetailTextLabel.Value1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/atv_cell_content_margin"
+            android:layout_marginRight="@dimen/atv_cell_content_margin" />
+    </LinearLayout>
+
+</FrameLayout>
