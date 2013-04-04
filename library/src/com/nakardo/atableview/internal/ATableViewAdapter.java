@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import android.content.res.Resources;
+import android.graphics.Rect;
 import android.graphics.drawable.ShapeDrawable;
 import android.graphics.drawable.StateListDrawable;
 import android.view.View;
@@ -190,7 +191,6 @@ public class ATableViewAdapter extends BaseAdapter {
 					if (mTableView.getSeparatorStyle() == ATableViewCellSeparatorStyle.SingleLineEtched) {
 						rowHeight += (int) ATableViewCellDrawable.CELL_STROKE_WIDTH_DP;
 					}
-					rowHeight += (int) ATableViewCellDrawable.CELL_STROKE_WIDTH_DP;
 				}
 
 				rowHeight += (int) ATableViewCellDrawable.CELL_STROKE_WIDTH_DP;
@@ -229,6 +229,19 @@ public class ATableViewAdapter extends BaseAdapter {
 		}
 		
 		return rowHeight;
+	}
+	
+	private ATableViewCellBackgroundStyle getRowBackgroundStyle(NSIndexPath indexPath) {
+		ATableViewCellBackgroundStyle backgroundStyle = ATableViewCellBackgroundStyle.Middle;
+		if (isSingleRow(indexPath)) {
+			backgroundStyle = ATableViewCellBackgroundStyle.Single;
+		} else if (isTopRow(indexPath)) {
+			backgroundStyle = ATableViewCellBackgroundStyle.Top;
+		} else if (isBottomRow(indexPath)) {
+			backgroundStyle = ATableViewCellBackgroundStyle.Bottom;
+		}
+		
+		return backgroundStyle;
 	}
 	
 	private int getRowBackgroundColor(ATableViewCell cell) {
@@ -322,16 +335,7 @@ public class ATableViewAdapter extends BaseAdapter {
 	}
 	
 	private void setupRowBackgroundDrawable(ATableViewCell cell, NSIndexPath indexPath) {
-		
-		// get row style for using specific drawable.
-		ATableViewCellBackgroundStyle backgroundStyle = ATableViewCellBackgroundStyle.Middle;
-		if (isSingleRow(indexPath)) {
-			backgroundStyle = ATableViewCellBackgroundStyle.Single;
-		} else if (isTopRow(indexPath)) {
-			backgroundStyle = ATableViewCellBackgroundStyle.Top;
-		} else if (isBottomRow(indexPath)) {
-			backgroundStyle = ATableViewCellBackgroundStyle.Bottom;
-		}
+		ATableViewCellBackgroundStyle backgroundStyle = getRowBackgroundStyle(indexPath);
 		
 		// setup background drawables.
 		StateListDrawable drawable = new StateListDrawable();
@@ -363,6 +367,16 @@ public class ATableViewAdapter extends BaseAdapter {
 					"please add it to remove this error.");
 		}
 		backgroundView.setBackgroundDrawable(drawable);
+	}
+	
+	private void setupRowContentView(ATableViewCell cell, NSIndexPath indexPath) {
+		ATableViewCellBackgroundStyle backgroundStyle = getRowBackgroundStyle(indexPath);
+		
+		// set margins accordingly to content view depending on stroke lines thickness.
+		View contentView = cell.getContentView();
+		FrameLayout.LayoutParams params = (FrameLayout.LayoutParams) contentView.getLayoutParams();
+		Rect margins = ATableViewCellDrawable.getContentMargins(mTableView, backgroundStyle);
+		params.setMargins(margins.left, margins.top, margins.right, margins.bottom);
 	}
 	
 	private void setupRowAccessoryButtonDelegateCallback(ATableViewCell cell, final NSIndexPath indexPath) {
@@ -479,6 +493,7 @@ public class ATableViewAdapter extends BaseAdapter {
 			// setup.
 			setupRowLayout(cell, indexPath);
 			setupRowBackgroundDrawable(cell, indexPath);
+			setupRowContentView(cell, indexPath);
 			setupRowAccessoryButtonDelegateCallback(cell, indexPath);
 			
 			// notify delegate we're about drawing the cell, so it can make changes to layout before drawing. 

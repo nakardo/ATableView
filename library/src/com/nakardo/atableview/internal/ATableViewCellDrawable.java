@@ -25,7 +25,7 @@ public class ATableViewCellDrawable extends ShapeDrawable {
 	
 	private ATableView mTableView;
 	private ATableViewCellBackgroundStyle mCellBackgroundStyle;
-	private float mStrokeWidth;
+	private int mStrokeWidth;
 	
 	private Paint mSeparatorPaint;
 	private Paint mTopEtchedPaint;
@@ -56,6 +56,44 @@ public class ATableViewCellDrawable extends ShapeDrawable {
 		return new RoundRectShape(radius, null, null);
 	}
 	
+	private static boolean isGroupedDoubleLineEtchedRow(ATableView tableView,
+			ATableViewCellBackgroundStyle backgroundStyle) {
+		
+		return tableView.getStyle() == ATableViewStyle.Grouped &&
+			   tableView.getSeparatorStyle() == ATableViewCellSeparatorStyle.SingleLineEtched &&
+			   backgroundStyle == ATableViewCellBackgroundStyle.Bottom ||
+			   backgroundStyle == ATableViewCellBackgroundStyle.Single;
+	}
+	
+	public static int getStrokeWidth(Resources res) {
+		return (int) Math.floor(CELL_STROKE_WIDTH_DP * res.getDisplayMetrics().density);
+	}
+	
+	public static Rect getContentMargins(ATableView tableView, ATableViewCellBackgroundStyle backgroundStyle) {
+		int strokeWidth = getStrokeWidth(tableView.getResources());
+		int margins = 0, marginBottom = 0;
+		
+		// calculate margins to avoid content to overlap with cell stroke lines.
+		if (tableView.getStyle() == ATableViewStyle.Grouped) {
+			margins = strokeWidth;
+			
+			// double lines for etched single / bottom rows, this is a pain in the ass.
+			if (backgroundStyle == ATableViewCellBackgroundStyle.Single ||
+				backgroundStyle == ATableViewCellBackgroundStyle.Bottom) {
+				
+				marginBottom = margins;
+				if (isGroupedDoubleLineEtchedRow(tableView, backgroundStyle)) {
+					marginBottom *= 2;
+				}
+			}
+		} else if (backgroundStyle == ATableViewCellBackgroundStyle.Top ||
+				backgroundStyle == ATableViewCellBackgroundStyle.Middle) {
+			marginBottom = strokeWidth;
+		}
+		
+		return new Rect(margins, margins, margins, marginBottom);
+	}
+	
 	private int getSeparatorColor() {
 		Resources res = mTableView.getResources();
 		
@@ -83,17 +121,8 @@ public class ATableViewCellDrawable extends ShapeDrawable {
 		mSeparatorPaint = new Paint(getPaint());
 		mSeparatorPaint.setColor(getSeparatorColor());
 		
-		// calculate stroke width, use rounded with for padding only.
-		mStrokeWidth = CELL_STROKE_WIDTH_DP * res.getDisplayMetrics().density;
-		int roundedStrokeWidth = (int) Math.ceil(mStrokeWidth);
-		
-		// add padding to avoid content to overlap with cell stroke lines.
-		int marginBottom = 0;
-		if (backgroundStyle == ATableViewCellBackgroundStyle.Single ||
-			backgroundStyle == ATableViewCellBackgroundStyle.Bottom) {
-			marginBottom = roundedStrokeWidth;
-		}
-		setPadding(roundedStrokeWidth, roundedStrokeWidth, roundedStrokeWidth, marginBottom);
+		// calculate stroke width.
+		mStrokeWidth = getStrokeWidth(res);
 		
 		// etched lines, only for grouped tables, with SingleLineEtched style.
 		if (mTableView.getStyle() == ATableViewStyle.Grouped &&
@@ -127,16 +156,9 @@ public class ATableViewCellDrawable extends ShapeDrawable {
 		mEndColor = endColor;	
 	}
 	
-	private boolean isGroupedDoubleLineEtchedRow() {
-		return mTableView.getStyle() == ATableViewStyle.Grouped &&
-			   mTableView.getSeparatorStyle() == ATableViewCellSeparatorStyle.SingleLineEtched &&
-			   mCellBackgroundStyle == ATableViewCellBackgroundStyle.Bottom ||
-			   mCellBackgroundStyle == ATableViewCellBackgroundStyle.Single;
-	}
-	
 	private Matrix getSeparatorPaintMatrix(Rect bounds) {
 		Matrix matrix = new Matrix();
-		if (isGroupedDoubleLineEtchedRow()) {
+		if (isGroupedDoubleLineEtchedRow(mTableView, mCellBackgroundStyle)) {
 			matrix.setRectToRect(new RectF(0, 0, bounds.right, bounds.bottom),
 					new RectF(0, 0, bounds.right, bounds.bottom - mStrokeWidth),
 					Matrix.ScaleToFit.FILL);
@@ -147,7 +169,7 @@ public class ATableViewCellDrawable extends ShapeDrawable {
 	
 	private Matrix getTopEtchedPaintMatrix(Rect bounds) {
 		RectF rect = new RectF(mStrokeWidth, mStrokeWidth, bounds.right - mStrokeWidth, bounds.bottom);
-		if (isGroupedDoubleLineEtchedRow()) {
+		if (isGroupedDoubleLineEtchedRow(mTableView, mCellBackgroundStyle)) {
 			rect.bottom -= mStrokeWidth * 2;
 		}
 		
@@ -168,7 +190,7 @@ public class ATableViewCellDrawable extends ShapeDrawable {
 			rect.left = rect.top = 0; rect.right += mStrokeWidth;
 		} else {
 			if (mTableView.getSeparatorStyle() == ATableViewCellSeparatorStyle.SingleLineEtched) {
-				if (isGroupedDoubleLineEtchedRow()) {
+				if (isGroupedDoubleLineEtchedRow(mTableView, mCellBackgroundStyle)) {
 					rect.bottom -= mStrokeWidth;
 				} else if (mCellBackgroundStyle == ATableViewCellBackgroundStyle.Top ||
 						mCellBackgroundStyle == ATableViewCellBackgroundStyle.Middle) {

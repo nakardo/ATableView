@@ -16,11 +16,15 @@ public class ATableViewCell extends FrameLayout {
 	public enum ATableViewCellSelectionStyle { None, Blue, Gray };
 	public enum ATableViewCellSeparatorStyle { None, SingleLine, SingleLineEtched };
 	
+	// UIView
+	private int mBackgroundColor = -1;
+	
 	private String mReuseIdentifier;
 	private TextView mTextLabel;
 	private TextView mDetailTextLabel;
 	private ImageView mImageView;
-	private int mBackgroundColor = -1;
+	private View mContentView;
+	private View mBackgroundView;
 	private ATableViewCellAccessoryType mAccessoryType = ATableViewCellAccessoryType.None;;
 	private ATableViewCellSelectionStyle mSelectionStyle = ATableViewCellSelectionStyle.Blue;
 	
@@ -39,13 +43,14 @@ public class ATableViewCell extends FrameLayout {
 	
 	public ATableViewCell(ATableViewCellStyle style, String reuseIdentifier, Context context) {
 		super(context);
-		View cell = LayoutInflater.from(context).inflate(getLayout(style), null);
-		addView(cell);
+		LayoutInflater.from(context).inflate(getLayout(style), this, true);
 		
 		mReuseIdentifier = reuseIdentifier;
 		mTextLabel = (TextView)findViewById(R.id.textLabel);
 		mDetailTextLabel = (TextView)findViewById(R.id.detailTextLabel);
 		mImageView = (ImageView)findViewById(R.id.imageView);
+		mContentView = findViewById(R.id.contentView);
+		mBackgroundView = findViewById(R.id.backgroundView);
 	}
 	
 	public ATableViewCell(Context context) {
@@ -55,7 +60,6 @@ public class ATableViewCell extends FrameLayout {
 	public int getBackgroundColor() {
 		return mBackgroundColor;
 	}
-	
 	public void setBackgroundColor(int resId) {
 		mBackgroundColor = resId;
 	}
@@ -76,6 +80,17 @@ public class ATableViewCell extends FrameLayout {
 		return mImageView;
 	}
 	
+	public View getContentView() {
+		return mContentView;
+	}
+	
+	public View getBackgroundView() {
+		return mBackgroundView;
+	}
+	public void setBackgroundView(View backgroundView) {
+		mBackgroundView = backgroundView;
+	}
+	
 	public ATableViewCellAccessoryType getAccessoryType() {
 		return mAccessoryType;
 	}
@@ -88,7 +103,6 @@ public class ATableViewCell extends FrameLayout {
 	public ATableViewCellSelectionStyle getSelectionStyle() {
 		return mSelectionStyle;
 	}
-	
 	public void setSelectionStyle(ATableViewCellSelectionStyle selectionStyle) {
 		mSelectionStyle = selectionStyle;
 	}
