@@ -69,7 +69,7 @@ public class ATableViewCellDrawable extends ShapeDrawable {
 		return (int) Math.floor(CELL_STROKE_WIDTH_DP * res.getDisplayMetrics().density);
 	}
 	
-	public static Rect getContentMargins(ATableView tableView, ATableViewCellBackgroundStyle backgroundStyle) {
+	public static Rect getContentPadding(ATableView tableView, ATableViewCellBackgroundStyle backgroundStyle) {
 		int strokeWidth = getStrokeWidth(tableView.getResources());
 		int margins = 0, marginBottom = 0;
 		

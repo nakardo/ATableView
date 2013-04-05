@@ -372,11 +372,13 @@ public class ATableViewAdapter extends BaseAdapter {
 	private void setupRowContentView(ATableViewCell cell, NSIndexPath indexPath) {
 		ATableViewCellBackgroundStyle backgroundStyle = getRowBackgroundStyle(indexPath);
 		
-		// set margins accordingly to content view depending on stroke lines thickness.
-		View contentView = cell.getContentView();
-		FrameLayout.LayoutParams params = (FrameLayout.LayoutParams) contentView.getLayoutParams();
-		Rect margins = ATableViewCellDrawable.getContentMargins(mTableView, backgroundStyle);
-		params.setMargins(margins.left, margins.top, margins.right, margins.bottom);
+		// set margins accordingly to content view depending on stroke lines thickness, 
+		// containerView might not exist on custom cells.
+		View containerView = cell.getInternalContainerView();
+		if (containerView != null) {
+			Rect padding = ATableViewCellDrawable.getContentPadding(mTableView, backgroundStyle);
+			containerView.setPadding(padding.left, padding.top, padding.right, padding.bottom);
+		}
 	}
 	
 	private void setupRowAccessoryButtonDelegateCallback(ATableViewCell cell, final NSIndexPath indexPath) {
