@@ -45,11 +45,13 @@ public class UILabel extends TextView {
     			customTypefacePath = BOLD_FONT_PATH;
     		}
     		
+    		// load custom font if available on app bundle.
     		if (assetExists(getContext(), customTypefacePath)) {
     			AssetManager assets = getContext().getAssets();
     			tf = Typeface.createFromAsset(assets, customTypefacePath);
 			}
-    		super.setTypeface(tf);
+    		
+    		super.setTypeface(tf, style);
 		}
     }
 }
