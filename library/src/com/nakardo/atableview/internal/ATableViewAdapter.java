@@ -434,7 +434,7 @@ public class ATableViewAdapter extends BaseAdapter {
 		
 		ATableViewDataSource dataSource = mTableView.getDataSource();
 	    if (dataSource instanceof ATableViewDataSourceExt) {
-	    	// TODO: additional styles for header and footers. Also custom header should be handled here when supported.
+	    	// TODO additional styles for header and footers. Also custom header should be handled here when supported.
 			count += ((ATableViewDataSourceExt) dataSource).numberOfRowStyles();
 		}
 	    
@@ -503,5 +503,15 @@ public class ATableViewAdapter extends BaseAdapter {
 		}
 		
 		return convertView;
+	}
+	
+	@Override
+	public boolean isEnabled(int position) {
+		// TODO disable sounds for header and footer rows, should be changed when supporting clicks on those views.
+		if (isHeaderRow(position) || isFooterRow(position)) {
+			return false;
+		}
+		
+		return super.isEnabled(position);
 	}
 }
