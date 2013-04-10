@@ -105,7 +105,11 @@ public class ATableViewCell extends FrameLayout {
 	
 	public void setAccessoryType(ATableViewCellAccessoryType accessoryType) {
 		mAccessoryType = accessoryType;
-		ATableViewCellAccessoryView.setup(this, accessoryType);
+		
+		// TODO build accessory view, it should support building accessories from any view.
+		ATableViewCellAccessoryView.Builder builder = new ATableViewCellAccessoryView.Builder(this);
+		builder.setAccessoryType(accessoryType);
+		builder.create();
 	}
 	
 	public ATableViewCellSelectionStyle getSelectionStyle() {

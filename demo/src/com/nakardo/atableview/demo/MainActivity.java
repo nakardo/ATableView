@@ -164,6 +164,7 @@ public class MainActivity extends Activity {
 			String cellIdentifier = "CellIdentifier0";
 			ATableViewCellStyle cellStyle = ATableViewCellStyle.Default;
 			ATableViewCellAccessoryType accessoryType = ATableViewCellAccessoryType.None;
+			ATableViewCellSelectionStyle selectionStyle = ATableViewCellSelectionStyle.Blue;
 			
 			// set proper style and identifier for cells on each section.
 			int section = indexPath.getSection();
@@ -179,8 +180,11 @@ public class MainActivity extends Activity {
 				cellIdentifier = "CellIdentifier3";
 				cellStyle = ATableViewCellStyle.Value2;
 				accessoryType = ATableViewCellAccessoryType.Checkmark;
-			}  else if (section == 5) {
+			} else if (section == 5) {
 				cellIdentifier = "CustomCellIdentifier";
+				selectionStyle = ATableViewCellSelectionStyle.Gray;
+			} else if (section == 7) {
+				selectionStyle = ATableViewCellSelectionStyle.None;
 			}
 			
 			// get row data.
@@ -192,9 +196,10 @@ public class MainActivity extends Activity {
 				cell = dequeueReusableCellWithIdentifier(cellIdentifier);
 				if (cell == null) {
 					cell = new ATableViewCell(cellStyle, cellIdentifier, MainActivity.this);
-					cell.setSelectionStyle(ATableViewCellSelectionStyle.Blue);
-					cell.setAccessoryType(accessoryType);
 				}
+				
+				cell.setSelectionStyle(selectionStyle);
+				cell.setAccessoryType(accessoryType);
 				
 				// imageView
 				ImageView imageView = cell.getImageView();
@@ -220,7 +225,8 @@ public class MainActivity extends Activity {
 				MyCustomCell customCell = (MyCustomCell)dequeueReusableCellWithIdentifier(cellIdentifier);
 				if (cell == null) {
 					customCell = new MyCustomCell(ATableViewCellStyle.Default, cellIdentifier, MainActivity.this);
-					customCell.setSelectionStyle(ATableViewCellSelectionStyle.Gray);
+					customCell.setSelectionStyle(selectionStyle);
+					customCell.setAccessoryType(accessoryType);
 				}
 				
 				// customLabel

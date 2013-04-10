@@ -13,28 +13,24 @@ public class UILabel extends TextView {
 	private static final String BOLD_FONT_PATH = "fonts/Roboto-Bold.ttf";
 	private static final String REGULAR_FONT_PATH = "fonts/Roboto-Regular.ttf";
 	
+	private static boolean assetExists(Context context, String path) {
+        boolean exists = false;
+        try {
+            InputStream stream = context.getAssets().open(path); stream.close();
+            exists = true;
+        } catch (Exception e) {
+            Log.w(TextView.class.getSimpleName(), "Unable to load custom font at path: " + path);
+        }
+        
+        return exists;
+    }
+	
     public UILabel(Context context) {
         super(context);
     }
     
     public UILabel(Context context, AttributeSet attrs) {
         super(context, attrs);
-    }
-    
-    public UILabel(Context context, AttributeSet attrs, int defStyle) {
-        super(context, attrs, defStyle);
-    }
-
-    private boolean assetExists(Context context, String path) {
-        boolean exists = false;
-        try {
-            InputStream stream = context.getAssets().open(path); stream.close();
-            exists = true;
-        } catch (Exception e) {
-            Log.w(getClass().getSimpleName(), "Unable to load custom font at path: " + path);
-        }
-        
-        return exists;
     }
     
     @Override
