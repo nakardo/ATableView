@@ -289,11 +289,14 @@ public class ATableViewAdapter extends BaseAdapter {
 		// setup layout and background depending on table style.
 		Rect padding = new Rect();
 		if (mTableView.getStyle() == ATableViewStyle.Grouped) {
+			boolean hasText = headerText != null && headerText.length() > 0;
+			
 			padding.left = padding.right = (int) res.getDimension(R.dimen.atv_grouped_section_header_footer_padding_left_right);
 			
-			// if we're on the very first header of the table, we've to add an extra padding top to the cell.
+			// if we're on the very first header of the table and it has text, we've to add an extra padding
+			// on top of the cell.
 			padding.top = (int) res.getDimension(R.dimen.atv_grouped_section_header_padding_top);
-			if (!isFooterRow && section == 0) {
+			if (!isFooterRow && section == 0 && hasText) {
 				padding.top = (int) res.getDimension(R.dimen.atv_grouped_section_header_first_row_padding_top);
 			}
 			
