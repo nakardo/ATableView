@@ -441,6 +441,9 @@ public class ATableViewAdapter extends BaseAdapter {
 			count += ((ATableViewDataSourceExt) dataSource).numberOfRowStyles();
 		}
 	    
+	    // adapter requires getViewTypeCount to be > 0;
+	    if (count == 0) count = 1;
+	    
 	    return count;
 	}
 	
