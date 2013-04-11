@@ -1,16 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:background="@drawable/plain_header_background" >
+    android:layout_height="match_parent" >
 
     <com.nakardo.atableview.uikit.UILabel
         android:id="@+id/textLabel"
         style="@style/Widget.ATableView.Section.Plain.Header.TextLabel"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:layout_marginLeft="@dimen/atv_plain_section_header_text_margin_left"
-        android:layout_marginRight="@dimen/atv_plain_section_header_text_margin_right" />
+        android:layout_gravity="center_vertical" />
 
 </FrameLayout>
