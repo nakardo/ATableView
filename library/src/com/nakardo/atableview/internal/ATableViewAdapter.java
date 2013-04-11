@@ -10,7 +10,6 @@ import android.graphics.drawable.StateListDrawable;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.FrameLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -274,9 +273,8 @@ public class ATableViewAdapter extends BaseAdapter {
 	
 	private void setupHeaderFooterRowLayout(ATableViewHeaderFooterCell cell, NSIndexPath indexPath, boolean isFooterRow) {
 		ATableViewDataSource dataSource = mTableView.getDataSource();
-		ATableViewStyle tableViewStyle = mTableView.getStyle();
 		int section = indexPath.getSection();
-		
+		Resources res = mTableView.getResources();
 		TextView textLabel = cell.getTextLabel();
 		
 		// get text.
@@ -288,31 +286,34 @@ public class ATableViewAdapter extends BaseAdapter {
 		}
 		textLabel.setText(headerText);
 		
-		// setup layout depending on style.
-		if (tableViewStyle == ATableViewStyle.Grouped) {
-			Resources res = mTableView.getResources();
-			FrameLayout.LayoutParams params = (FrameLayout.LayoutParams) textLabel.getLayoutParams();
+		// setup layout and background depending on table style.
+		Rect padding = new Rect();
+		if (mTableView.getStyle() == ATableViewStyle.Grouped) {
+			padding.left = padding.right = (int) res.getDimension(R.dimen.atv_grouped_section_header_footer_padding_left_right);
 			
-			// if we're on the very first header of the table, we've to add an extra margin top to textView.
-			int marginTop = (int) res.getDimension(R.dimen.atv_grouped_section_header_text_margin_top);
+			// if we're on the very first header of the table, we've to add an extra padding top to the cell.
+			padding.top = (int) res.getDimension(R.dimen.atv_grouped_section_header_padding_top);
 			if (!isFooterRow && section == 0) {
-				marginTop = (int) res.getDimension(R.dimen.atv_grouped_section_header_first_row_text_margin_top);
+				padding.top = (int) res.getDimension(R.dimen.atv_grouped_section_header_first_row_padding_top);
 			}
-			params.topMargin = marginTop;
 			
-			// if we're on the last footer of the table, extra margin applies here as well.
-			int marginBottom = (int) res.getDimension(R.dimen.atv_grouped_section_footer_text_margin_bottom);
+			// if we're on the last footer of the table, extra padding applies here as well.
+			padding.bottom = (int) res.getDimension(R.dimen.atv_grouped_section_footer_padding_bottom);
 			if (isFooterRow && section == mRows.size() - 1) {
-				marginBottom = (int) res.getDimension(R.dimen.atv_grouped_section_footer_last_row_text_margin_bottom);			
+				padding.bottom = (int) res.getDimension(R.dimen.atv_grouped_section_footer_last_row_padding_bottom);			
 			}
-			params.bottomMargin = marginBottom;
-			
-			textLabel.setLayoutParams(params);
 			
 			// hide header or footer text if it's null.
 			int visibility = headerText != null && headerText.length() > 0 ? View.VISIBLE : View.GONE;
 			textLabel.setVisibility(visibility);
+		} else {
+			padding.left = (int) res.getDimension(R.dimen.atv_plain_section_header_padding_left);
+			padding.right = (int) res.getDimension(R.dimen.atv_plain_section_header_padding_right);
+			
+			// set background for plain style.
+			cell.setBackgroundResource(R.drawable.plain_header_background);
 		}
+		cell.setPadding(padding.left, padding.top, padding.right, padding.bottom);
 		
 		// setup layout height.
 		int rowHeight = getHeaderFooterRowHeight(indexPath, isFooterRow);
@@ -372,13 +373,10 @@ public class ATableViewAdapter extends BaseAdapter {
 	private void setupRowContentView(ATableViewCell cell, NSIndexPath indexPath) {
 		ATableViewCellBackgroundStyle backgroundStyle = getRowBackgroundStyle(indexPath);
 		
-		// set margins accordingly to content view depending on stroke lines thickness, 
-		// containerView might not exist on custom cells.
-		View containerView = cell.getInternalContainerView();
-		if (containerView != null) {
-			Rect padding = ATableViewCellDrawable.getContentPadding(mTableView, backgroundStyle);
-			containerView.setPadding(padding.left, padding.top, padding.right, padding.bottom);
-		}
+		// set margins accordingly to content view depending on stroke lines thickness.
+		View contentView = cell.getContentView();
+		Rect padding = ATableViewCellDrawable.getContentPadding(mTableView, backgroundStyle);
+		contentView.setPadding(padding.left, padding.top, padding.right, padding.bottom);
 	}
 	
 	private void setupRowAccessoryButtonDelegateCallback(ATableViewCell cell, final NSIndexPath indexPath) {
@@ -437,7 +435,7 @@ public class ATableViewAdapter extends BaseAdapter {
 		
 		ATableViewDataSource dataSource = mTableView.getDataSource();
 	    if (dataSource instanceof ATableViewDataSourceExt) {
-	    	// TODO: additional styles for header and footers. Also custom header should be handled here when supported.
+	    	// TODO additional styles for header and footers. Also custom header should be handled here when supported.
 			count += ((ATableViewDataSourceExt) dataSource).numberOfRowStyles();
 		}
 	    
@@ -509,5 +507,15 @@ public class ATableViewAdapter extends BaseAdapter {
 		}
 		
 		return convertView;
+	}
+	
+	@Override
+	public boolean isEnabled(int position) {
+		// TODO disable sounds for header and footer rows, should be changed when supporting clicks on those views.
+		if (isHeaderRow(position) || isFooterRow(position)) {
+			return false;
+		}
+		
+		return super.isEnabled(position);
 	}
 }

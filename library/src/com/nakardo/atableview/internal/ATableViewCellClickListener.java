@@ -13,7 +13,7 @@ public class ATableViewCellClickListener implements OnItemClickListener {
 	public ATableViewCellClickListener(ATableView tableView) {
 		mTableView = tableView;
 	}
-
+	
 	@Override
 	public void onItemClick(AdapterView<?> adapter, View view, int pos, long id) {
 		ATableViewAdapter a = mTableView.getInternalAdapter();

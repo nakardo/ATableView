@@ -2,7 +2,6 @@ package com.nakardo.atableview.internal;
 
 import android.content.Context;
 import android.view.LayoutInflater;
-import android.view.View;
 import android.widget.FrameLayout;
 
 import com.nakardo.atableview.R;
@@ -25,16 +24,14 @@ public class ATableViewHeaderFooterCell extends FrameLayout {
 			return R.layout.atv_grouped_footer;
 		}
 		
-		return R.layout.atv_plain_header;
+		return R.layout.atv_plain_header_footer;
 	}
 	
 	public ATableViewHeaderFooterCell(ATableViewHeaderFooterCellType type, ATableView tableView) {
 		super(tableView.getContext());
-		LayoutInflater inflater = LayoutInflater.from(tableView.getContext());
+		LayoutInflater.from(getContext()).inflate(getLayout(type, tableView), this, true);
 		
-		View headerFooterView = inflater.inflate(getLayout(type, tableView), null);
-		mTextLabel = (UILabel) headerFooterView.findViewById(R.id.textLabel);
-		addView(headerFooterView);
+		mTextLabel = (UILabel) findViewById(R.id.textLabel);
 	}
 	
 	public ATableViewHeaderFooterCell(Context context) {

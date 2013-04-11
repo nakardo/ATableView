@@ -7,12 +7,12 @@
         android:layout_height="match_parent" />
 
     <FrameLayout
-        android:id="@+id/containerView"
+        android:id="@+id/contentView"
         android:layout_width="match_parent"
         android:layout_height="match_parent" >
 
-        <LinearLayout
-            android:id="@+id/contentView"
+        <com.nakardo.atableview.internal.ATableViewCellContainerView
+            android:id="@+id/containerView"
             style="@style/Widget.ATableViewCell"
             android:layout_width="match_parent"
             android:layout_height="match_parent" >
@@ -31,7 +31,7 @@
                 android:layout_marginLeft="@dimen/atv_cell_content_margin"
                 android:layout_marginRight="@dimen/atv_cell_content_margin"
                 android:layout_weight="1" />
-        </LinearLayout>
+        </com.nakardo.atableview.internal.ATableViewCellContainerView>
     </FrameLayout>
 
 </merge>

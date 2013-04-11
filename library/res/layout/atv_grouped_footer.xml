@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<merge xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:minHeight="@dimen/atv_grouped_section_header_footer_min_height" >
@@ -7,12 +7,8 @@
     <com.nakardo.atableview.uikit.UILabel
         android:id="@+id/textLabel"
         style="@style/Widget.ATableView.Section.Grouped.Footer.TextLabel"
-        android:layout_width="fill_parent"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="@dimen/atv_grouped_section_footer_text_margin_bottom"
-        android:layout_marginLeft="@dimen/atv_grouped_section_header_footer_text_margin_left_right"
-        android:layout_marginRight="@dimen/atv_grouped_section_header_footer_text_margin_left_right"
-        android:layout_marginTop="@dimen/atv_grouped_section_header_footer_text_margin_top_bottom"
         android:visibility="gone" />
 
-</FrameLayout>
+</merge>
