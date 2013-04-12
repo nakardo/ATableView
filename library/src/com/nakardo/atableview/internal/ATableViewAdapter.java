@@ -436,33 +436,38 @@ public class ATableViewAdapter extends BaseAdapter {
 	public int getViewTypeCount() {
 		int count = getHeaderFooterStyleCount();
 		
+		// count must be 1 always, either we don't have any rows, plus the additional count for header & footers.
 		ATableViewDataSource dataSource = mTableView.getDataSource();
 	    if (dataSource instanceof ATableViewDataSourceExt) {
-	    	// TODO additional styles for header and footers. Also custom header should be handled here when supported.
+	    	// TODO should add custom headers & footers to view count here when supported.
 			count += ((ATableViewDataSourceExt) dataSource).numberOfRowStyles();
+		} else {
+			count += 1;
 		}
-	    
-	    // adapter requires getViewTypeCount to be > 0;
-	    if (count == 0) count = 1;
 	    
 	    return count;
 	}
 	
 	@Override
 	public int getItemViewType(int position) {
-		if (isHeaderRow(position) && mTableView.getStyle() == ATableViewStyle.Grouped) {
-			return getViewTypeCount() - 2; // additional style for groped headers.
-		} else if (isHeaderRow(position) || isFooterRow(position)) {
-			return getViewTypeCount() - 1; // for plain tables, headers and footers share same style.
-		} else {
-			ATableViewDataSource dataSource = mTableView.getDataSource();
-			if (dataSource instanceof ATableViewDataSourceExt) {
-				NSIndexPath indexPath = getIndexPath(position);
-				return ((ATableViewDataSourceExt) dataSource).styleForRowAtIndexPath(indexPath);			
+		int viewType = 0;
+		
+		int viewTypeCount = getViewTypeCount();
+		if (viewTypeCount > 1) {
+			if (isHeaderRow(position) && mTableView.getStyle() == ATableViewStyle.Grouped) {
+				viewType = viewTypeCount - 2; // additional style for groped headers.
+			} else if (isHeaderRow(position) || isFooterRow(position)) {
+				viewType = viewTypeCount - 1; // for plain tables, headers and footers share same style.
+			} else {
+				ATableViewDataSource dataSource = mTableView.getDataSource();
+				if (dataSource instanceof ATableViewDataSourceExt) {
+					NSIndexPath indexPath = getIndexPath(position);
+					viewType = ((ATableViewDataSourceExt) dataSource).styleForRowAtIndexPath(indexPath);			
+				}
 			}
 		}
 		
-		return IGNORE_ITEM_VIEW_TYPE;
+		return viewType;
 	}
 	
 	@Override
