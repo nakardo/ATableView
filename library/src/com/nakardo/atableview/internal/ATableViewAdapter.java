@@ -185,7 +185,7 @@ public class ATableViewAdapter extends BaseAdapter {
 		return cell.getMeasuredHeight();
 	}
 	
-	private int getRowHeight(NSIndexPath indexPath, ATableViewCell cell) {
+	private int getRowHeight(ATableViewCell cell, NSIndexPath indexPath) {
 		Resources res = mTableView.getContext().getResources();
 		
 		// make height calculations only for valid values, exclude constants.
@@ -337,13 +337,11 @@ public class ATableViewAdapter extends BaseAdapter {
 		cell.setLayoutParams(params);
 	}
 	
-	private void setupRowLayout(ATableViewCell cell, NSIndexPath indexPath) {
-		Resources res = mTableView.getContext().getResources();
-		int rowHeight = getRowHeight(indexPath, cell);
+	private void setupRowLayout(ATableViewCell cell, NSIndexPath indexPath, int rowHeight) {
 		
-		// add margins for grouped style.
+		// add extra padding for grouped style.
 		if (mTableView.getStyle() == ATableViewStyle.Grouped) {
-			int margin = (int) res.getDimension(R.dimen.atv_cell_grouped_margins);
+			int margin = (int) cell.getResources().getDimension(R.dimen.atv_cell_grouped_margins);
 			cell.setPadding(margin, 0, margin, 0);
 		}
 		
@@ -351,7 +349,7 @@ public class ATableViewAdapter extends BaseAdapter {
 		cell.setLayoutParams(params);
 	}
 	
-	private void setupRowBackgroundDrawable(ATableViewCell cell, NSIndexPath indexPath) {
+	private void setupRowBackgroundDrawable(ATableViewCell cell, NSIndexPath indexPath, int rowHeight) {
 		ATableViewCellBackgroundStyle backgroundStyle = getRowBackgroundStyle(indexPath);
 		
 		// setup background drawables.
@@ -369,12 +367,13 @@ public class ATableViewAdapter extends BaseAdapter {
 				endColor = res.getColor(R.color.atv_cell_selection_style_gray_end);
 			}
 			
-			ShapeDrawable pressed = new ATableViewCellDrawable(mTableView, backgroundStyle, startColor, endColor);
+			ShapeDrawable pressed = new ATableViewCellDrawable(mTableView, backgroundStyle, rowHeight, startColor, endColor);
 			drawable.addState(new int[] { android.R.attr.state_pressed }, pressed);
 			drawable.addState(new int[] { android.R.attr.state_focused }, pressed);
 		}
 		
-		ShapeDrawable normal = new ATableViewCellDrawable(mTableView, backgroundStyle, getRowBackgroundColor(cell));
+		int color = getRowBackgroundColor(cell);
+		ShapeDrawable normal = new ATableViewCellDrawable(mTableView, backgroundStyle, rowHeight, color);
 		drawable.addState(new int[] {}, normal);
 		
 		// when extending
@@ -515,8 +514,9 @@ public class ATableViewAdapter extends BaseAdapter {
 			cell = dataSource.cellForRowAtIndexPath(mTableView, indexPath);
 			
 			// setup.
-			setupRowLayout(cell, indexPath);
-			setupRowBackgroundDrawable(cell, indexPath);
+			int rowHeight = getRowHeight(cell, indexPath);
+			setupRowLayout(cell, indexPath, rowHeight);
+			setupRowBackgroundDrawable(cell, indexPath, rowHeight);
 			setupRowContentView(cell, indexPath);
 			setupRowAccessoryButtonDelegateCallback(cell, indexPath);
 			

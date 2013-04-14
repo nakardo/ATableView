@@ -172,6 +172,7 @@ public class MainActivity extends Activity {
 			LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) textLabel.getLayoutParams();
 			params.topMargin = params.bottomMargin = 0;
 			
+			// add multiline to textView apart from WRAP_CONTENT to make height dynamic.
 			if (indexPath.getSection() == 7) {
 				maxLines = Integer.MAX_VALUE;
 				params.topMargin = (int) getResources().getDimension(R.dimen.atv_cell_content_margin);

@@ -25,6 +25,7 @@ public class ATableViewCellDrawable extends ShapeDrawable {
 	
 	private ATableView mTableView;
 	private ATableViewCellBackgroundStyle mCellBackgroundStyle;
+	private int mRowHeight;
 	private int mStrokeWidth;
 	
 	private Paint mSeparatorPaint;
@@ -109,13 +110,16 @@ public class ATableViewCellDrawable extends ShapeDrawable {
 	}
 	
 	public ATableViewCellDrawable(ATableView tableView, ATableViewCellBackgroundStyle backgroundStyle,
-			int backgroundColor) {
+			int rowHeight, int backgroundColor) {
 		
 		super(getShape(tableView, backgroundStyle));
 		Resources res = tableView.getResources();
 		
 		mTableView = tableView;
 		mCellBackgroundStyle = backgroundStyle;
+		
+		// Closes #11, even we should be able to pull height from canvas it doesn't work well on ~2.2.
+		mRowHeight = rowHeight;
 		
 		// separator.
 		mSeparatorPaint = new Paint(getPaint());
@@ -146,9 +150,9 @@ public class ATableViewCellDrawable extends ShapeDrawable {
 	}
 	
 	public ATableViewCellDrawable(ATableView tableView, ATableViewCellBackgroundStyle backgroundStyle,
-			int startColor, int endColor) {
+			int rowHeight, int startColor, int endColor) {
 		
-		this(tableView, backgroundStyle, android.R.color.transparent);
+		this(tableView, backgroundStyle, rowHeight, android.R.color.transparent);
 		
 		// selected.
 		mSelectedPaint = new Paint(getPaint());
@@ -265,9 +269,11 @@ public class ATableViewCellDrawable extends ShapeDrawable {
 		// selected.
 		canvas.concat(getSelectedPaintMatrix(bounds));
 		if (mSelectedPaint != null) {
+			Rect padding = getContentPadding(mTableView, mCellBackgroundStyle);
+			int height = mRowHeight - (padding.bottom + padding.top);
 			
 			// we'll set the selected color on onDraw event since we don't know drawable height up to here.
-			Shader shader = new LinearGradient(0, 0, 0, canvas.getHeight(), mStartColor, mEndColor, Shader.TileMode.MIRROR);
+			Shader shader = new LinearGradient(0, 0, 0, height, mStartColor, mEndColor, Shader.TileMode.MIRROR);
 			mSelectedPaint.setShader(shader);
 			
 			shape.draw(canvas, mSelectedPaint);
