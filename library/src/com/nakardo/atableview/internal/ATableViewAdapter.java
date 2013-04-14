@@ -8,7 +8,9 @@ import android.graphics.Rect;
 import android.graphics.drawable.ShapeDrawable;
 import android.graphics.drawable.StateListDrawable;
 import android.view.View;
+import android.view.View.MeasureSpec;
 import android.view.ViewGroup;
+import android.widget.AbsListView;
 import android.widget.BaseAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -175,6 +177,14 @@ public class ATableViewAdapter extends BaseAdapter {
 		return indexPath.getRow() == mRows.get(indexPath.getSection()) - 1;
 	}
 	
+	private int getMeasuredRowHeight(ATableViewCell cell) {
+		int widthMeasureSpec = MeasureSpec.makeMeasureSpec(cell.getWidth(), MeasureSpec.EXACTLY);
+		int heightMeasureSpec = MeasureSpec.makeMeasureSpec(AbsListView.LayoutParams.WRAP_CONTENT, MeasureSpec.EXACTLY);
+		cell.measure(widthMeasureSpec, heightMeasureSpec);
+		
+		return cell.getMeasuredHeight();
+	}
+	
 	private int getRowHeight(NSIndexPath indexPath, ATableViewCell cell) {
 		Resources res = mTableView.getContext().getResources();
 		
@@ -196,6 +206,9 @@ public class ATableViewAdapter extends BaseAdapter {
 			}
 			
 			rowHeight = (int) Math.ceil(rowHeight * res.getDisplayMetrics().density);
+		} else {
+			// Closes #7. It seems Android ~2.2 requires known row height to draw cell background drawable.
+			rowHeight = getMeasuredRowHeight(cell);
 		}
 		
 		return rowHeight;
@@ -365,7 +378,7 @@ public class ATableViewAdapter extends BaseAdapter {
 		drawable.addState(new int[] {}, normal);
 		
 		// when extending
-		ViewGroup backgroundView = (ViewGroup) cell.findViewById(R.id.backgroundView);
+		ViewGroup backgroundView = (ViewGroup) cell.getBackgroundView();
 		if (backgroundView == null) {
 			throw new RuntimeException("Cannot find R.id.backgroundView on your cell custom layout, " +
 					"please add it to remove this error.");

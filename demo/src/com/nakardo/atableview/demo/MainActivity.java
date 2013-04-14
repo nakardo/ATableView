@@ -7,6 +7,7 @@ import java.util.List;
 import android.app.Activity;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.text.TextUtils.TruncateAt;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.FrameLayout;
@@ -137,27 +138,51 @@ public class MainActivity extends Activity {
         createTableView();
     }
 
-    private Drawable getDrawableForRow(int row) {
-    	Drawable drawable = null;
-		switch (row) {
-			case 0:
-				drawable = getResources().getDrawable(R.drawable.san_juan);
-				break;
-			case 1:
-				drawable = getResources().getDrawable(R.drawable.la_rioja);
-				break;
-			case 2:
-				drawable = getResources().getDrawable(R.drawable.mendoza);
-				break;
-			default:
-				drawable = getResources().getDrawable(R.drawable.san_luis);
-				break;
+	private class SampleATableViewDataSource extends ATableViewDataSourceExt {
+		
+		private Drawable getDrawableForRowAtIndexPath(NSIndexPath indexPath) {
+	    	Drawable drawable = null;
+			switch (indexPath.getRow()) {
+				case 0: drawable = getResources().getDrawable(R.drawable.san_juan); break;
+				case 1: drawable = getResources().getDrawable(R.drawable.la_rioja); break;
+				case 2: drawable = getResources().getDrawable(R.drawable.mendoza); break;
+				default:drawable = getResources().getDrawable(R.drawable.san_luis);
+			}
+			
+			return drawable;
+	    }
+		
+		private void setupImageView(ATableViewCell cell, NSIndexPath indexPath) {
+			ImageView imageView = cell.getImageView();
+			if (indexPath.getSection() == 4) {
+				int paddingLeft = (int) Math.ceil(8 * getResources().getDisplayMetrics().density);
+				imageView.setPadding(paddingLeft, 0, 0, 0);
+				imageView.setImageDrawable(getDrawableForRowAtIndexPath(indexPath));
+			} else {
+				imageView.setPadding(0, 0, 0, 0);
+				imageView.setImageDrawable(null);
+			}
 		}
 		
-		return drawable;
-    }
-    
-	private class SampleATableViewDataSource extends ATableViewDataSourceExt {
+		private void setupLayout(ATableViewCell cell, NSIndexPath indexPath) {
+			TextView textLabel = (TextView) cell.findViewById(R.id.textLabel);
+			
+			int maxLines = 1;
+			TruncateAt truncateAt = TruncateAt.END;
+			LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) textLabel.getLayoutParams();
+			params.topMargin = params.bottomMargin = 0;
+			
+			if (indexPath.getSection() == 7) {
+				maxLines = Integer.MAX_VALUE;
+				params.topMargin = (int) getResources().getDimension(R.dimen.atv_cell_content_margin);
+				params.bottomMargin = (int) getResources().getDimension(R.dimen.atv_cell_content_margin);
+				truncateAt = null;
+			}
+			
+			textLabel.setLayoutParams(params);
+			textLabel.setMaxLines(maxLines);
+			textLabel.setEllipsize(truncateAt);
+		}
 		
 		@Override
 		public ATableViewCell cellForRowAtIndexPath(ATableView tableView, NSIndexPath indexPath) {
@@ -202,15 +227,7 @@ public class MainActivity extends Activity {
 				cell.setAccessoryType(accessoryType);
 				
 				// imageView
-				ImageView imageView = cell.getImageView();
-				if (indexPath.getSection() == 4) {
-					int paddingLeft = (int) Math.ceil(8 * getResources().getDisplayMetrics().density);
-					imageView.setPadding(paddingLeft, 0, 0, 0);
-					imageView.setImageDrawable(getDrawableForRow(row));
-				} else {
-					imageView.setPadding(0, 0, 0, 0);
-					imageView.setImageDrawable(null);
-				}
+				setupImageView(cell, indexPath);
 				
 				// textLabel
 				cell.getTextLabel().setText(province);
@@ -221,6 +238,8 @@ public class MainActivity extends Activity {
 					String capital = mCapitals.get(section).get(row);
 					detailTextLabel.setText(capital);
 				}
+				
+				setupLayout(cell, indexPath);
 			} else {
 				MyCustomCell customCell = (MyCustomCell)dequeueReusableCellWithIdentifier(cellIdentifier);
 				if (cell == null) {
@@ -285,21 +304,6 @@ public class MainActivity extends Activity {
 			}
 			
 			return super.heightForRowAtIndexPath(tableView, indexPath);
-		}
-		
-		@Override
-		public void willDisplayCellForRowAtIndexPath(ATableView tableView, ATableViewCell cell, NSIndexPath indexPath) {
-			if (indexPath.getSection() == 7) {
-				TextView textLabel = (TextView) cell.findViewById(R.id.textLabel);
-				
-				LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) textLabel.getLayoutParams();
-				params.topMargin = (int) getResources().getDimension(R.dimen.atv_cell_content_margin);
-				params.bottomMargin = (int) getResources().getDimension(R.dimen.atv_cell_content_margin);
-				
-				textLabel.setLayoutParams(params);
-				textLabel.setMaxLines(Integer.MAX_VALUE);
-				textLabel.setEllipsize(null);
-			}
 		}
 		
 		@Override
