@@ -8,6 +8,10 @@ ATableView intends to imitate same object model proposed on UIKit for building t
 
 If not, you should be good with the examples included here and the demo project.
 
+## Updates
+
+Documentation is a little outdated, please use it only for reference and stay close to the examples included on the demo project. Feel free to submit a bug if you find any issues using it.
+
 ## How to use it
 
 ### Creating tables
