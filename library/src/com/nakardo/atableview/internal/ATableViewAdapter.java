@@ -177,39 +177,49 @@ public class ATableViewAdapter extends BaseAdapter {
 		return indexPath.getRow() == mRows.get(indexPath.getSection()) - 1;
 	}
 	
-	private int getMeasuredRowHeight(ATableViewCell cell) {
-		int widthMeasureSpec = MeasureSpec.makeMeasureSpec(cell.getWidth(), MeasureSpec.EXACTLY);
+	private int getMeasuredRowHeight(ATableViewCell cell, NSIndexPath indexPath, boolean cache) {
+		
+		// closes #12, use table width instead cell since sometimes returns zero for WRAP_CONTENT height cells.
+		int widthMeasureSpec = MeasureSpec.makeMeasureSpec(mTableView.getWidth(), MeasureSpec.EXACTLY);
 		int heightMeasureSpec = MeasureSpec.makeMeasureSpec(AbsListView.LayoutParams.WRAP_CONTENT, MeasureSpec.EXACTLY);
 		cell.measure(widthMeasureSpec, heightMeasureSpec);
 		
-		return cell.getMeasuredHeight();
+		// add measured height to cache, so we don't have to recalculate every time.
+		int height = (int) (cell.getMeasuredHeight() / cell.getResources().getDisplayMetrics().density);
+		if (cache) {
+			mRowsHeight.get(indexPath.getSection()).set(indexPath.getRow(), height);
+		}
+		
+		return height;
 	}
 	
 	private int getRowHeight(ATableViewCell cell, NSIndexPath indexPath) {
 		Resources res = mTableView.getContext().getResources();
 		
-		// make height calculations only for valid values, exclude constants.
+		// transform height constants into values if we've set so.
+		// closes #7. it seems Android ~2.2 requires known row height to draw cell background drawable.
 		int rowHeight = mRowsHeight.get(indexPath.getSection()).get(indexPath.getRow());
-		if (rowHeight > -1) {
-			if (mTableView.getStyle() == ATableViewStyle.Plain) {
-				if (!isBottomRow(indexPath) && !isSingleRow(indexPath)) {
-					rowHeight += (int) ATableViewCellDrawable.CELL_STROKE_WIDTH_DP;
-				}
-			} else {
-				if (isBottomRow(indexPath) || isSingleRow(indexPath)) {
-					if (mTableView.getSeparatorStyle() == ATableViewCellSeparatorStyle.SingleLineEtched) {
-						rowHeight += (int) ATableViewCellDrawable.CELL_STROKE_WIDTH_DP;
-					}
-				}
-
+		if (rowHeight < 0) {
+			// cached for performance, it might have some impact if user changes the text after layout.
+			rowHeight = getMeasuredRowHeight(cell, indexPath, true);
+		}
+		
+		// add extra height to rows depending on it's style.
+		if (mTableView.getStyle() == ATableViewStyle.Plain) {
+			if (!isBottomRow(indexPath) && !isSingleRow(indexPath)) {
 				rowHeight += (int) ATableViewCellDrawable.CELL_STROKE_WIDTH_DP;
 			}
-			
-			rowHeight = (int) Math.ceil(rowHeight * res.getDisplayMetrics().density);
 		} else {
-			// Closes #7. It seems Android ~2.2 requires known row height to draw cell background drawable.
-			rowHeight = getMeasuredRowHeight(cell);
+			if (isBottomRow(indexPath) || isSingleRow(indexPath)) {
+				if (mTableView.getSeparatorStyle() == ATableViewCellSeparatorStyle.SingleLineEtched) {
+					rowHeight += (int) ATableViewCellDrawable.CELL_STROKE_WIDTH_DP;
+				}
+			}
+
+			rowHeight += (int) ATableViewCellDrawable.CELL_STROKE_WIDTH_DP;
 		}
+		
+		rowHeight = (int) Math.ceil(rowHeight * res.getDisplayMetrics().density);
 		
 		return rowHeight;
 	}
