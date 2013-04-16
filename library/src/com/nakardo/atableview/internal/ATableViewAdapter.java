@@ -27,7 +27,6 @@ import com.nakardo.atableview.view.ATableView;
 import com.nakardo.atableview.view.ATableView.ATableViewStyle;
 import com.nakardo.atableview.view.ATableViewCell;
 import com.nakardo.atableview.view.ATableViewCell.ATableViewCellSelectionStyle;
-import com.nakardo.atableview.view.ATableViewCell.ATableViewCellSeparatorStyle;
 
 public class ATableViewAdapter extends BaseAdapter {
 	private List<Boolean> mHasHeader;
@@ -193,7 +192,7 @@ public class ATableViewAdapter extends BaseAdapter {
 		return height;
 	}
 	
-	private int getRowHeight(ATableViewCell cell, NSIndexPath indexPath) {
+	private int getRowHeight(ATableViewCell cell, NSIndexPath indexPath, ATableViewCellBackgroundStyle backgroundStyle) {
 		Resources res = mTableView.getContext().getResources();
 		
 		// transform height constants into values if we've set so.
@@ -203,23 +202,11 @@ public class ATableViewAdapter extends BaseAdapter {
 			// cached for performance, it might have some impact if user changes the text after layout.
 			rowHeight = getMeasuredRowHeight(cell, indexPath, true);
 		}
+		rowHeight = (int) Math.ceil(rowHeight * res.getDisplayMetrics().density);
 		
 		// add extra height to rows depending on it's style.
-		if (mTableView.getStyle() == ATableViewStyle.Plain) {
-			if (!isBottomRow(indexPath) && !isSingleRow(indexPath)) {
-				rowHeight += (int) ATableViewCellDrawable.CELL_STROKE_WIDTH_DP;
-			}
-		} else {
-			if (isBottomRow(indexPath) || isSingleRow(indexPath)) {
-				if (mTableView.getSeparatorStyle() == ATableViewCellSeparatorStyle.SingleLineEtched) {
-					rowHeight += (int) ATableViewCellDrawable.CELL_STROKE_WIDTH_DP;
-				}
-			}
-
-			rowHeight += (int) ATableViewCellDrawable.CELL_STROKE_WIDTH_DP;
-		}
-		
-		rowHeight = (int) Math.ceil(rowHeight * res.getDisplayMetrics().density);
+		Rect padding = ATableViewCellDrawable.getContentPadding(mTableView, backgroundStyle);
+		rowHeight += padding.top + padding.bottom;
 		
 		return rowHeight;
 	}
@@ -359,8 +346,8 @@ public class ATableViewAdapter extends BaseAdapter {
 		cell.setLayoutParams(params);
 	}
 	
-	private void setupRowBackgroundDrawable(ATableViewCell cell, NSIndexPath indexPath, int rowHeight) {
-		ATableViewCellBackgroundStyle backgroundStyle = getRowBackgroundStyle(indexPath);
+	private void setupRowBackgroundDrawable(ATableViewCell cell, NSIndexPath indexPath,
+			ATableViewCellBackgroundStyle backgroundStyle, int rowHeight) {
 		
 		// setup background drawables.
 		StateListDrawable drawable = new StateListDrawable();
@@ -523,10 +510,12 @@ public class ATableViewAdapter extends BaseAdapter {
 			
 			cell = dataSource.cellForRowAtIndexPath(mTableView, indexPath);
 			
+			ATableViewCellBackgroundStyle backgroundStyle = getRowBackgroundStyle(indexPath);
+			int rowHeight = getRowHeight(cell, indexPath, backgroundStyle);
+			
 			// setup.
-			int rowHeight = getRowHeight(cell, indexPath);
 			setupRowLayout(cell, indexPath, rowHeight);
-			setupRowBackgroundDrawable(cell, indexPath, rowHeight);
+			setupRowBackgroundDrawable(cell, indexPath, backgroundStyle, rowHeight);
 			setupRowContentView(cell, indexPath);
 			setupRowAccessoryButtonDelegateCallback(cell, indexPath);
 			
