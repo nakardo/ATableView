@@ -404,28 +404,19 @@ public class ATableViewAdapter extends BaseAdapter {
 		}
 	}
 	
-	public int getHeaderFooterStyleCount() {
-		int count = 0;
+	private int getHeaderFooterStyleCount() {
+		int count = 1;
 		
-		// check if we've a header or a footer at least.
-		int s = 0;
-		while (count < 2 && s < mRows.size()) {
-			int offset = getHeaderFooterCountOffset(s);
-			if (offset > count) count = offset;
-			s++;
+		// closes #10. getViewTypeCount() is only called once by the adapter even when notifyDataSetChanged is invoked,
+		// so we've to return header & footer styles even we don't have rows to display.
+		if (mTableView.getStyle() == ATableViewStyle.Grouped) {
+			count = 2;
 		}
 		
-		// only grouped style tables has different header and footer style.
-		if (mTableView.getStyle() == ATableViewStyle.Grouped && count > 1) {
-			return 2;
-		} else if (count > 0) {
-			return 1;
-		}
-		
-		return 0;
+		return count;
 	}
 	
-	public int getHeaderFooterCountOffset(int section) {
+	private int getHeaderFooterCountOffset(int section) {
 		return (hasHeader(section) ? 1 : 0) + (hasFooter(section) ? 1 : 0);
 	}
 	
@@ -449,6 +440,7 @@ public class ATableViewAdapter extends BaseAdapter {
 		ATableViewDataSource dataSource = mTableView.getDataSource();
 	    if (dataSource instanceof ATableViewDataSourceExt) {
 	    	// TODO should add custom headers & footers to view count here when supported.
+	    	// getViewTypeCount() is called only once, so no effect if this value is changed on runtime by the user.
 			count += ((ATableViewDataSourceExt) dataSource).numberOfRowStyles();
 		} else {
 			count += 1;

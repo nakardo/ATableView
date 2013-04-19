@@ -99,10 +99,7 @@ public class ATableView extends ListView {
 	}
 	
 	public void reloadData() {
-		// Closes #10, it seems notifyDataSetChanged doesn't clean rows queue as it should.
-		// getInternalAdapter().notifyDataSetChanged();
-		
-		setAdapter(new ATableViewAdapter(this));
+		getInternalAdapter().notifyDataSetChanged();
 	}
 	
 	@Override
