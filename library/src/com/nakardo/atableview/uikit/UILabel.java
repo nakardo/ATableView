@@ -6,7 +6,6 @@ import android.content.Context;
 import android.content.res.AssetManager;
 import android.graphics.Typeface;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.widget.TextView;
 
 public class UILabel extends TextView {
@@ -18,9 +17,7 @@ public class UILabel extends TextView {
         try {
             InputStream stream = context.getAssets().open(path); stream.close();
             exists = true;
-        } catch (Exception e) {
-            Log.w(TextView.class.getSimpleName(), "Unable to load custom font at path: " + path);
-        }
+        } catch (Exception e) {}
         
         return exists;
     }
