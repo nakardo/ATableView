@@ -236,7 +236,7 @@ public class ATableViewAdapter extends BaseAdapter {
 		if (rowHeight > -1) {
 			rowHeight = (int) Math.ceil(rowHeight * res.getDisplayMetrics().density);
 		}
-		
+
 		return rowHeight;
 	}
 	
@@ -328,8 +328,14 @@ public class ATableViewAdapter extends BaseAdapter {
 		}
 		cell.setPadding(padding.left, padding.top, padding.right, padding.bottom);
 		
-		// setup layout height.
-		int rowHeight = getHeaderFooterRowHeight(indexPath, isFooterRow);
+		// setup layout height
+		// closes #16, we've to set minHeight for grouped headers & footers as well to make it take effect.
+		int rowHeight = getHeaderFooterRowHeight(indexPath, isFooterRow);	
+		if (mTableView.getStyle() == ATableViewStyle.Grouped) {
+			int minHeight = (int) res.getDimension(R.dimen.atv_grouped_section_header_footer_min_height);
+			cell.setMinimumHeight(rowHeight < minHeight ? rowHeight : minHeight);
+		}
+		
 		ListView.LayoutParams params = new ListView.LayoutParams(ListView.LayoutParams.MATCH_PARENT, rowHeight);
 		cell.setLayoutParams(params);
 	}
