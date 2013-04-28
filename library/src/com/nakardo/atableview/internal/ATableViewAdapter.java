@@ -103,7 +103,9 @@ public class ATableViewAdapter extends BaseAdapter {
 	}
 	
 	public NSIndexPath getIndexPath(int position) {
-		int offset = 1, count = 0, limit = 0;
+		// closes #18, set offset in one by default only if we've a header in the very first
+		// section of the table.
+		int offset = hasHeader(0) ? 1 : 0, count = 0, limit = 0;
 		
 		int sections = mRows.size();
 		for (int s = 0; s < sections; s++) {
@@ -127,7 +129,7 @@ public class ATableViewAdapter extends BaseAdapter {
 			return true;
 		}
 		
-		return mHasHeader.get(section);
+		return section < mHasHeader.size() && mHasHeader.get(section);
 	}
 	
 	public boolean hasFooter(int section) {
@@ -135,7 +137,7 @@ public class ATableViewAdapter extends BaseAdapter {
 			return true;
 		}
 		
-		return mHasFooter.get(section);
+		return section < mHasHeader.size() && mHasFooter.get(section);
 	}
 	
 	public boolean isHeaderRow(int position) {
@@ -242,12 +244,20 @@ public class ATableViewAdapter extends BaseAdapter {
 	
 	private ATableViewCellBackgroundStyle getRowBackgroundStyle(NSIndexPath indexPath) {
 		ATableViewCellBackgroundStyle backgroundStyle = ATableViewCellBackgroundStyle.Middle;
+		
 		if (isSingleRow(indexPath)) {
 			backgroundStyle = ATableViewCellBackgroundStyle.Single;
 		} else if (isTopRow(indexPath)) {
 			backgroundStyle = ATableViewCellBackgroundStyle.Top;
 		} else if (isBottomRow(indexPath)) {
+			int section = indexPath.getSection();
+			boolean nextSectionHasHeader = section < mRows.size() - 1 && !hasHeader(section + 1);
+			
+			// closes #19, plain tables should show separator if next section doesn't have a header.
 			backgroundStyle = ATableViewCellBackgroundStyle.Bottom;
+			if (mTableView.getStyle() == ATableViewStyle.Plain && nextSectionHasHeader) {
+				backgroundStyle = ATableViewCellBackgroundStyle.PlainBottomDoubleLine;
+			}
 		}
 		
 		return backgroundStyle;
