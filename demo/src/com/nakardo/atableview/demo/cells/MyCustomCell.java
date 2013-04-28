@@ -1,7 +1,8 @@
-package com.nakardo.atableview.demo;
+package com.nakardo.atableview.demo.cells;
 
 import android.content.Context;
 
+import com.nakardo.atableview.demo.R;
 import com.nakardo.atableview.view.ATableViewCell;
 
 public class MyCustomCell extends ATableViewCell {

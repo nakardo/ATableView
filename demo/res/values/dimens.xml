@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="menu_shadow_width">15dp</dimen>
+    <dimen name="menu_behind_offset">70dp</dimen>
+</resources>

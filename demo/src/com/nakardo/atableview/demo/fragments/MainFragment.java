@@ -1,15 +1,15 @@
-package com.nakardo.atableview.demo;
+package com.nakardo.atableview.demo.fragments;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import android.app.Activity;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.text.TextUtils.TruncateAt;
-import android.view.Menu;
-import android.view.MenuItem;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -17,6 +17,10 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.actionbarsherlock.app.SherlockFragment;
+import com.nakardo.atableview.demo.R;
+import com.nakardo.atableview.demo.cells.MyCustomCell;
+import com.nakardo.atableview.demo.interfaces.OnSlidingMenuItemClickedListener;
 import com.nakardo.atableview.foundation.NSIndexPath;
 import com.nakardo.atableview.internal.ATableViewCellAccessoryView.ATableViewCellAccessoryType;
 import com.nakardo.atableview.protocol.ATableViewDataSourceExt;
@@ -28,7 +32,7 @@ import com.nakardo.atableview.view.ATableViewCell.ATableViewCellSelectionStyle;
 import com.nakardo.atableview.view.ATableViewCell.ATableViewCellSeparatorStyle;
 import com.nakardo.atableview.view.ATableViewCell.ATableViewCellStyle;
 
-public class MainActivity extends Activity {
+public class MainFragment extends SherlockFragment implements OnSlidingMenuItemClickedListener {
 	private List<List<String>> mCapitals;
 	private List<List<String>> mProvinces;
 	private String[] mRegions = {
@@ -75,67 +79,33 @@ public class MainActivity extends Activity {
 	}
 	
 	private void createTableView() {
-		mTableView = new ATableView(mTableViewStyle, this);
+		mTableView = new ATableView(mTableViewStyle, getActivity());
 		mTableView.setSeparatorStyle(mTableViewSeparatorStyle);
         mTableView.setDataSource(new SampleATableViewDataSource());
         mTableView.setDelegate(new SampleATableViewDelegate());
         
-        FrameLayout container = (FrameLayout)findViewById(android.R.id.content);
+        ViewGroup container = (ViewGroup) getView();
         container.addView(mTableView);
 	}
 	
-	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
-		switch (item.getItemId()) {
-			case R.id.grouped_etched:
-				mTableViewStyle = ATableViewStyle.Grouped;
-				mTableViewSeparatorStyle = ATableViewCellSeparatorStyle.SingleLineEtched;
-				break;
-			case R.id.grouped_single:
-				mTableViewStyle = ATableViewStyle.Grouped;
-				mTableViewSeparatorStyle = ATableViewCellSeparatorStyle.SingleLine;
-				break;
-			case R.id.plain:
-				mTableViewStyle = ATableViewStyle.Plain;
-				break;
-			default:
-				return super.onOptionsItemSelected(item);
-		}
-		
-		FrameLayout container = (FrameLayout)findViewById(android.R.id.content);
-		container.removeView(mTableView);
-		
-		createTableView();
-		
-		return true;
-	}
-	
-	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		getMenuInflater().inflate(R.menu.main_menu, menu);
-		return true;
-	}
-	
-	@Override
-	public Object onRetainNonConfigurationInstance() {
-		return new ConfigurationHolder(this);
-	}
-	
     @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.main);
-        
-        mCapitals = createCapitalsList();
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    	FrameLayout view = new FrameLayout(getActivity());
+    	view.setBackgroundResource(R.drawable.atv_group_background_color);
+    	
+    	return view;
+    }
+    
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+    	super.onActivityCreated(savedInstanceState);
+    	
+    	mCapitals = createCapitalsList();
         mProvinces = createProvincesList();
-        
-        ConfigurationHolder holder = (ConfigurationHolder) getLastNonConfigurationInstance();
-        if (holder != null) {
-        	mTableViewStyle = holder.tableViewStyle;
-        	mTableViewSeparatorStyle = holder.tableViewSeparatorStyle;
+    	
+    	if (savedInstanceState == null) {
+    		createTableView();
 		}
-        
-        createTableView();
     }
 
 	private class SampleATableViewDataSource extends ATableViewDataSourceExt {
@@ -221,7 +191,7 @@ public class MainActivity extends Activity {
 			if (section != 5) {
 				cell = dequeueReusableCellWithIdentifier(cellIdentifier);
 				if (cell == null) {
-					cell = new ATableViewCell(cellStyle, cellIdentifier, MainActivity.this);
+					cell = new ATableViewCell(cellStyle, cellIdentifier, getActivity());
 				}
 				
 				cell.setSelectionStyle(selectionStyle);
@@ -244,7 +214,7 @@ public class MainActivity extends Activity {
 			} else {
 				MyCustomCell customCell = (MyCustomCell)dequeueReusableCellWithIdentifier(cellIdentifier);
 				if (cell == null) {
-					customCell = new MyCustomCell(ATableViewCellStyle.Default, cellIdentifier, MainActivity.this);
+					customCell = new MyCustomCell(ATableViewCellStyle.Default, cellIdentifier, getActivity());
 					customCell.setSelectionStyle(selectionStyle);
 					customCell.setAccessoryType(accessoryType);
 				}
@@ -310,25 +280,26 @@ public class MainActivity extends Activity {
 		@Override
 		public void didSelectRowAtIndexPath(ATableView tableView, NSIndexPath indexPath) {
 			String text ="Selected IndexPath [" + indexPath.getSection() + "," + indexPath.getRow() + "]";
-			Toast toast = Toast.makeText(getApplicationContext(), text, Toast.LENGTH_SHORT);
+			Toast toast = Toast.makeText(getActivity(), text, Toast.LENGTH_SHORT);
 			toast.show();
 		}
 		
 		@Override
 		public void accessoryButtonTappedForRowWithIndexPath(ATableView tableView, NSIndexPath indexPath) {
 			String text = "Tapped DisclosureButton at indexPath [" + indexPath.getSection() + "," + indexPath.getRow() + "]";
-			Toast toast = Toast.makeText(getApplicationContext(), text, Toast.LENGTH_SHORT);
+			Toast toast = Toast.makeText(getActivity(), text, Toast.LENGTH_SHORT);
 			toast.show();
 		}
 	}
-	
-	private static class ConfigurationHolder {
-		public ATableViewStyle tableViewStyle;
-		public ATableViewCellSeparatorStyle tableViewSeparatorStyle;
+
+	@Override
+	public void onStyleATableViewStyleSelected(ATableViewStyle tableViewStyle,
+			ATableViewCellSeparatorStyle separatorStyle) {
 		
-		public ConfigurationHolder(MainActivity activity) {
-			tableViewStyle = activity.mTableViewStyle;
-			tableViewSeparatorStyle = activity.mTableViewSeparatorStyle;
-		}
+		mTableViewStyle = tableViewStyle;
+		mTableViewSeparatorStyle = separatorStyle;
+		
+		((ViewGroup) getView()).removeView(mTableView);
+		createTableView();
 	}
 }
