@@ -21,7 +21,10 @@ public class ATableViewCellDrawable extends ShapeDrawable {
 	private static final float CELL_STROKE_WIDTH_DP = 1f;
 	private static final float CELL_GROUPED_STYLE_CORNER_RADIUS = 7;
 	
-	public enum ATableViewCellBackgroundStyle { Single, Top, Middle, Bottom };
+	// PlainBottomDoubleLine applies for bottom rows on Plain tables without a section next to it.
+	public enum ATableViewCellBackgroundStyle {
+		Single, Top, Middle, Bottom, PlainBottomDoubleLine
+	};
 	
 	private ATableView mTableView;
 	private ATableViewCellBackgroundStyle mCellBackgroundStyle;
@@ -88,6 +91,8 @@ public class ATableViewCellDrawable extends ShapeDrawable {
 		} else if (backgroundStyle == ATableViewCellBackgroundStyle.Middle ||
 				backgroundStyle == ATableViewCellBackgroundStyle.Bottom) {
 			marginTop = strokeWidth;
+		} else if (backgroundStyle == ATableViewCellBackgroundStyle.PlainBottomDoubleLine) {
+			marginTop = marginBottom = strokeWidth;
 		}
 		
 		return new Rect(margins, marginTop, margins, marginBottom);
