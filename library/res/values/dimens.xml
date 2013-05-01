@@ -1,6 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     
+    <!-- general -->
+    <dimen name="atv_stroke_width">1dp</dimen>
+    <dimen name="atv_grouped_stroke_radius">7dp</dimen>
+    
     <!-- plain table header -->
     <dimen name="atv_plain_header_text_size">18sp</dimen>
     <dimen name="atv_plain_section_header_padding_left">12dp</dimen>

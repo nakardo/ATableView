@@ -91,8 +91,6 @@ public class MainFragment extends SherlockFragment implements OnSlidingMenuItemC
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
     	FrameLayout view = new FrameLayout(getActivity());
-    	view.setBackgroundResource(R.drawable.atv_group_background_color);
-    	
     	return view;
     }
     
@@ -255,14 +253,15 @@ public class MainFragment extends SherlockFragment implements OnSlidingMenuItemC
 
 		@Override
 		public int styleForRowAtIndexPath(NSIndexPath indexPath) {
-			int section = indexPath.getSection();
-			if (section < 4) {
-				return section;
-			} else if (section != 5) {
-				return 4;
+			int style = indexPath.getRow();
+			
+			switch (indexPath.getSection()) {
+				case 3: case 4: case 6: case 7: style = 3; break; // default
+				case 5: style = 4; break; // custom
+				default: break;
 			}
 			
-			return 3;
+			return style;
 		}
 	}
 	

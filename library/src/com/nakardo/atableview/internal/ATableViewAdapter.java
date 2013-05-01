@@ -102,6 +102,44 @@ public class ATableViewAdapter extends BaseAdapter {
 		super.notifyDataSetChanged();
 	}
 	
+	public int getContentHeight() {
+		int height = 0;
+		
+		// TODO we're supporting content height only for plain tables, it's more complicated for grouped style
+		// since we would have to measure all headers & footers values.
+		if (mTableView.getStyle() == ATableViewStyle.Plain) {
+			float density = mTableView.getResources().getDisplayMetrics().density;
+			
+			// rows.
+			for (List<Integer> sectionHeights : mRowsHeight) {
+				for (int rowHeight : sectionHeights) {
+					height += rowHeight * density;
+				}
+			}
+			
+			// headers.
+			for (int section = 0; section < mHeadersHeight.size(); section++) {
+				height += hasHeader(section) ? getHeaderFooterRowHeight(section, false) : 0;
+			}
+			
+			// footers.
+			for (int section = 0; section < mFootersHeight.size(); section++) {
+				height += hasFooter(section) ? getHeaderFooterRowHeight(section, true) : 0;
+			}
+			
+			// MAGIC MAGIC MAGIC. for some reason it seems to be a given offset by the number of rows
+			// subtracting headers & footers count.
+			height += (getCount() - mHeadersHeight.size() - mFootersHeight.size()) * density;
+		}
+		
+		return height;
+	}
+	
+	public int getLastRowHeight() {
+		List<Integer> sectionHeights = mRowsHeight.get(mRowsHeight.size() - 1);
+		return sectionHeights.get(sectionHeights.size() - 1);
+	}
+	
 	public NSIndexPath getIndexPath(int position) {
 		// closes #18, set offset in one by default only if we've a header in the very first
 		// section of the table.
@@ -213,9 +251,8 @@ public class ATableViewAdapter extends BaseAdapter {
 		return rowHeight;
 	}
 	
-	private int getHeaderFooterRowHeight(NSIndexPath indexPath, boolean isFooterRow) {
+	private int getHeaderFooterRowHeight(int section, boolean isFooterRow) {
 		Resources res = mTableView.getResources();
-		int section = indexPath.getSection();
 		
 		// pull height, it will default on delegate to UNDEFINED if not overridden.
 		int rowHeight = ATableViewCell.LayoutParams.UNDEFINED;
@@ -340,7 +377,7 @@ public class ATableViewAdapter extends BaseAdapter {
 		
 		// setup layout height
 		// closes #16, we've to set minHeight for grouped headers & footers as well to make it take effect.
-		int rowHeight = getHeaderFooterRowHeight(indexPath, isFooterRow);	
+		int rowHeight = getHeaderFooterRowHeight(indexPath.getSection(), isFooterRow);	
 		if (mTableView.getStyle() == ATableViewStyle.Grouped) {
 			int minHeight = (int) res.getDimension(R.dimen.atv_grouped_section_header_footer_min_height);
 			cell.setMinimumHeight(rowHeight < minHeight ? rowHeight : minHeight);

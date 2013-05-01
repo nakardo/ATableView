@@ -13,13 +13,12 @@ import android.graphics.drawable.shapes.RoundRectShape;
 import android.graphics.drawable.shapes.Shape;
 
 import com.nakardo.atableview.R;
+import com.nakardo.atableview.utils.DrawableUtils;
 import com.nakardo.atableview.view.ATableView;
 import com.nakardo.atableview.view.ATableView.ATableViewStyle;
 import com.nakardo.atableview.view.ATableViewCell.ATableViewCellSeparatorStyle;
 
 public class ATableViewCellDrawable extends ShapeDrawable {
-	private static final float CELL_STROKE_WIDTH_DP = 1f;
-	private static final float CELL_GROUPED_STYLE_CORNER_RADIUS = 7;
 	
 	// PlainBottomDoubleLine applies for bottom rows on Plain tables without a section next to it.
 	public enum ATableViewCellBackgroundStyle {
@@ -47,7 +46,7 @@ public class ATableViewCellDrawable extends ShapeDrawable {
 		if (tableStyle == ATableViewStyle.Grouped) {
 			Resources res = tableView.getResources();
 			
-			float radii = (float) Math.round(CELL_GROUPED_STYLE_CORNER_RADIUS * res.getDisplayMetrics().density);
+			float radii = Math.round(res.getDimension(R.dimen.atv_grouped_stroke_radius));
 			if (backgroundStyle == ATableViewCellBackgroundStyle.Single) {
 				radius = new float[] { radii, radii, radii, radii, radii, radii, radii, radii };
 			} else if (backgroundStyle == ATableViewCellBackgroundStyle.Top) {
@@ -69,12 +68,8 @@ public class ATableViewCellDrawable extends ShapeDrawable {
 			   backgroundStyle == ATableViewCellBackgroundStyle.Single);
 	}
 	
-	public static int getStrokeWidth(Resources res) {
-		return (int) Math.floor(CELL_STROKE_WIDTH_DP * res.getDisplayMetrics().density);
-	}
-	
 	public static Rect getContentPadding(ATableView tableView, ATableViewCellBackgroundStyle backgroundStyle) {
-		int strokeWidth = getStrokeWidth(tableView.getResources());
+		int strokeWidth = DrawableUtils.getStrokeWidth(tableView.getResources());
 		int margins = 0, marginTop = 0, marginBottom = 0;
 		
 		// calculate margins to avoid content to overlap with cell stroke lines.
@@ -98,20 +93,6 @@ public class ATableViewCellDrawable extends ShapeDrawable {
 		return new Rect(margins, marginTop, margins, marginBottom);
 	}
 	
-	private int getSeparatorColor() {
-		Resources res = mTableView.getResources();
-		
-		// pull color, -1 implies no custom color has being defined so we go with defaults.
-		int color = mTableView.getSeparatorColor();
-		if (color == -1) {
-			color = res.getColor(R.color.atv_plain_separator);
-			if (mTableView.getStyle() == ATableViewStyle.Grouped) {
-				color = res.getColor(R.color.atv_grouped_separator);
-			}
-		}
-		return color;
-	}
-	
 	public ATableViewCellDrawable(ATableView tableView, ATableViewCellBackgroundStyle backgroundStyle,
 			int rowHeight, int backgroundColor) {
 		
@@ -126,10 +107,10 @@ public class ATableViewCellDrawable extends ShapeDrawable {
 		
 		// separator.
 		mSeparatorPaint = new Paint(getPaint());
-		mSeparatorPaint.setColor(getSeparatorColor());
+		mSeparatorPaint.setColor(DrawableUtils.getSeparatorColor(mTableView));
 		
 		// calculate stroke width.
-		mStrokeWidth = getStrokeWidth(res);
+		mStrokeWidth = DrawableUtils.getStrokeWidth(res);
 		
 		// etched lines, only for grouped tables, with SingleLineEtched style.
 		if (mTableView.getStyle() == ATableViewStyle.Grouped &&
