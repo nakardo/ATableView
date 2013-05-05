@@ -8,14 +8,20 @@ import com.actionbarsherlock.view.MenuItem;
 import com.nakardo.atableview.demo.R;
 import com.nakardo.atableview.demo.fragments.MainFragment;
 import com.nakardo.atableview.demo.fragments.MenuFragment;
-import com.nakardo.atableview.demo.interfaces.OnSlidingMenuItemClickedListener;
+import com.nakardo.atableview.demo.interfaces.TableViewConfigurationInterface;
 import com.nakardo.atableview.view.ATableView.ATableViewStyle;
 import com.nakardo.atableview.view.ATableViewCell.ATableViewCellSeparatorStyle;
 import com.slidingmenu.lib.SlidingMenu;
 
-public class MainActivity extends SherlockFragmentActivity implements OnSlidingMenuItemClickedListener {
-	private OnSlidingMenuItemClickedListener mContentListener;
+public class MainActivity extends SherlockFragmentActivity implements TableViewConfigurationInterface {
+	private TableViewConfigurationInterface mContentListener;
 	private SlidingMenu mMenu;
+	
+	// example default selections.
+	public ATableViewStyle tableViewStyle = ATableViewStyle.Grouped;
+	public ATableViewCellSeparatorStyle separatorStyle = ATableViewCellSeparatorStyle.SingleLineEtched;
+	public boolean allowsSelection = true;
+	public boolean allowsMultipleSelection = false;
 	
 	private void setupSlidingMenu() {
 		mMenu = new SlidingMenu(this);
@@ -29,6 +35,7 @@ public class MainActivity extends SherlockFragmentActivity implements OnSlidingM
         mMenu.attachToActivity(this, SlidingMenu.SLIDING_CONTENT);
         
         mMenu.setMenu(R.layout.menu_frame);
+        
         getSupportFragmentManager().beginTransaction().replace(R.id.menu_frame,
         		new MenuFragment()).commit();
 	}
@@ -44,8 +51,7 @@ public class MainActivity extends SherlockFragmentActivity implements OnSlidingM
 		
 		MainFragment fragment = new MainFragment();
 		fragment.setHasOptionsMenu(true);
-		getSupportFragmentManager().beginTransaction().replace(R.id.content_frame,
-				fragment).commit();
+		getSupportFragmentManager().beginTransaction().replace(R.id.content_frame, fragment).commit();
 		
 		mContentListener = fragment;
 	}
@@ -67,12 +73,9 @@ public class MainActivity extends SherlockFragmentActivity implements OnSlidingM
 		 
 		 return super.onKeyDown(keycode,event);  
 	 }
-
-	@Override
-	public void onStyleATableViewStyleSelected(ATableViewStyle tableViewStyle,
-			ATableViewCellSeparatorStyle separatorStyle) {
-		
-		mMenu.toggle();
-		mContentListener.onStyleATableViewStyleSelected(tableViewStyle, separatorStyle);
-	}
+	 
+	 @Override
+	 public void onTableViewConfigurationChanged() {
+		 mContentListener.onTableViewConfigurationChanged(); mMenu.toggle();
+	 }
 }

@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import android.app.Activity;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.text.TextUtils.TruncateAt;
@@ -19,20 +20,19 @@ import android.widget.Toast;
 
 import com.actionbarsherlock.app.SherlockFragment;
 import com.nakardo.atableview.demo.R;
+import com.nakardo.atableview.demo.activities.MainActivity;
 import com.nakardo.atableview.demo.cells.MyCustomCell;
-import com.nakardo.atableview.demo.interfaces.OnSlidingMenuItemClickedListener;
+import com.nakardo.atableview.demo.interfaces.TableViewConfigurationInterface;
 import com.nakardo.atableview.foundation.NSIndexPath;
 import com.nakardo.atableview.internal.ATableViewCellAccessoryView.ATableViewCellAccessoryType;
 import com.nakardo.atableview.protocol.ATableViewDataSourceExt;
 import com.nakardo.atableview.protocol.ATableViewDelegate;
 import com.nakardo.atableview.view.ATableView;
-import com.nakardo.atableview.view.ATableView.ATableViewStyle;
 import com.nakardo.atableview.view.ATableViewCell;
 import com.nakardo.atableview.view.ATableViewCell.ATableViewCellSelectionStyle;
-import com.nakardo.atableview.view.ATableViewCell.ATableViewCellSeparatorStyle;
 import com.nakardo.atableview.view.ATableViewCell.ATableViewCellStyle;
 
-public class MainFragment extends SherlockFragment implements OnSlidingMenuItemClickedListener {
+public class MainFragment extends SherlockFragment implements TableViewConfigurationInterface {
 	private List<List<String>> mCapitals;
 	private List<List<String>> mProvinces;
 	private String[] mRegions = {
@@ -45,9 +45,8 @@ public class MainFragment extends SherlockFragment implements OnSlidingMenuItemC
 		null, null
 	};
 	
+	private MainActivity mFragmentContainer;
 	private ATableView mTableView;
-	private ATableViewStyle mTableViewStyle = ATableViewStyle.Grouped;
-	private ATableViewCellSeparatorStyle mTableViewSeparatorStyle = ATableViewCellSeparatorStyle.SingleLineEtched;
 	
 	private static List<List<String>> createProvincesList() {
 		List<List<String>> provinces = new ArrayList<List<String>>();
@@ -60,7 +59,8 @@ public class MainFragment extends SherlockFragment implements OnSlidingMenuItemC
 		provinces.add(Arrays.asList(new String[] { "Neuquén", "Chubut", "Santa Cruz", "Tierra del Fuego" }));
 		provinces.add(Arrays.asList(new String[] { "Autonomous City of Buenos Aires" }));
 		provinces.add(Arrays.asList(new String[] { "ATableView intends to imitate same object model proposed on UIKit for building tables, " +
-				"so it's not only limited on theming Android ListView.\n\nCopyright 2012 Diego Acosta\n\nContact me at diegonake@gmail.com / @nakardo"}));
+				"so it's not only limited on theming Android ListView.\n\nCopyright 2012 Diego Acosta\n\n" +
+				"Contact me at diegonake@gmail.com / @nakardo"}));
 		
 		return provinces;
 	}
@@ -79,8 +79,10 @@ public class MainFragment extends SherlockFragment implements OnSlidingMenuItemC
 	}
 	
 	private void createTableView() {
-		mTableView = new ATableView(mTableViewStyle, getActivity());
-		mTableView.setSeparatorStyle(mTableViewSeparatorStyle);
+		mTableView = new ATableView(mFragmentContainer.tableViewStyle, getActivity());
+		mTableView.setSeparatorStyle(mFragmentContainer.separatorStyle);
+		mTableView.setAllowsSelection(mFragmentContainer.allowsSelection);
+		mTableView.setAllowsMultipleSelection(mFragmentContainer.allowsMultipleSelection);
         mTableView.setDataSource(new SampleATableViewDataSource());
         mTableView.setDelegate(new SampleATableViewDelegate());
         
@@ -100,10 +102,16 @@ public class MainFragment extends SherlockFragment implements OnSlidingMenuItemC
     	
     	mCapitals = createCapitalsList();
         mProvinces = createProvincesList();
+        
+        createTableView();
+    }
+    
+    @Override
+    public void onAttach(Activity activity) {
+    	if (activity instanceof MainActivity) mFragmentContainer = (MainActivity) activity;
+    	else throw new RuntimeException();
     	
-    	if (savedInstanceState == null) {
-    		createTableView();
-		}
+    	super.onAttach(activity);
     }
 
 	private class SampleATableViewDataSource extends ATableViewDataSourceExt {
@@ -288,16 +296,12 @@ public class MainFragment extends SherlockFragment implements OnSlidingMenuItemC
 			String text = "Tapped DisclosureButton at indexPath [" + indexPath.getSection() + "," + indexPath.getRow() + "]";
 			Toast toast = Toast.makeText(getActivity(), text, Toast.LENGTH_SHORT);
 			toast.show();
+			mTableView.clearChoices(); mTableView.requestLayout();
 		}
 	}
 
 	@Override
-	public void onStyleATableViewStyleSelected(ATableViewStyle tableViewStyle,
-			ATableViewCellSeparatorStyle separatorStyle) {
-		
-		mTableViewStyle = tableViewStyle;
-		mTableViewSeparatorStyle = separatorStyle;
-		
+	public void onTableViewConfigurationChanged() {
 		((ViewGroup) getView()).removeView(mTableView);
 		createTableView();
 	}

@@ -3,6 +3,7 @@ package com.nakardo.atableview.view;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.Checkable;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -11,7 +12,7 @@ import com.nakardo.atableview.R;
 import com.nakardo.atableview.internal.ATableViewCellAccessoryView;
 import com.nakardo.atableview.internal.ATableViewCellAccessoryView.ATableViewCellAccessoryType;
 
-public class ATableViewCell extends FrameLayout {
+public class ATableViewCell extends FrameLayout implements Checkable {
 	public enum ATableViewCellStyle { Default, Subtitle, Value1, Value2 };
 	public enum ATableViewCellSelectionStyle { None, Blue, Gray };
 	public enum ATableViewCellSeparatorStyle { None, SingleLine, SingleLineEtched };
@@ -21,6 +22,7 @@ public class ATableViewCell extends FrameLayout {
 	
 	// internal
 	private View mContainerView;
+	private boolean mIsChecked;
 	
 	private String mReuseIdentifier;
 	private TextView mTextLabel;
@@ -121,5 +123,35 @@ public class ATableViewCell extends FrameLayout {
 	
 	public class LayoutParams {
 		public static final int UNDEFINED = -3;
+	}
+
+	@Override
+	public void setPressed(boolean pressed) {
+		
+		// disable selection when it's not allowed by the table configuration.
+		ATableView tableView = (ATableView) getParent();
+		super.setPressed(tableView.getAllowsSelection() ? pressed : false);
+	}
+	
+	@Override
+	public void setSelected(boolean selected) {
+		
+		// disable selection if selectionStyle is none.
+		super.setSelected(mSelectionStyle != ATableViewCellSelectionStyle.None ? selected : false);
+	}
+	
+	@Override
+	public boolean isChecked() {
+		return mIsChecked;
+	}
+
+	@Override
+	public void setChecked(boolean checked) {
+		mIsChecked = checked; setSelected(mIsChecked);
+	}
+
+	@Override
+	public void toggle() {
+		mIsChecked = !mIsChecked; setSelected(mIsChecked);
 	}
 }

@@ -103,7 +103,7 @@ public class ATableViewAdapter extends BaseAdapter {
 	}
 	
 	public int getContentHeight() {
-		int height = 0;
+		float height = 0;
 		
 		// TODO we're supporting content height only for plain tables, it's more complicated for grouped style
 		// since we would have to measure all headers & footers values.
@@ -127,12 +127,12 @@ public class ATableViewAdapter extends BaseAdapter {
 				height += hasFooter(section) ? getHeaderFooterRowHeight(section, true) : 0;
 			}
 			
-			// MAGIC MAGIC MAGIC. for some reason it seems to be a given offset by the number of rows
-			// subtracting headers & footers count.
-			height += (getCount() - mHeadersHeight.size() - mFootersHeight.size()) * density;
+			// MAGIC MAGIC MAGIC. for some reason we've to add the row count to the height.
+			// might it be related with the ListView separators?
+			height += getCount() * density;
 		}
 		
-		return height;
+		return (int) Math.floor(height);
 	}
 	
 	public int getLastRowHeight() {
@@ -418,6 +418,7 @@ public class ATableViewAdapter extends BaseAdapter {
 			}
 			
 			ShapeDrawable pressed = new ATableViewCellDrawable(mTableView, backgroundStyle, rowHeight, startColor, endColor);
+			drawable.addState(new int[] { android.R.attr.state_selected }, pressed);
 			drawable.addState(new int[] { android.R.attr.state_pressed }, pressed);
 			drawable.addState(new int[] { android.R.attr.state_focused }, pressed);
 		}

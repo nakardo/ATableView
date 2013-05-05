@@ -27,6 +27,8 @@ public class ATableView extends ListView {
 	private ATableViewCellSeparatorStyle mSeparatorStyle = ATableViewCellSeparatorStyle.SingleLine;
 	private int mSeparatorColor = -1;
 	private ATableViewStyle mStyle = DEFAULT_STYLE;
+	private boolean mAllowsSelection = true;
+	private boolean mAllowsMultipleSelection = false;
 	private ATableViewDataSource mDataSource;
 	private ATableViewDelegate mDelegate = new ATableViewDelegate();
 	
@@ -72,11 +74,26 @@ public class ATableView extends ListView {
 		}
 	}
 	
+	private int getSelectionMode() {
+		
+		// well, this is just a workaround since we've two variables in ios and only one in android
+		// to define selection enabled and multiple selection.
+		int choiceMode = CHOICE_MODE_SINGLE;
+		if (mAllowsMultipleSelection) choiceMode = CHOICE_MODE_MULTIPLE;
+		
+		return choiceMode;
+	}
+	
+	private void clearSelectedRows() {
+		clearChoices(); requestLayout();
+	}
+	
 	public ATableView(ATableViewStyle style, Context context) {
 		super(context);
 		mStyle = style;
 		
 		setSelector(android.R.color.transparent);
+		setChoiceMode(getChoiceMode());
 		setDivider(null);
 		setDividerHeight(0);
 		setScrollBarStyle(View.SCROLLBARS_OUTSIDE_OVERLAY);
@@ -100,7 +117,6 @@ public class ATableView extends ListView {
 	public ATableViewCellSeparatorStyle getSeparatorStyle() {
 		return mSeparatorStyle;
 	}
-	
 	public void setSeparatorStyle(ATableViewCellSeparatorStyle separatorStyle) {
 		mSeparatorStyle = separatorStyle;
 	}
@@ -108,7 +124,6 @@ public class ATableView extends ListView {
 	public int getSeparatorColor() {
 		return mSeparatorColor;
 	}
-	
 	public void setSeparatorColor(int resId) {
 		mSeparatorColor = resId;
 	}
@@ -117,10 +132,32 @@ public class ATableView extends ListView {
 		return mStyle;
 	}
 
+	public boolean getAllowsSelection() {
+		return mAllowsSelection;
+	}
+	public void setAllowsSelection(boolean allowsSelection) {
+		mAllowsSelection = allowsSelection;
+		
+		if (mAllowsSelection) setChoiceMode(getSelectionMode());
+		else setChoiceMode(CHOICE_MODE_NONE);
+		
+		clearSelectedRows();
+	}
+	
+	public boolean getAllowsMultipleSelection() {
+		return mAllowsMultipleSelection;
+	}
+	public void setAllowsMultipleSelection(boolean allowsMultipleSelection) {
+		mAllowsMultipleSelection = allowsMultipleSelection;
+		
+		if (mAllowsSelection) {
+			setChoiceMode(getSelectionMode()); clearSelectedRows();
+		}
+	}
+	
 	public ATableViewDataSource getDataSource() {
 		return mDataSource;
 	}
-
 	public void setDataSource(ATableViewDataSource dataSource) {
 		mDataSource = dataSource;
 	}
@@ -128,7 +165,6 @@ public class ATableView extends ListView {
 	public ATableViewDelegate getDelegate() {
 		return mDelegate;
 	}
-
 	public void setDelegate(ATableViewDelegate delegate) {
 		mDelegate = delegate;
 	}
