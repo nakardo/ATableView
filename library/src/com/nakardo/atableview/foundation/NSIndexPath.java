@@ -20,4 +20,9 @@ public class NSIndexPath {
 	public int getRow() {
 		return mRow;
 	}
+	
+	@Override
+	public String toString() {
+		return "[" + mRow + ", " + mSection + "]";
+	}
 }

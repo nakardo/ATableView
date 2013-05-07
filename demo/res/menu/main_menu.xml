@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android" >
-    <item android:id="@+id/grouped_etched" android:title="Grouped (Etched)"/>
-    <item android:id="@+id/grouped_single" android:title="Grouped"/>
-    <item android:id="@+id/plain" android:title="Plain"/>
+    <item android:id="@+id/goto_github"
+        android:icon="@drawable/ic_action_github"
+        android:title=""
+        android:showAsAction="always"/>
 </menu>

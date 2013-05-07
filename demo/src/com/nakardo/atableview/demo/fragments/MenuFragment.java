@@ -4,15 +4,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import android.app.Activity;
 import android.os.Bundle;
-import android.view.LayoutInflater;
-import android.view.View;
+import android.support.v4.app.Fragment;
 import android.view.ViewGroup;
-import android.widget.FrameLayout;
 
-import com.actionbarsherlock.app.SherlockFragment;
-import com.nakardo.atableview.demo.activities.MainActivity;
 import com.nakardo.atableview.foundation.NSIndexPath;
 import com.nakardo.atableview.internal.ATableViewCellAccessoryView.ATableViewCellAccessoryType;
 import com.nakardo.atableview.protocol.ATableViewDataSource;
@@ -23,27 +18,35 @@ import com.nakardo.atableview.view.ATableViewCell;
 import com.nakardo.atableview.view.ATableViewCell.ATableViewCellSeparatorStyle;
 import com.nakardo.atableview.view.ATableViewCell.ATableViewCellStyle;
 
-public class MenuFragment extends SherlockFragment {
-	private static final String[] mSectionsTitle = { "Styles", "Selection" };
-	private List<List<String>> mRowsText;
+public class MenuFragment extends BaseListFragment {
 	
-	private static enum ATableViewSection { STYLES, SELECTION };
+	// section.
+	private static final String[] mSectionsTitle = { "Demos", "Style", "Selection Style" };
+	private static enum MenuFragmentSection { DEMOS, STYLES, SELECTION };
+	
+	// selections.
+	private static enum ATableViewDemo { SIMPLE, COMPLEX };
 	private static enum ATableViewStyleValue { GROUPED_ETCHED, GROUPED, PLAIN };
 	private static enum ATableViewSelectionValue { NONE, SINGLE, MULTIPLE };
-	
-	private MainActivity mFragmentContainer;
-	private ATableView mTableView;
 
+	private List<List<String>> mRowsText;
+	
+	public interface TableViewDemoInterface {
+		public <T extends Fragment> void onTableViewDemoSelected(Class<T> fragmentClass);
+	}
+	
 	private static List<List<String>> createRowsTextList() {
 		List<List<String>> rows = new ArrayList<List<String>>();
 		
+		rows.add(Arrays.asList(new String[] { "Simple", "Complex" }));
 		rows.add(Arrays.asList(new String[] { "Grouped (Etched)", "Grouped", "Plain" }));
 		rows.add(Arrays.asList(new String[] { "None", "Single", "Multiple" }));
 		
 		return rows;
 	}
 	
-	private void createTableView() {
+	@Override
+	protected void createTableView() {
 		mTableView = new ATableView(ATableViewStyle.Plain, getActivity());
         mTableView.setDataSource(new MenuTableViewDataSource());
         mTableView.setDelegate(new MenuTableViewDelegate());
@@ -53,28 +56,20 @@ public class MenuFragment extends SherlockFragment {
 	}
 	
 	@Override
-	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-		View view = new FrameLayout(getActivity());
-		view.setBackgroundColor(getResources().getColor(android.R.color.white));
-		
-		return view;
+	public ATableViewDataSource getDataSource() {
+		return new MenuTableViewDataSource();
+	}
+	
+	@Override
+	public ATableViewDelegate getDelegate() {
+		return new MenuTableViewDelegate();
 	}
 	
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
-		super.onActivityCreated(savedInstanceState);
-		
 		mRowsText = createRowsTextList();
-		createTableView();
+		super.onActivityCreated(savedInstanceState);
 	}
-	
-	@Override
-    public void onAttach(Activity activity) {
-    	if (activity instanceof MainActivity) mFragmentContainer = (MainActivity) activity;
-    	else throw new RuntimeException();
-    	
-    	super.onAttach(activity);
-    }
 	
 	private class MenuTableViewDataSource extends ATableViewDataSource {
 
@@ -82,11 +77,11 @@ public class MenuFragment extends SherlockFragment {
 			boolean isSelected = false;
 			
 			int row = indexPath.getRow();
-			ATableViewSection section = ATableViewSection.values()[indexPath.getSection()];
+			MenuFragmentSection section = MenuFragmentSection.values()[indexPath.getSection()];
 			switch (section) {
 				case STYLES:
-					ATableViewStyle tableViewStyle = mFragmentContainer.tableViewStyle;
-					ATableViewCellSeparatorStyle separatorStyle = mFragmentContainer.separatorStyle;
+					ATableViewStyle tableViewStyle = mFragmentContainer.mTableViewStyle;
+					ATableViewCellSeparatorStyle separatorStyle = mFragmentContainer.mSeparatorStyle;
 					
 					ATableViewStyleValue style = ATableViewStyleValue.values()[row];
 					switch (style) {
@@ -100,8 +95,8 @@ public class MenuFragment extends SherlockFragment {
 							isSelected = (tableViewStyle == ATableViewStyle.Plain); break;
 					} break;
 				case SELECTION:
-					boolean allowsSelection = mFragmentContainer.allowsSelection;
-					boolean allowsMultipleSelection = mFragmentContainer.allowsMultipleSelection;
+					boolean allowsSelection = mFragmentContainer.mAllowsSelection;
+					boolean allowsMultipleSelection = mFragmentContainer.mAllowsMultipleSelection;
 					
 					ATableViewSelectionValue selection = ATableViewSelectionValue.values()[row];
 					switch (selection) {
@@ -117,23 +112,37 @@ public class MenuFragment extends SherlockFragment {
 		
 		@Override
 		public ATableViewCell cellForRowAtIndexPath(ATableView tableView, NSIndexPath indexPath) {
-			final String cellIdentifier = "DEFAULT_CELL";
+			ATableViewCell cell = null;
+			String cellIdentifier = null;
 			
-			ATableViewCell cell = dequeueReusableCellWithIdentifier(cellIdentifier);
-			if (cell == null) {
-				cell = new ATableViewCell(ATableViewCellStyle.Default, cellIdentifier, getActivity());
+			MenuFragmentSection section = MenuFragmentSection.values()[indexPath.getSection()];
+			if (section == MenuFragmentSection.DEMOS) {
+				cellIdentifier = "SELECTION_CELL";
+				
+				cell = dequeueReusableCellWithIdentifier(cellIdentifier);
+				if (cell == null) {
+					cell = new ATableViewCell(ATableViewCellStyle.Default, cellIdentifier, getActivity());
+					cell.setAccessoryType(ATableViewCellAccessoryType.DisclosureIndicator);
+				}
+			} else {
+				cellIdentifier = "CHECKED_CELL";
+				
+				cell = dequeueReusableCellWithIdentifier(cellIdentifier);
+				if (cell == null) {
+					cell = new ATableViewCell(ATableViewCellStyle.Default, cellIdentifier, getActivity());
+				}
+				
+				// toogle selection.
+				ATableViewCellAccessoryType accessoryType = ATableViewCellAccessoryType.None;
+				if (isSelected(indexPath)) {
+					accessoryType = ATableViewCellAccessoryType.Checkmark;
+				}
+				cell.setAccessoryType(accessoryType);
 			}
 			
 			// set text.
 			String text = mRowsText.get(indexPath.getSection()).get(indexPath.getRow());
 			cell.getTextLabel().setText(text);
-			
-			// toogle selection.
-			ATableViewCellAccessoryType accessoryType = ATableViewCellAccessoryType.None;
-			if (isSelected(indexPath)) {
-				accessoryType = ATableViewCellAccessoryType.Checkmark;
-			}
-			cell.setAccessoryType(accessoryType);
 			
 			return cell;
 		}
@@ -160,8 +169,19 @@ public class MenuFragment extends SherlockFragment {
 		public void didSelectRowAtIndexPath(ATableView tableView, NSIndexPath indexPath) {
 			int row = indexPath.getRow();
 			
-			ATableViewSection section = ATableViewSection.values()[indexPath.getSection()];
+			MenuFragmentSection section = MenuFragmentSection.values()[indexPath.getSection()];
 			switch (section) {
+				case DEMOS:
+					Class<? extends Fragment> fragmentClass = null;
+					
+					ATableViewDemo demo = ATableViewDemo.values()[row];
+					switch (demo) {
+						case SIMPLE: fragmentClass = SimpleListFragment.class; break;
+						default: fragmentClass = MultipleStylesListFragment.class; break;
+					}
+					
+					mFragmentContainer.onTableViewDemoSelected(fragmentClass);
+					break;
 				case STYLES:
 					ATableViewStyle tableViewStyle = ATableViewStyle.Grouped;
 					ATableViewCellSeparatorStyle separatorStyle = ATableViewCellSeparatorStyle.SingleLine;
@@ -173,8 +193,10 @@ public class MenuFragment extends SherlockFragment {
 						default: tableViewStyle = ATableViewStyle.Plain; break;
 					}
 					
-					mFragmentContainer.tableViewStyle = tableViewStyle;
-					mFragmentContainer.separatorStyle = separatorStyle;
+					mFragmentContainer.mTableViewStyle = tableViewStyle;
+					mFragmentContainer.mSeparatorStyle = separatorStyle;
+					
+					mTableView.reloadData(); mFragmentContainer.onTableViewConfigurationChanged();
 					break;
 				case SELECTION:
 					boolean allowsSelection = true, allowsMultipleSelection = false;
@@ -186,14 +208,13 @@ public class MenuFragment extends SherlockFragment {
 						default: break;
 					}
 					
-					mFragmentContainer.allowsSelection = allowsSelection;
-					mFragmentContainer.allowsMultipleSelection = allowsMultipleSelection;
+					mFragmentContainer.mAllowsSelection = allowsSelection;
+					mFragmentContainer.mAllowsMultipleSelection = allowsMultipleSelection;
+					
+					mTableView.reloadData(); mFragmentContainer.onTableViewConfigurationChanged();
 					break;
 				default: break;
 			}
-			mTableView.reloadData();
-			
-			mFragmentContainer.onTableViewConfigurationChanged();
 		}
 	}
 }

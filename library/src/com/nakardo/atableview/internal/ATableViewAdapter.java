@@ -23,6 +23,7 @@ import com.nakardo.atableview.internal.ATableViewHeaderFooterCell.ATableViewHead
 import com.nakardo.atableview.protocol.ATableViewDataSource;
 import com.nakardo.atableview.protocol.ATableViewDataSourceExt;
 import com.nakardo.atableview.protocol.ATableViewDelegate;
+import com.nakardo.atableview.utils.DrawableUtils;
 import com.nakardo.atableview.view.ATableView;
 import com.nakardo.atableview.view.ATableView.ATableViewStyle;
 import com.nakardo.atableview.view.ATableViewCell;
@@ -129,7 +130,7 @@ public class ATableViewAdapter extends BaseAdapter {
 			
 			// MAGIC MAGIC MAGIC. for some reason we've to add the row count to the height.
 			// might it be related with the ListView separators?
-			height += getCount() * density;
+			height += getCount();
 		}
 		
 		return (int) Math.floor(height);
@@ -300,21 +301,6 @@ public class ATableViewAdapter extends BaseAdapter {
 		return backgroundStyle;
 	}
 	
-	private int getRowBackgroundColor(ATableViewCell cell) {
-		Resources res = mTableView.getResources();
-		
-		// pull cell color, -1 implies color has not being defined so we'll go with the defaults.
-		int color = cell.getBackgroundColor();
-		if (color == -1) {
-			color = res.getColor(R.color.atv_cell_plain_background);
-			if (mTableView.getStyle() == ATableViewStyle.Grouped) {
-				color = res.getColor(R.color.atv_cell_grouped_background);
-			}
-		}
-		
-		return color;
-	}
-	
 	private ATableViewHeaderFooterCell getReusableHeaderFooterCell(View convertView, boolean isFooterRow) {
 		ATableViewHeaderFooterCell cell = (ATableViewHeaderFooterCell) convertView;
 		if (cell == null) {
@@ -423,7 +409,7 @@ public class ATableViewAdapter extends BaseAdapter {
 			drawable.addState(new int[] { android.R.attr.state_focused }, pressed);
 		}
 		
-		int color = getRowBackgroundColor(cell);
+		int color = DrawableUtils.getRowBackgroundColor(mTableView, cell);
 		ShapeDrawable normal = new ATableViewCellDrawable(mTableView, backgroundStyle, rowHeight, color);
 		drawable.addState(new int[] {}, normal);
 		

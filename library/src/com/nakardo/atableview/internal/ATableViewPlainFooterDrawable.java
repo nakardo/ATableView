@@ -24,6 +24,7 @@ public class ATableViewPlainFooterDrawable extends ShapeDrawable {
 		mStrokeWidth = DrawableUtils.getStrokeWidth(res);
 		mStrokeOffset = (float) Math.ceil(rowHeight * res.getDisplayMetrics().density) + mStrokeWidth;
 		
+		// stroke.
 		mStrokePaint = new Paint();
 		mStrokePaint.setStyle(Paint.Style.STROKE);
 		mStrokePaint.setStrokeWidth(mStrokeWidth);

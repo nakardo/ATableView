@@ -4,27 +4,20 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import android.app.Activity;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.text.TextUtils.TruncateAt;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.actionbarsherlock.app.SherlockFragment;
 import com.nakardo.atableview.demo.R;
-import com.nakardo.atableview.demo.activities.MainActivity;
 import com.nakardo.atableview.demo.cells.MyCustomCell;
-import com.nakardo.atableview.demo.interfaces.TableViewConfigurationInterface;
 import com.nakardo.atableview.foundation.NSIndexPath;
 import com.nakardo.atableview.internal.ATableViewCellAccessoryView.ATableViewCellAccessoryType;
+import com.nakardo.atableview.protocol.ATableViewDataSource;
 import com.nakardo.atableview.protocol.ATableViewDataSourceExt;
 import com.nakardo.atableview.protocol.ATableViewDelegate;
 import com.nakardo.atableview.view.ATableView;
@@ -32,7 +25,7 @@ import com.nakardo.atableview.view.ATableViewCell;
 import com.nakardo.atableview.view.ATableViewCell.ATableViewCellSelectionStyle;
 import com.nakardo.atableview.view.ATableViewCell.ATableViewCellStyle;
 
-public class MainFragment extends SherlockFragment implements TableViewConfigurationInterface {
+public class MultipleStylesListFragment extends BaseListFragment {
 	private List<List<String>> mCapitals;
 	private List<List<String>> mProvinces;
 	private String[] mRegions = {
@@ -44,9 +37,6 @@ public class MainFragment extends SherlockFragment implements TableViewConfigura
 		"La Rioja is sometimes considered part of Cuyo region instead of the Northwest.", null,
 		null, null
 	};
-	
-	private MainActivity mFragmentContainer;
-	private ATableView mTableView;
 	
 	private static List<List<String>> createProvincesList() {
 		List<List<String>> provinces = new ArrayList<List<String>>();
@@ -77,44 +67,26 @@ public class MainFragment extends SherlockFragment implements TableViewConfigura
 		
 		return capitals;
 	}
+    
+	@Override
+	public ATableViewDataSource getDataSource() {
+		return new MultipleStylesListDataSource();
+	}
 	
-	private void createTableView() {
-		mTableView = new ATableView(mFragmentContainer.tableViewStyle, getActivity());
-		mTableView.setSeparatorStyle(mFragmentContainer.separatorStyle);
-		mTableView.setAllowsSelection(mFragmentContainer.allowsSelection);
-		mTableView.setAllowsMultipleSelection(mFragmentContainer.allowsMultipleSelection);
-        mTableView.setDataSource(new SampleATableViewDataSource());
-        mTableView.setDelegate(new SampleATableViewDelegate());
-        
-        ViewGroup container = (ViewGroup) getView();
-        container.addView(mTableView);
+	@Override
+	public ATableViewDelegate getDelegate() {
+		return new MultipleStylesListDelegate();
 	}
 	
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-    	FrameLayout view = new FrameLayout(getActivity());
-    	return view;
-    }
-    
-    @Override
     public void onActivityCreated(Bundle savedInstanceState) {
-    	super.onActivityCreated(savedInstanceState);
-    	
     	mCapitals = createCapitalsList();
         mProvinces = createProvincesList();
         
-        createTableView();
+        super.onActivityCreated(savedInstanceState);
     }
     
-    @Override
-    public void onAttach(Activity activity) {
-    	if (activity instanceof MainActivity) mFragmentContainer = (MainActivity) activity;
-    	else throw new RuntimeException();
-    	
-    	super.onAttach(activity);
-    }
-
-	private class SampleATableViewDataSource extends ATableViewDataSourceExt {
+	private class MultipleStylesListDataSource extends ATableViewDataSourceExt {
 		
 		private Drawable getDrawableForRowAtIndexPath(NSIndexPath indexPath) {
 	    	Drawable drawable = null;
@@ -273,7 +245,7 @@ public class MainFragment extends SherlockFragment implements TableViewConfigura
 		}
 	}
 	
-	private class SampleATableViewDelegate extends ATableViewDelegate {
+	private class MultipleStylesListDelegate extends ATableViewDelegate {
 		
 		@Override
 		public int heightForRowAtIndexPath(ATableView tableView, NSIndexPath indexPath) {
@@ -298,11 +270,5 @@ public class MainFragment extends SherlockFragment implements TableViewConfigura
 			toast.show();
 			mTableView.clearChoices(); mTableView.requestLayout();
 		}
-	}
-
-	@Override
-	public void onTableViewConfigurationChanged() {
-		((ViewGroup) getView()).removeView(mTableView);
-		createTableView();
 	}
 }

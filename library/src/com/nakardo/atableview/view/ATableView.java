@@ -1,11 +1,10 @@
 package com.nakardo.atableview.view;
 
+import java.util.ArrayList;
+
 import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.Shader.TileMode;
-import android.graphics.drawable.BitmapDrawable;
 import android.util.AttributeSet;
+import android.util.SparseBooleanArray;
 import android.view.View;
 import android.view.ViewTreeObserver;
 import android.widget.AbsListView;
@@ -13,16 +12,20 @@ import android.widget.FrameLayout;
 import android.widget.HeaderViewListAdapter;
 import android.widget.ListView;
 
-import com.nakardo.atableview.R;
+import com.nakardo.atableview.foundation.NSIndexPath;
 import com.nakardo.atableview.internal.ATableViewAdapter;
 import com.nakardo.atableview.internal.ATableViewCellClickListener;
 import com.nakardo.atableview.internal.ATableViewPlainFooterDrawable;
 import com.nakardo.atableview.protocol.ATableViewDataSource;
 import com.nakardo.atableview.protocol.ATableViewDelegate;
+import com.nakardo.atableview.utils.DrawableUtils;
 import com.nakardo.atableview.view.ATableViewCell.ATableViewCellSeparatorStyle;
 
 public class ATableView extends ListView {
 	private static final ATableViewStyle DEFAULT_STYLE = ATableViewStyle.Plain;
+	
+	// UIView
+	private int mBackgroundColor = -1;
 	
 	private ATableViewCellSeparatorStyle mSeparatorStyle = ATableViewCellSeparatorStyle.SingleLine;
 	private int mSeparatorColor = -1;
@@ -35,20 +38,6 @@ public class ATableView extends ListView {
 	public enum ATableViewStyle {
 		Plain, Grouped
 	};
-	
-	private void setupBackgroundDrawable() {
-		
-		// closes #20, tiled backgrounds defined on xml doesn't seems to work well on Android ~2.1.
-		// setup gray striped background for plain style tables.
-		if (mStyle == ATableViewStyle.Grouped) {
-			Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.group_background);
-			
-			BitmapDrawable drawable = new BitmapDrawable(bitmap);
-			drawable.setTileModeX(TileMode.REPEAT);
-			drawable.setTileModeY(TileMode.REPEAT);
-			setBackgroundDrawable(drawable);
-		}
-	}
 	
 	private void setupFooterView(int lastRowHeight) {
 		
@@ -74,6 +63,10 @@ public class ATableView extends ListView {
 		}
 	}
 	
+	private void setupBackgroundDrawable() {
+		setBackgroundDrawable(DrawableUtils.getTableBackgroundDrawable(this));
+	}
+	
 	private int getSelectionMode() {
 		
 		// well, this is just a workaround since we've two variables in ios and only one in android
@@ -93,7 +86,7 @@ public class ATableView extends ListView {
 		mStyle = style;
 		
 		setSelector(android.R.color.transparent);
-		setChoiceMode(getChoiceMode());
+		setChoiceMode(getSelectionMode());
 		setDivider(null);
 		setDividerHeight(0);
 		setScrollBarStyle(View.SCROLLBARS_OUTSIDE_OVERLAY);
@@ -114,6 +107,13 @@ public class ATableView extends ListView {
 		super(context, attrs, defStyle);
 	}
 
+	public int getBackgroundColor() {
+		return mBackgroundColor;
+	}
+	public void setBackgroundColor(int resId) {
+		mBackgroundColor = resId; setupBackgroundDrawable();
+	}
+	
 	public ATableViewCellSeparatorStyle getSeparatorStyle() {
 		return mSeparatorStyle;
 	}
@@ -155,6 +155,37 @@ public class ATableView extends ListView {
 		}
 	}
 	
+	public NSIndexPath getIndexPathForSelectedRow() {
+		NSIndexPath indexPath = null;
+		
+		int position = getCheckedItemPosition();
+		if (position != INVALID_POSITION) {
+			indexPath = getInternalAdapter().getIndexPath(position);
+		}
+		
+		return indexPath;
+	}
+	
+	public NSIndexPath[] getIndexPathsForSelectedRows() {
+		NSIndexPath[] indexPaths = null;
+		
+		SparseBooleanArray checkedList = getCheckedItemPositions();
+		if (checkedList != null) {
+			ArrayList<NSIndexPath> indexPathList = new ArrayList<NSIndexPath>();
+			
+			ATableViewAdapter adapter = getInternalAdapter();
+			for (int i = 0; i < adapter.getCount(); i++) {
+				if (checkedList.get(i)) {
+					indexPathList.add(adapter.getIndexPath(i));
+				}
+			}
+			
+			indexPaths = indexPathList.toArray(new NSIndexPath[indexPathList.size()]);
+		}
+		
+		return indexPaths;
+	}
+	
 	public ATableViewDataSource getDataSource() {
 		return mDataSource;
 	}
@@ -185,6 +216,7 @@ public class ATableView extends ListView {
 	
 	public void reloadData() {
 		getInternalAdapter().notifyDataSetChanged();
+		clearSelectedRows();
 	}
 	
 	@Override
