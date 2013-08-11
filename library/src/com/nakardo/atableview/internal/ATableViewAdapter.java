@@ -82,11 +82,13 @@ public class ATableViewAdapter extends BaseAdapter {
 				List<Integer> sectionRowHeights = new ArrayList<Integer>();
 				
 				// pull row heights.
-				int rows = mRows.get(s);
-				for (int r = 0; r < rows; r++) {
+				// closes #23, make sure to pull at least the default height for empty rows sections
+				int r = mRows.get(s) - 1;
+				do {
 					NSIndexPath indexPath = NSIndexPath.indexPathForRowInSection(r, s);
 					sectionRowHeights.add(delegate.heightForRowAtIndexPath(mTableView, indexPath));
-				} 
+					r--;
+				} while (r >= 0);
 				mRowsHeight.add(sectionRowHeights);
 			}
 		}

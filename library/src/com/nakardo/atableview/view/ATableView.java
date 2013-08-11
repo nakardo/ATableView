@@ -223,6 +223,7 @@ public class ATableView extends ListView {
 	protected void onAttachedToWindow() {
 		ATableViewAdapter adapter = new ATableViewAdapter(this);
 		
+		// TODO we should handle the case last row is ListView.LayoutParams.WRAP_CONTENT, to get its height.
 		// setup footer for plain tables to complete its height with empty rows.
 		setupFooterView(adapter.getLastRowHeight());
 		
