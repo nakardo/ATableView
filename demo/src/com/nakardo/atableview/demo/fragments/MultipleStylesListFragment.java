@@ -41,12 +41,12 @@ public class MultipleStylesListFragment extends BaseListFragment {
 	private static List<List<String>> createProvincesList() {
 		List<List<String>> provinces = new ArrayList<List<String>>();
 		
-		provinces.add(Arrays.asList(new String[] { "Jujuy", "Salta", "Tucumán", "Catamarca" }));
+		provinces.add(Arrays.asList(new String[] { "Jujuy", "Salta", "Tucuman", "Catamarca" }));
 		provinces.add(Arrays.asList(new String[] { "Formosa", "Chaco", "Santiago del Estero" }));
-		provinces.add(Arrays.asList(new String[] { "Misiones", "Entre Ríos", "Corrientes" }));
-		provinces.add(Arrays.asList(new String[] { "Córdoba", "Santa Fe", "La Pampa", "Buenos Aires" }));
+		provinces.add(Arrays.asList(new String[] { "Misiones", "Entre Rios", "Corrientes" }));
+		provinces.add(Arrays.asList(new String[] { "Cordoba", "Santa Fe", "La Pampa", "Buenos Aires" }));
 		provinces.add(Arrays.asList(new String[] { "San Juan", "La Rioja", "Mendoza", "San Luis" }));
-		provinces.add(Arrays.asList(new String[] { "Neuquén", "Chubut", "Santa Cruz", "Tierra del Fuego" }));
+		provinces.add(Arrays.asList(new String[] { "Neuquen", "Chubut", "Santa Cruz", "Tierra del Fuego" }));
 		provinces.add(Arrays.asList(new String[] { "Autonomous City of Buenos Aires" }));
 		provinces.add(Arrays.asList(new String[] { "ATableView intends to imitate same object model proposed on UIKit for building tables, " +
 				"so it's not only limited on theming Android ListView.\n\nCopyright 2012 Diego Acosta\n\n" +
@@ -63,7 +63,7 @@ public class MultipleStylesListFragment extends BaseListFragment {
 		capitals.add(Arrays.asList(new String[] { "Posadas", "Parana", "Corrientes" }));
 		capitals.add(Arrays.asList(new String[] { "Cordoba", "Santa Fe", "Santa Rosa", "Capital Federal" }));
 		capitals.add(Arrays.asList(new String[] { "San Juan", "La Rioja", "Mendoza", "San Luis" }));
-		capitals.add(Arrays.asList(new String[] { "Viedma", "Neuquén", "Rawson", "Rio Gallegos", "Ushuaia" }));
+		capitals.add(Arrays.asList(new String[] { "Viedma", "Neuquen", "Rawson", "Rio Gallegos", "Ushuaia" }));
 		
 		return capitals;
 	}
