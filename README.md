@@ -1,4 +1,7 @@
-# ATableView ([Play Store Demo](https://play.google.com/store/apps/details?id=com.nakardo.atableview.demo))
+# THIS PROJECT IS NO LONGER MAINTAINED
+> Please refer to Android [docs](https://developer.android.com/training/material/lists-cards.html) to customize lists depending on your needs.
+
+# ATableView
 
 ![ATableView](http://oi45.tinypic.com/vshn2x.jpg)
 
@@ -228,13 +231,6 @@ public int styleForRowAtIndexPath(NSIndexPath indexPath) {
 UILabel uses internally [Roboto](http://developer.android.com/design/style/typography.html) font, which make labels look-alike in iOS and it's rendered great by Android. Roboto font is available from ICS and above, so it should be included on your project `/assets` folder in order to make it work for any version.
 
 Both **Roboto-Regular.ttf** and **Roboto-Bold.ttf** are included on the demo project. On the case you don't include these files, text will render using the default font available.
-
-## Roadmap
-
-* Support for pinned headers & footers in UITableViewPlainStyle.
-* Support for creating the table from layout.
-* ATableViewActivity and ATableViewFragment classes.
-* More.
 
 ## License
 
